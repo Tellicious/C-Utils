@@ -9,4 +9,5 @@
 - ***timer:*** user-configurable timers
 - ***queue:*** queue structures
 - ***quaternion:*** quaternion operations and conversion to Euler angles
+- ***PID:*** PID controller with several anti-windup options (aero-specific, integral-clamping, back-calculation)
 

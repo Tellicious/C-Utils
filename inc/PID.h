@@ -1,10 +1,9 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    aeroPID.h
+ * \file    PID.h
  * \author  Andrea Vivani
- * \brief   Implementation of PID controller with integral clamping specific
- *          for aero applications
+ * \brief   Implementation of PID controller with several anti-windup options
  ******************************************************************************
  * \copyright
  *
@@ -33,8 +32,8 @@
 /* END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __AEROPID_H__
-#define __AEROPID_H__
+#ifndef __PID_H__
+#define __PID_H__
 
 #ifdef __cplusplus
 extern "C"
@@ -53,14 +52,16 @@ typedef struct {
   float ki;	//integral gain
   float kd;	//derivative gain
   float nd;	//derivative filter constant N: derivative in Laplace=s/(1+s/N)
-  float dT;	//loop time in ms
+  float dT;	//loop time in s
+  float kb; //back-calculation coefficient
   float kf;	//derivative filter constant
-  float intMin;	//lower integral saturation limit
-  float intMax;	//upper integral saturation limit
-  float eOld;	//previous step error
+  float satMin;	//lower integral saturation limit
+  float satMax;	//upper integral saturation limit
+  float oldE;	//previous step error
+  float tmp;	//previous step error (used for integral clamping) or back-calculation coefficient
   float DuD;	//derivative action contribution
   float DuI;	//integral action contribution
-} aeroPID_t;
+} PID_t;
 
 /* Function prototypes -------------------------------------------------------*/
 
@@ -72,22 +73,62 @@ typedef struct {
  * \param [in] ki_val     integral gain
  * \param [in] kd_val     derivative gain
  * \param [in] nd_val     derivative filter constant N: derivative in Laplace=s/(1+s/N)
- * \param [in] dT         loop time in ms
- * \param [in] sat_min    lower integral saturation limit
- * \param [in] sat_max    upper integral saturation limit
+ * \param [in] kb_val     back-calculation coefficient value. Set to 0 if PID_calcBackCalc() is not used
+ * \param [in] dT_ms      loop time in ms
+ * \param [in] sat_min    lower saturation limit
+ * \param [in] sat_max    upper saturation limit
  */
-void aeroPID_init(aeroPID_t *PID, float kp_val, float ki_val, float kd_val, float nd_val, float dT, float sat_min, float sat_max);
+void PID_init(PID_t *PID, float kp_val, float ki_val, float kd_val, float nd_val, float kb_val, float dT_ms, float sat_min, float sat_max);
 
 /*!
- * \brief PID calculation, to be called regularly every dT ms
+ * \brief PID calculation without anti-windup (with output clamping)
  *
  * \param [in] PID        pointer to PID object
  * \param [in] set_point  set point value
  * \param [in] measure    measure value
  * 
+ * \attention to be called regularly every dT ms
+ */
+void PID_calc(PID_t *PID, float set_point, float measure);
+
+/*!
+ * \brief PID calculation with aero-specific anti-windup, clamping only integral term
+ *
+ * \param [in] PID        pointer to PID object
+ * \param [in] set_point  set point value
+ * \param [in] measure    measure value
+ * 
+ * \attention to be called regularly every dT ms
+ * 
  * \return 0 if success, 1 if integral term is saturated
  */
-uint8_t aeroPID_calc(aeroPID_t *PID, float set_point, float measure);
+uint8_t PID_calcAeroClamp(PID_t *PID, float set_point, float measure);
+
+/*!
+ * \brief PID calculation with integral-clamping anti-windup, clamping entire output
+ *
+ * \param [in] PID        pointer to PID object
+ * \param [in] set_point  set point value
+ * \param [in] measure    measure value
+ * 
+ * \attention to be called regularly every dT ms
+ * 
+ * \return 0 if success, 1 if integral term is saturated
+ */
+uint8_t PID_calcIntegralClamp(PID_t *PID, float set_point, float measure);
+
+/*!
+ * \brief PID calculation with back-calculation anti-windup, clamping entire output
+ *
+ * \param [in] PID        pointer to PID object
+ * \param [in] set_point  set point value
+ * \param [in] measure    measure value
+ * 
+ * \attention to be called regularly every dT ms
+ * 
+ * \return 0 if success, 1 if integral term is saturated
+ */
+uint8_t PID_calcBackCalc(PID_t *PID, float set_point, float measure);
 
 /*!
  * \brief Return PID output value
@@ -96,7 +137,7 @@ uint8_t aeroPID_calc(aeroPID_t *PID, float set_point, float measure);
  * 
  * \return output value
  */
-inline float aeroPID_getOutput(aeroPID_t *PID) {return PID->output;};
+inline float PID_getOutput(PID_t *PID) {return PID->output;};
 
 /*!
  * \brief Return Kp value
@@ -105,7 +146,7 @@ inline float aeroPID_getOutput(aeroPID_t *PID) {return PID->output;};
  * 
  * \return Kp value
  */
-inline float aeroPID_getKp(aeroPID_t *PID) {return PID->kp;};
+inline float PID_getKp(PID_t *PID) {return PID->kp;};
 
 /*!
  * \brief Return Ki value
@@ -114,7 +155,7 @@ inline float aeroPID_getKp(aeroPID_t *PID) {return PID->kp;};
  * 
  * \return Ki value
  */
-inline float aeroPID_getKi(aeroPID_t *PID) {return (2 * PID->ki / PID->dT);};
+inline float PID_getKi(PID_t *PID) {return (2 * PID->ki / PID->dT);};
 
 /*!
  * \brief Return Kd value
@@ -123,7 +164,7 @@ inline float aeroPID_getKi(aeroPID_t *PID) {return (2 * PID->ki / PID->dT);};
  * 
  * \return Kd value
  */
-inline float aeroPID_getKd(aeroPID_t *PID) {return (0.5 * (2 + PID->nd * PID->dT) * PID->kd / PID->nd);};
+inline float PID_getKd(PID_t *PID) {return (0.5 * (2 + PID->nd * PID->dT) * PID->kd / PID->nd);};
 
 /*!
  * \brief Set proportional gain value
@@ -131,7 +172,7 @@ inline float aeroPID_getKd(aeroPID_t *PID) {return (0.5 * (2 + PID->nd * PID->dT
  * \param [in] PID        pointer to PID object
  * \param [in] kp_val     proportional gain value
  */
-inline void aeroPID_setKp(aeroPID_t *PID, float kp_val) {PID->kp = kp_val;};
+inline void PID_setKp(PID_t *PID, float kp_val) {PID->kp = kp_val;};
 
 /*!
  * \brief Set integral gain value
@@ -139,7 +180,7 @@ inline void aeroPID_setKp(aeroPID_t *PID, float kp_val) {PID->kp = kp_val;};
  * \param [in] PID        pointer to PID object
  * \param [in] ki_val     integral gain value
  */
-inline void aeroPID_setKi(aeroPID_t *PID, float ki_val) {PID->ki = 0.5 * ki_val * PID->dT;};
+inline void PID_setKi(PID_t *PID, float ki_val) {PID->ki = 0.5 * ki_val * PID->dT;};
 
 /*!
  * \brief Set derivative gain value
@@ -148,7 +189,15 @@ inline void aeroPID_setKi(aeroPID_t *PID, float ki_val) {PID->ki = 0.5 * ki_val 
  * \param [in] kd_val     derivative gain value
  * \param [in] nd_val     derivative filter constant N: derivative in Laplace=s/(1+s/N)
  */
-inline void aeroPID_setKd(aeroPID_t *PID, float kd_val, float nd_val) {PID->nd = nd_val; PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT); PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);};
+inline void PID_setKd(PID_t *PID, float kd_val, float nd_val) {PID->nd = nd_val; PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT); PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);};
+
+/*!
+ * \brief Set back-calculation coefficient
+ *
+ * \param [in] PID        pointer to PID object
+ * \param [in] kb_val     back-calculation coefficient value
+ */
+inline void PID_setKb(PID_t *PID, float kb_val) {PID->kb = 0.5 * kb_val * PID->dT;};
 
 /*!
  * \brief Set integral component value
@@ -156,27 +205,27 @@ inline void aeroPID_setKd(aeroPID_t *PID, float kd_val, float nd_val) {PID->nd =
  * \param [in] PID        pointer to PID object
  * \param [in] value      value of integral component
  */
-inline void aeroPID_setIntegralValue(aeroPID_t *PID, float value) {PID->DuI = value;};
+inline void PID_setIntegralValue(PID_t *PID, float value) {PID->DuI = value;};
 
 /*!
- * \brief Set integral saturation values
+ * \brief Set output saturation values
  *
  * \param [in] PID        pointer to PID object
- * \param [in] sat_min    lower integral saturation limit
- * \param [in] sat_max    upper integral saturation limit
+ * \param [in] sat_min    lower saturation limit
+ * \param [in] sat_max    upper saturation limit
  */
-inline void aeroPID_setIntegralSaturation(aeroPID_t *PID, float sat_min, float sat_max) {PID->intMin = sat_min; PID->intMax = sat_max;};
+inline void PID_setIntegralSaturation(PID_t *PID, float sat_min, float sat_max) {PID->satMin = sat_min; PID->satMax = sat_max;};
 
 /*!
  * \brief Reset PID
  *
  * \param [in] PID        pointer to PID object
  */
-inline void aeroPID_reset(aeroPID_t *PID) {PID->eOld = 0; PID->DuD = 0; PID->DuI = 0;};
+inline void PID_reset(PID_t *PID) {PID->oldE = 0; PID->DuD = 0; PID->DuI = 0; PID->tmp = 0;};
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __AEROPID_H__
+#endif // __PID_H__
 
