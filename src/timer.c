@@ -37,10 +37,10 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-void timerProcess(userTimer_t *t)
+void timerProcess(userTimer_t *t, uint32_t currentTick)
 {
     uint32_t k;
-    if (t->flag && GET_TIME_MS >= t->target_tick) {
+    if (t->flag && currentTick >= t->target_tick) {
         t->event_cnt++;
         k = t->target_tick; // to prevent Warning volatile access in IAR EWARM  
         t->target_tick = k + t->interval;

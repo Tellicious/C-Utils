@@ -44,28 +44,24 @@ extern "C"
 
 #include <stdint.h>
 
-
-/* Macros --------------------------------------------------------------------*/
-
-#warning GET_TIME_MS needs to be customized according to the specific platform
-//#define GET_TIME_MS HAL_GetTick()
-#define GET_TIME_MS 0
-
 /* Typedefs ------------------------------------------------------------------*/
 
 typedef volatile struct {
     uint32_t target_tick;
     uint32_t interval;
-    uint32_t flag;
-    uint32_t event_cnt;
+    uint8_t flag;
+    uint16_t event_cnt;
 } userTimer_t;
 
 /* Function prototypes --------------------------------------------------------*/
+
+uint32_t timerGetTimeMS();
+
 /*!
  * \brief Setup timer object
  *
  * \param [in] t             pointer to timer object
- * \param [in] interval  required timer interval
+ * \param [in] interval  	 required timer interval
  */
 inline void timerInit(userTimer_t *t, uint32_t interval) {t->interval = interval; t->flag = 0; t->event_cnt = 0;};
 
@@ -73,13 +69,14 @@ inline void timerInit(userTimer_t *t, uint32_t interval) {t->interval = interval
  * \brief Start timer object
  *
  * \param [in] t             pointer to timer object
+ * \param [in] currentTick   value of current tick
  */
-inline void timerStart(userTimer_t *t) {t->target_tick = GET_TIME_MS + t->interval; t->flag = 1;};
+inline void timerStart(userTimer_t *t, uint32_t currentTick) {t->target_tick = currentTick + t->interval; t->flag = 1;};
 
 /*!
  * \brief Stop timer object
  *
- * \param [in] t pointer to timer object
+ * \param [in] t 			 pointer to timer object
  */
 inline void timerStop(userTimer_t *t) {t->flag = 0;};
 
@@ -94,10 +91,11 @@ inline void timerClear(userTimer_t *t) {t->event_cnt = 0;};
  * \brief Process timer object
  *
  * \param [in] t             pointer to timer object
+ * \param [in] currentTick   value of current tick
  *
  * \attention to be called on a regular basis to update timers
  */
-void timerProcess(userTimer_t *t);
+void timerProcess(userTimer_t *t, uint32_t currentTick);
 
 /*!
  * \brief Check if any timer event exists
@@ -107,7 +105,7 @@ void timerProcess(userTimer_t *t);
  * \return number of events for the specified timer
  *
  */
-inline uint32_t timerEventExists(userTimer_t *t) {return t->event_cnt;};
+inline uint16_t timerEventExists(userTimer_t *t) {return t->event_cnt;};
 
 #ifdef __cplusplus
 }
