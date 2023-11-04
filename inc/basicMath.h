@@ -57,6 +57,30 @@ extern "C"
 // Get sign of value
 #define SIGN(x) (((x) >= 0) ? 1 : -1)
 
+// Conversion between rad and deg
+#define RAD2DEG(x) ((x) * 57.29578f)
+
+// Conversion between deg and rad
+#define DEG2RAD(x) ((x) * 0.0174533f)
+
+// Conversion between rad/s and milliDegrees-per-second
+#define RADPS_TO_MDPS(x) ((x) * 57295.779513f)
+
+// Conversion between milliDegrees-per-second and rad/s
+#define MDPS2RADPS(x) ((x) * 1.745329252e-5f)
+
+// Conversion between C and K
+#define C2K(x) ((x) + 273.15f)
+
+// Conversion between K and C
+#define K2C(x) ((x) - 273.15f)
+
+// Conversion between milliG and m/s^2
+#define MG2MS2(x) ((x) * 0.00980665f)
+
+// Conversion between m/s^2 and milliG 
+#define MS22MG(x) ((x) * 101.9716212978f)
+
 /* Constants -----------------------------------------------------------------*/
 
 // Pi value
@@ -67,27 +91,6 @@ extern "C"
 
 // e value
 #define E               2.71828182845904523536028747135266249f
-
-// Conversion between milliDegrees-per-second and rad/s
-#define MDPS_TO_RADPS   1.745329252e-5f
-
-// Conversion between rad/s and milliDegrees-per-second
-#define RADPS_TO_MDPS   57295.779513f
-
-// Conversion between rad and deg
-#define RAD_TO_DEG      57.29578f
-
-// Conversion between deg and rad
-#define DEG_TO_RAD      0.0174533f
-
-// Conversion between milliG and m/s^2
-#define MG_TO_MS2       0.00980665f
-
-// Conversion between m/s^2 and milliG 
-#define MS2_TO_MG		101.9716212978f
-
-// Conversion between C and K
-#define C_TO_K          273.15f
 
 /* Functions ----------------------------------------------------------------*/
 
