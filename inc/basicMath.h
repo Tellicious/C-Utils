@@ -54,6 +54,8 @@ extern "C"
 // Re-map value according to new scale
 #define MAP(x, fromLow, fromHigh, toLow, toHigh) (((x) - (fromLow)) * ((toHigh) - (toLow)) / ((fromHigh) - (fromLow)) + (fromLow))
 
+// Get sign of value
+#define SIGN(x) (((x) >= 0) ? 1 : -1)
 
 /* Constants -----------------------------------------------------------------*/
 
