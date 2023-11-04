@@ -1,7 +1,7 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    quaternion.h
+ * \file    quaternion.c
  * \author  Andrea Vivani
  * \brief   Implementation of quaternion manipulation functions
  ******************************************************************************
