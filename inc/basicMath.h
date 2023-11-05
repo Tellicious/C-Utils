@@ -57,6 +57,22 @@ extern "C"
 // Get sign of value
 #define SIGN(x) (((x) >= 0) ? 1 : -1)
 
+// Get maximum between 2 values
+#define MAX(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b;       \
+})
+
+// Get minimum between 2 values
+#define MIN(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a < _b ? _a : _b;       \
+})
+
 // Conversion between rad and deg
 #define RAD2DEG(x) ((x) * 57.29578f)
 
