@@ -137,7 +137,7 @@ uint8_t PID_calcBackCalc(PID_t *PID, float set_point, float measure);
  * 
  * \return output value
  */
-inline float PID_getOutput(PID_t *PID) {return PID->output;};
+static inline float PID_getOutput(PID_t *PID) {return PID->output;};
 
 /*!
  * \brief Return Kp value
@@ -146,7 +146,7 @@ inline float PID_getOutput(PID_t *PID) {return PID->output;};
  * 
  * \return Kp value
  */
-inline float PID_getKp(PID_t *PID) {return PID->kp;};
+static inline float PID_getKp(PID_t *PID) {return PID->kp;};
 
 /*!
  * \brief Return Ki value
@@ -155,7 +155,7 @@ inline float PID_getKp(PID_t *PID) {return PID->kp;};
  * 
  * \return Ki value
  */
-inline float PID_getKi(PID_t *PID) {return (2 * PID->ki / PID->dT);};
+static inline float PID_getKi(PID_t *PID) {return (2 * PID->ki / PID->dT);};
 
 /*!
  * \brief Return Kd value
@@ -164,7 +164,7 @@ inline float PID_getKi(PID_t *PID) {return (2 * PID->ki / PID->dT);};
  * 
  * \return Kd value
  */
-inline float PID_getKd(PID_t *PID) {return (0.5 * (2 + PID->nd * PID->dT) * PID->kd / PID->nd);};
+static inline float PID_getKd(PID_t *PID) {return (0.5 * (2 + PID->nd * PID->dT) * PID->kd / PID->nd);};
 
 /*!
  * \brief Set proportional gain value
@@ -172,7 +172,7 @@ inline float PID_getKd(PID_t *PID) {return (0.5 * (2 + PID->nd * PID->dT) * PID-
  * \param [in] PID        pointer to PID object
  * \param [in] kp_val     proportional gain value
  */
-inline void PID_setKp(PID_t *PID, float kp_val) {PID->kp = kp_val;};
+static inline void PID_setKp(PID_t *PID, float kp_val) {PID->kp = kp_val;};
 
 /*!
  * \brief Set integral gain value
@@ -180,7 +180,7 @@ inline void PID_setKp(PID_t *PID, float kp_val) {PID->kp = kp_val;};
  * \param [in] PID        pointer to PID object
  * \param [in] ki_val     integral gain value
  */
-inline void PID_setKi(PID_t *PID, float ki_val) {PID->ki = 0.5 * ki_val * PID->dT;};
+static inline void PID_setKi(PID_t *PID, float ki_val) {PID->ki = 0.5 * ki_val * PID->dT;};
 
 /*!
  * \brief Set derivative gain value
@@ -189,7 +189,7 @@ inline void PID_setKi(PID_t *PID, float ki_val) {PID->ki = 0.5 * ki_val * PID->d
  * \param [in] kd_val     derivative gain value
  * \param [in] nd_val     derivative filter constant N: derivative in Laplace=s/(1+s/N)
  */
-inline void PID_setKd(PID_t *PID, float kd_val, float nd_val) {PID->nd = nd_val; PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT); PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);};
+static inline void PID_setKd(PID_t *PID, float kd_val, float nd_val) {PID->nd = nd_val; PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT); PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);};
 
 /*!
  * \brief Set back-calculation coefficient
@@ -197,7 +197,7 @@ inline void PID_setKd(PID_t *PID, float kd_val, float nd_val) {PID->nd = nd_val;
  * \param [in] PID        pointer to PID object
  * \param [in] kb_val     back-calculation coefficient value
  */
-inline void PID_setKb(PID_t *PID, float kb_val) {PID->kb = 0.5 * kb_val * PID->dT;};
+static inline void PID_setKb(PID_t *PID, float kb_val) {PID->kb = 0.5 * kb_val * PID->dT;};
 
 /*!
  * \brief Set integral component value
@@ -205,7 +205,7 @@ inline void PID_setKb(PID_t *PID, float kb_val) {PID->kb = 0.5 * kb_val * PID->d
  * \param [in] PID        pointer to PID object
  * \param [in] value      value of integral component
  */
-inline void PID_setIntegralValue(PID_t *PID, float value) {PID->DuI = value;};
+static inline void PID_setIntegralValue(PID_t *PID, float value) {PID->DuI = value;};
 
 /*!
  * \brief Set output saturation values
@@ -214,14 +214,14 @@ inline void PID_setIntegralValue(PID_t *PID, float value) {PID->DuI = value;};
  * \param [in] sat_min    lower saturation limit
  * \param [in] sat_max    upper saturation limit
  */
-inline void PID_setIntegralSaturation(PID_t *PID, float sat_min, float sat_max) {PID->satMin = sat_min; PID->satMax = sat_max;};
+static inline void PID_setIntegralSaturation(PID_t *PID, float sat_min, float sat_max) {PID->satMin = sat_min; PID->satMax = sat_max;};
 
 /*!
  * \brief Reset PID
  *
  * \param [in] PID        pointer to PID object
  */
-inline void PID_reset(PID_t *PID) {PID->oldE = 0; PID->DuD = 0; PID->DuI = 0; PID->tmp = 0;};
+static inline void PID_reset(PID_t *PID) {PID->oldE = 0; PID->DuD = 0; PID->DuI = 0; PID->tmp = 0;};
 
 #ifdef __cplusplus
 }

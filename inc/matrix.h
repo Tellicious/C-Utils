@@ -210,7 +210,7 @@ void matrixPseudo_inv(const matrix_t lhs, matrix_t result);
  *
  * \return matrix element
  */
-inline float matrixGet(const matrix_t matrix, uint8_t i, uint8_t j) {return ELEM(matrix, i, j);};
+static inline float matrixGet(const matrix_t matrix, uint8_t i, uint8_t j) {return ELEM(matrix, i, j);};
 
 /*!
  * \brief Calculate matrix determinant

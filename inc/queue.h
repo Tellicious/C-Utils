@@ -73,6 +73,7 @@ typedef enum
 } queueStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/
+
 /*!
  * \brief Init queue structure
  *
