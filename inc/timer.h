@@ -55,8 +55,6 @@ typedef volatile struct {
 
 /* Function prototypes --------------------------------------------------------*/
 
-uint32_t timerGetTimeMS();
-
 /*!
  * \brief Setup timer object
  *
