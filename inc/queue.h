@@ -184,7 +184,7 @@ queueStatus_t queuePeekRight(queue_t *queue, QTYPE *value);
  * \param [out] size        pointer to size
  * \param [out] items       pointer to number of items currently queued
  */
-void queueInfo(queue_t *queue, STYPE *size, STYPE *items);
+static inline void queueInfo(queue_t *queue, STYPE *size, STYPE *items) {*size = queue->size; *items = queue->items;};
 
 /*!
  * \brief Flush queue setting all values to 0

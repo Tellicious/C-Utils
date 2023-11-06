@@ -282,13 +282,6 @@ queueStatus_t queuePeekRight(queue_t *queue, QTYPE *value)
     return QUEUE_SUCCESS;
 }
 
-
-void queueInfo(queue_t *queue, STYPE *size, STYPE *items)
-{
-    *size = queue->size;
-    *items = queue->items;
-}
-
 queueStatus_t queueFlush(queue_t *queue)
 {
     if(queue->data == NULL)
