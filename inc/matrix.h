@@ -47,188 +47,219 @@ extern "C"
 
 /* Macros --------------------------------------------------------------------*/
 
+#define ELEMP(m, i, j) (m->data[(i) * m->cols + (j)])
 #define ELEM(m, i, j) (m.data[(i) * m.cols + (j)])
 
 /* Typedefs ------------------------------------------------------------------*/
 
+/*!
+ * Matrix struct
+ */
 typedef struct {
-    uint8_t rows;
-    uint8_t cols;
     float *data;
+    uint8_t rows, cols;
 } matrix_t;
+
+/*!
+ * Matrix return status
+ */
+typedef enum
+{
+    MATRIX_SUCCESS = 00,
+    MATRIX_ERROR = 01
+} matrixStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/
 
 /*!
  * \brief Create a new matrix containing a pointer to an external array
  *
+ * \param [in] matrix      pointer to matrix object
  * \param [in] rows        number of rows
  * \param [in] cols        number of columns
- * \param [in] data        pointer to external array
  *
- * \return matrix object
+ * \return MATRIX_SUCCESS if matrix was initialized, MATRIX_ERROR if data was not allocated correctly
  */
-matrix_t matrixInit(uint8_t rows, uint8_t cols, float *data);
+matrixStatus_t matrixInit(matrix_t *matrix, uint8_t rows, uint8_t cols);
 
 /*!
  * \brief Set the matrix as an identity matrix
  *
  * \param [in] matrix      pointer to matrix object
  */
-void matrixIdentity(matrix_t matrix);
+void matrixIdentity(matrix_t *matrix);
 
 /*!
  * \brief Fill the matrix with zero
  *
  * \param [in] matrix      pointer to matrix object
  */
-static inline void matrixZeros(matrix_t matrix){memset(matrix.data, 0x00, matrix.cols * matrix.rows * sizeof(float));};
+static inline void matrixZeros(matrix_t *matrix){memset(matrix->data, 0x00, matrix->cols * matrix->rows * sizeof(float));};
 
 /*!
  * \brief Copy data from input matrix to output matrix
  *
- * \param [in] input          pointer to input matrix object
+ * \param [in] input        pointer to input matrix object
  * \param [out] output      pointer to output matrix object
  */
-static inline void matrixCopyData(const matrix_t input, matrix_t output){memcpy(output.data, input.data, output.cols * output.rows * sizeof(float));};
+static inline void matrixCopy(matrix_t *input, matrix_t *output){memcpy(output->data, input->data, output->cols * output->rows * sizeof(float));};
 
 /*!
  * \brief Matrix addition
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] rhs              pointer to right-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] rhs         pointer to right-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixAdd(const matrix_t lhs, const matrix_t rhs, matrix_t result);
+void matrixAdd(matrix_t *lhs, matrix_t *rhs, matrix_t *result);
 
 /*!
  * \brief Matrix addition with scalar
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] sc                scalar value
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] sc          scalar value
  * \param [out] result     pointer to result matrix object
  */
-void matrixAddScalar(const matrix_t lhs, const float sc, matrix_t result);
+void matrixAddScalar(matrix_t *lhs, float sc, matrix_t *result);
 
 /*!
  * \brief Matrix subtraction
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] rhs              pointer to right-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] rhs         pointer to right-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixSub(const matrix_t lhs, const matrix_t rhs, matrix_t result);
+void matrixSub(matrix_t *lhs, matrix_t *rhs, matrix_t *result);
 
 /*!
  * \brief Matrix multiplication
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] rhs              pointer to right-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] rhs         pointer to right-hand side matrix object
  * \param [out] result     pointer to result matrix object
  *
- * \return 0 if success, 1 if matrices cannot be multiplied
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if matrices cannot be multiplied
  */
-uint8_t matrixMult(const matrix_t lhs, const matrix_t rhs, matrix_t result);
+matrixStatus_t matrixMult(matrix_t *lhs, matrix_t *rhs, matrix_t *result);
 
 /*!
  * \brief Matrix multiplication with transposed left-hand side matrix
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] rhs              pointer to right-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] rhs         pointer to right-hand side matrix object
  * \param [out] result     pointer to result matrix object
  *
- * \return 0 if success, 1 if matrices cannot be multiplied
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if matrices cannot be multiplied
  */
-uint8_t matrixMult_lhsT(const matrix_t lhs, const matrix_t rhs, matrix_t result);
+matrixStatus_t matrixMult_lhsT(matrix_t *lhs, matrix_t *rhs, matrix_t *result);
 
 /*!
  * \brief Matrix multiplication with transposed right-hand side matrix
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] rhs              pointer to right-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] rhs         pointer to right-hand side matrix object
  * \param [out] result     pointer to result matrix object
  *
- * \return 0 if success, 1 if matrices cannot be multiplied
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if matrices cannot be multiplied
  */
-uint8_t matrixMult_rhsT(const matrix_t lhs, const matrix_t rhs, matrix_t result);
+matrixStatus_t matrixMult_rhsT(matrix_t *lhs, matrix_t *rhs, matrix_t *result);
 
 /*!
  * \brief Matrix multiplication with scalar
  *
- * \param [in] lhs              pointer to left-hand side matrix object
- * \param [in] sc                scalar value
+ * \param [in] lhs         pointer to left-hand side matrix object
+ * \param [in] sc          scalar value
  * \param [out] result     pointer to result matrix object
  */
-void matrixMultScalar(const matrix_t lhs, const float sc, matrix_t result);
+void matrixMultScalar(matrix_t *lhs, float sc, matrix_t *result);
 
 /*!
  * \brief Matrix inversion
  *
- * \param [in] lhs              pointer to left-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixInversed(const matrix_t lhs, matrix_t result);
+void matrixInversed(matrix_t *lhs, matrix_t *result);
 
 /*!
  * \brief Robust matrix inversion performed with LUP decomposition
  *
- * \param [in] lhs              pointer to left-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixInversed_rob(const matrix_t lhs, matrix_t result);
+void matrixInversed_rob(matrix_t *lhs, matrix_t *result);
 
 /*!
  * \brief Matrix transposition
  *
- * \param [in] lhs              pointer to left-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixTrans(const matrix_t lhs, matrix_t result);
+void matrixTrans(matrix_t *lhs, matrix_t *result);
 
 /*!
  * \brief Matrix normalization
  *
- * \param [in] lhs              pointer to left-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixNormalized(const matrix_t lhs, matrix_t result);
+void matrixNormalized(matrix_t *lhs, matrix_t *result);
 
 /*!
  * \brief Matrix Moore-Penrose pseudo-inverse
  *
- * \param [in] lhs              pointer to left-hand side matrix object
+ * \param [in] lhs         pointer to left-hand side matrix object
  * \param [out] result     pointer to result matrix object
  */
-void matrixPseudo_inv(const matrix_t lhs, matrix_t result);
+void matrixPseudo_inv(matrix_t *lhs, matrix_t *result);
+
+/*!
+ * \brief Set a single element inside matrix
+ *
+ * \param [in] matrix      pointer to matrix object
+ * \param [in] i           row
+ * \param [in] j           column
+ * \param [in] value       value
+ */
+static inline void matrixSet(matrix_t *matrix, uint8_t i, uint8_t j, float value) {ELEMP(matrix, i, j) = value;};
 
 /*!
  * \brief Get a single element inside matrix
  *
- * \param [in] matrix       pointer to matrix object
- * \param [in] i                  row
- * \param [in] j                  column
+ * \param [in] matrix      pointer to matrix object
+ * \param [in] i           row
+ * \param [in] j           column
  *
  * \return matrix element
  */
-static inline float matrixGet(const matrix_t matrix, uint8_t i, uint8_t j) {return ELEM(matrix, i, j);};
+static inline float matrixGet(matrix_t *matrix, uint8_t i, uint8_t j) {return ELEMP(matrix, i, j);};
 
 /*!
  * \brief Calculate matrix determinant
  *
- * \param [in] matrix       pointer to matrix object
+ * \param [in] matrix      pointer to matrix object
  *
  * \return determinant
  */
-float matrixDet(const matrix_t matrix);
+float matrixDet(matrix_t *matrix);
 
 /*!
  * \brief Calculate matrix norm
  *
- * \param [in] matrix       pointer to matrix object
+ * \param [in] matrix      pointer to matrix object
  *
  * \return norm
  */
-float matrixNorm(const matrix_t matrix);
+float matrixNorm(matrix_t *matrix);
+
+/*!
+ * \brief Delete matrix
+ *
+ * \param [in] matrix      pointer to matrix object
+ *
+ * \return MATRIX_SUCCESS if matrix data is deleted, MATRIX_ERROR if data was not deleted correctly
+ */
+matrixStatus_t matrixDelete(matrix_t *matrix);
 
 #ifdef __cplusplus
 }

@@ -54,7 +54,7 @@ extern "C"
  *
  * \attention assumes that the matrix A is already a lower triangular one. No check is performed within function!
  */
-void fwsub(matrix_t A, matrix_t B, matrix_t result);
+void fwsub(matrix_t *A, matrix_t *B, matrix_t *result);
 
 /*!
  * \brief Solve an Ax = PB system with forward substitution (with permutation)
@@ -66,7 +66,7 @@ void fwsub(matrix_t A, matrix_t B, matrix_t result);
  *
  * \attention assumes that the matrix A is already a lower triangular one. No check is performed within function!
  */
-void fwsubPerm(matrix_t A, matrix_t B, matrix_t P, matrix_t result);
+void fwsubPerm(matrix_t *A, matrix_t *B, matrix_t *P, matrix_t *result);
 
 /*!
  * \brief Solve AX = B system with backward substitution
@@ -77,7 +77,7 @@ void fwsubPerm(matrix_t A, matrix_t B, matrix_t P, matrix_t result);
  *
  * \attention assumes that the matrix A is already an upper triangular one. No check is performed within function!
  */
-void bksub(matrix_t A, matrix_t B, matrix_t result);
+void bksub(matrix_t *A, matrix_t *B, matrix_t *result);
 
 /*!
  * \brief Solve AX = PB system with backward substitution (with permutation)
@@ -89,7 +89,7 @@ void bksub(matrix_t A, matrix_t B, matrix_t result);
  *
  * \attention assumes that the matrix A is already an upper triangular one. No check is performed within function!
  */
-void bksubPerm(matrix_t A, matrix_t B, matrix_t P, matrix_t result);
+void bksubPerm(matrix_t *A, matrix_t *B, matrix_t *P, matrix_t *result);
 
 /*!
  * \brief Calculate L (lower triangular) and U (upper triangular) matrices such that A = LU with Crout's Method
@@ -98,9 +98,9 @@ void bksubPerm(matrix_t A, matrix_t B, matrix_t P, matrix_t result);
  * \param [out] L                    pointer to L matrix object
  * \param [out] U                    pointer to U matrix object
  *
- * \return 0 if success, 1 if errors
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if errors
  */
-uint8_t LU_Crout(matrix_t A, matrix_t L, matrix_t U);
+matrixStatus_t LU_Crout(matrix_t *A, matrix_t *L, matrix_t *U);
 
 /*!
  * \brief Calculate L (lower triangular) and U (upper triangular) matrices such that A = LU with Cormen's Method
@@ -109,9 +109,9 @@ uint8_t LU_Crout(matrix_t A, matrix_t L, matrix_t U);
  * \param [out] L                    pointer to L matrix object
  * \param [out] U                    pointer to U matrix object
  *
- * \return 0 if success, 1 if errors
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if errors
  */
-uint8_t LU_Cormen(matrix_t A, matrix_t L, matrix_t U);
+matrixStatus_t LU_Cormen(matrix_t *A, matrix_t *L, matrix_t *U);
 
 /*!
  * \brief Calculate L (lower triangular), U (upper triangular) and P (permutation) matrices such that A = LUP with Cormen's Method
@@ -123,7 +123,7 @@ uint8_t LU_Cormen(matrix_t A, matrix_t L, matrix_t U);
  *
  * \return factor to be multiplied by determinant of U to obtain determinant of A
  */
-int8_t LUP_Cormen(matrix_t A, matrix_t L, matrix_t U, matrix_t P);
+int8_t LUP_Cormen(matrix_t *A, matrix_t *L, matrix_t *U, matrix_t *P);
 
 /*!
  * \brief Solve AX = B system using LU factorization
@@ -132,7 +132,7 @@ int8_t LUP_Cormen(matrix_t A, matrix_t L, matrix_t U, matrix_t P);
  * \param [in] B                      pointer to B matrix object
  * \param [out] result         pointer to result matrix object
  */
-void LinSolveLU(matrix_t A, matrix_t B, matrix_t result);
+void LinSolveLU(matrix_t *A, matrix_t *B, matrix_t *result);
 
 /*!
  * \brief Solve AX = B system using LUP factorization
@@ -141,7 +141,7 @@ void LinSolveLU(matrix_t A, matrix_t B, matrix_t result);
  * \param [in] B                      pointer to B matrix object
  * \param [out] result         pointer to result matrix object
  */
-void LinSolveLUP(matrix_t A, matrix_t B, matrix_t result);
+void LinSolveLUP(matrix_t *A, matrix_t *B, matrix_t *result);
 
 /*!
  * \brief Solve AX = B system using Gauss elimination with partial pivoting
@@ -150,7 +150,7 @@ void LinSolveLUP(matrix_t A, matrix_t B, matrix_t result);
  * \param [in] B                      pointer to B matrix object
  * \param [out] result         pointer to result matrix object
  */
-void LinSolveGauss(matrix_t A, matrix_t B, matrix_t result);
+void LinSolveGauss(matrix_t *A, matrix_t *B, matrix_t *result);
 
 /*!
  * \brief Calculate sort of quadratic form result=A*B*(~A)
@@ -159,7 +159,7 @@ void LinSolveGauss(matrix_t A, matrix_t B, matrix_t result);
  * \param [in] B                      pointer to B matrix object
  * \param [out] result         pointer to result matrix object
  */
-void QuadProd(matrix_t A, matrix_t B, matrix_t result);
+void QuadProd(matrix_t *A, matrix_t *B, matrix_t *result);
 
 /*!
  * \brief Gauss-Newton sensor calibration with 9 parameters
@@ -182,9 +182,9 @@ void QuadProd(matrix_t A, matrix_t B, matrix_t result);
  * \param [in] tol                   stopping tolerance (1e-6 is generally fine)
  * \param [out] result          pointer to result matrix object S
  *
- * \return 0 if success, 1 if errors
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if errors
  */
-uint8_t GaussNewton_Sens_Cal_9(matrix_t Data, float k, matrix_t X0, uint16_t nmax, float tol, matrix_t result);
+matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uint16_t nmax, float tol, matrix_t *result);
 
 /*!
  * \brief Gauss-Newton sensor calibration with 6 parameters
@@ -204,9 +204,9 @@ uint8_t GaussNewton_Sens_Cal_9(matrix_t Data, float k, matrix_t X0, uint16_t nma
  * \param [in] tol                   stopping tolerance (1e-6 is generally fine)
  * \param [out] result          pointer to result matrix object S
  *
- * \return 0 if success, 1 if errors
+ * \return MATRIX_SUCCESS if success, MATRIX_ERROR if errors
  */
-uint8_t GaussNewton_Sens_Cal_6(matrix_t Data, float k, matrix_t X0, uint16_t nmax, float tol, matrix_t result);
+matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t *Data, float k, matrix_t *X0, uint16_t nmax, float tol, matrix_t *result);
 
 #ifdef __cplusplus
 }
