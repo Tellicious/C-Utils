@@ -45,8 +45,7 @@ extern "C"
 
 /* Macros --------------------------------------------------------------------*/
 
-#define QTYPE uint8_t
-#define STYPE uint16_t
+#define QUEUE_STYPE uint16_t
 
 /* Typedefs ------------------------------------------------------------------*/
 
@@ -55,8 +54,9 @@ extern "C"
  */
 typedef struct
 {
-    QTYPE *data;
-    STYPE size, _front, _rear, items;
+    uint8_t *data;
+    uint8_t itemSize;
+    QUEUE_STYPE size, _front, _rear, items;
 } queue_t;
 
 /*!
@@ -78,11 +78,12 @@ typedef enum
  * \brief Init queue structure
  *
  * \param [in] queue        pointer to queue object
- * \param [in] size         required queue size
+ * \param [in] itemSize     size in bytes of each item in the queue
+ * \param [in] size         required queue size (number of objects)
  *
  * \return QUEUE_SUCCESS if queue is initialized, QUEUE_ERROR if data was not allocated correctly
  */
-queueStatus_t queueInit(queue_t *queue, STYPE size);
+queueStatus_t queueInit(queue_t *queue, size_t itemSize, QUEUE_STYPE size);
 
 /*!
  * \brief Add data to end of queue
@@ -92,7 +93,7 @@ queueStatus_t queueInit(queue_t *queue, STYPE size);
  *
  * \return QUEUE_SUCCESS if data can be enqueued correctly, QUEUE_FULL if queue is full
  */
-queueStatus_t queueEnqueue(queue_t *queue, QTYPE value);
+queueStatus_t queueEnqueue(queue_t *queue, void *value);
 
 /*!
  * \brief Add an array of data to end of queue
@@ -103,7 +104,7 @@ queueStatus_t queueEnqueue(queue_t *queue, QTYPE value);
  *
  * \return QUEUE_SUCCESS if data can be enqueued correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
  */
-queueStatus_t queueEnqueueArr(queue_t *queue, QTYPE *data, STYPE num);
+queueStatus_t queueEnqueueArr(queue_t *queue, void *data, QUEUE_STYPE num);
 
 /*!
  * \brief Add data to beginning of queue
@@ -113,7 +114,7 @@ queueStatus_t queueEnqueueArr(queue_t *queue, QTYPE *data, STYPE num);
  *
  * \return QUEUE_SUCCESS if data can be bequeued correctly, QUEUE_FULL if queue is full
  */
-queueStatus_t queueBequeue(queue_t *queue, QTYPE value);
+queueStatus_t queueBequeue(queue_t *queue, void *value);
 
 /*!
  * \brief Add an array of data to beginning of queue
@@ -124,7 +125,7 @@ queueStatus_t queueBequeue(queue_t *queue, QTYPE value);
  *
  * \return QUEUE_SUCCESS if data can be bequeued correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
  */
-queueStatus_t queueBequeueArr(queue_t *queue, QTYPE *data, STYPE num);
+queueStatus_t queueBequeueArr(queue_t *queue, void *data, QUEUE_STYPE num);
 
 /*!
  * \brief Read data from beginning of queue, removing it
@@ -134,7 +135,7 @@ queueStatus_t queueBequeueArr(queue_t *queue, QTYPE *data, STYPE num);
  *
  * \return QUEUE_SUCCESS if data can be dequeued correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queueDequeue(queue_t *queue, QTYPE *value);
+queueStatus_t queueDequeue(queue_t *queue, void *value);
 
 /*!
  * \brief Read an array of data from beginning of queue, removing it
@@ -145,7 +146,7 @@ queueStatus_t queueDequeue(queue_t *queue, QTYPE *value);
  *
  * \return QUEUE_SUCCESS if data can be bequeued correctly, QUEUE_NOT_ENOUGH_ITEMS if queue doesn't hold all requested items
  */
-queueStatus_t queueDequeueArr(queue_t *queue, QTYPE *data, STYPE num);
+queueStatus_t queueDequeueArr(queue_t *queue, void *data, QUEUE_STYPE num);
 
 /*!
  * \brief Read data from end of queue, removing it
@@ -155,7 +156,7 @@ queueStatus_t queueDequeueArr(queue_t *queue, QTYPE *data, STYPE num);
  *
  * \return QUEUE_SUCCESS if data can be dequeued correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queueDequeueRight(queue_t *queue, QTYPE *value);
+queueStatus_t queueDequeueRight(queue_t *queue, void *value);
 
 /*!
  * \brief Read data from beginning of queue, without removing it
@@ -165,7 +166,7 @@ queueStatus_t queueDequeueRight(queue_t *queue, QTYPE *value);
  *
  * \return QUEUE_SUCCESS if data can be read correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queuePeek(queue_t *queue, QTYPE *value);
+queueStatus_t queuePeek(queue_t *queue, void *value);
 
 /*!
  * \brief Read data from end of queue, without removing it
@@ -175,7 +176,7 @@ queueStatus_t queuePeek(queue_t *queue, QTYPE *value);
  *
  * \return QUEUE_SUCCESS if data can be read correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queuePeekRight(queue_t *queue, QTYPE *value);
+queueStatus_t queuePeekRight(queue_t *queue, void *value);
 
 /*!
  * \brief Returns queue info
@@ -184,7 +185,7 @@ queueStatus_t queuePeekRight(queue_t *queue, QTYPE *value);
  * \param [out] size        pointer to size
  * \param [out] items       pointer to number of items currently queued
  */
-static inline void queueInfo(queue_t *queue, STYPE *size, STYPE *items) {*size = queue->size; *items = queue->items;};
+static inline void queueInfo(queue_t *queue, QUEUE_STYPE *size, QUEUE_STYPE *items) {*size = queue->size / queue->itemSize; *items = queue->items / queue->itemSize;};
 
 /*!
  * \brief Flush queue setting all values to 0
