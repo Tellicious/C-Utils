@@ -47,7 +47,6 @@ extern "C"
 /* Macros --------------------------------------------------------------------*/
 
 #define BUTTON_RESET_TICKS 400
-#define BUTTON_DEBOUNCE_TICKS 20
 
 /* Typedefs ------------------------------------------------------------------*/
 
@@ -75,11 +74,11 @@ typedef enum
 /*!
  * Button struct
  */
-typedef volatile struct
+typedef struct
 {
     buttonStatus_t status;
     buttonPressType_t press;
-    uint32_t validDownTick, validUpTick, lastDownTick, lastUpTick, pulseDownWidth, pulseUpWidth, longPressTicks;
+    uint32_t validTick[2], lastTick[2], debounceTicks, longPressTicks;
     uint8_t pulses, event;
 } button_t;
 
@@ -89,9 +88,10 @@ typedef volatile struct
  * \brief Init button structure
  *
  * \param [in] button           pointer to button object
- * \param [in] longPressTicks   required queue size
+ * \param [in] debounceTicks    number of ticks used for debouncing. Use 20ms as a starting point
+ * \param [in] longPressTicks   number of ticks that the button needs to be pressed to detect long-press
  */
-void buttonInit(button_t *button, uint32_t longPressTicks);
+void buttonInit(button_t *button, uint32_t debounceTicks, uint32_t longPressTicks);
 
 /*!
  * \brief Button event update, to be called either in an EXT interrupt or in a timer
@@ -106,12 +106,11 @@ void buttonEvent(button_t *button, buttonStatus_t status, uint32_t ticks);
  * \brief Get button status, to be called in the main loop
  *
  * \param [in] button           pointer to button object
- * \param [in] status           current button status
  * \param [in] ticks            current system ticks
  * 
  * \return BUTTON_NO_PRESS, BUTTON_SHORT_PRESS, BUTTON_DOUBLE_PRESS, BUTTON_TRIPLE_PRESS, BUTTON_LONG_PRESS according to current button press type
  */
-buttonPressType_t buttonGetPress(button_t *button, buttonStatus_t status, uint32_t ticks);
+buttonPressType_t buttonGetPress(button_t *button, uint32_t ticks);
 
 #ifdef __cplusplus
 }

@@ -40,76 +40,53 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-void buttonInit(button_t *button, uint32_t longPressTicks)
+void buttonInit(button_t *button, uint32_t debounceTicks, uint32_t longPressTicks)
 {
     button->status = BUTTON_RELEASED;
     button->press = BUTTON_NO_PRESS;
-    button->validUpTick = 0;
-    button->validDownTick = 1;
+    button->validTick[0] = 1;
+    button->validTick[1] = 0;
+    button->lastTick[0] = 0;
+    button->lastTick[1] = 0;
     button->pulses = 0;
     button->event = 0;
+	button->debounceTicks = debounceTicks;
     button->longPressTicks = longPressTicks;
 }
 
 void buttonEvent(button_t *button, buttonStatus_t status, uint32_t ticks)
 {
-
-    if (status == BUTTON_PRESSED)
+	uint8_t invStatus = !status;
+	if (button->status == status)
+	{
+		return;
+	}
+	button->lastTick[status] = ticks;
+    if (((button->lastTick[status] - button->lastTick[invStatus]) >= button->debounceTicks))
     {
-    	button->lastUpTick = ticks;
-        if (((button->lastUpTick - button->lastDownTick) >= BUTTON_DEBOUNCE_TICKS) && (button->validUpTick >= button->validDownTick))
-        {
-        	button->validDownTick = button->lastDownTick;
-            button->pulseUpWidth = button->validDownTick - button->validUpTick;
-        }
+    	button->event |= status;
+    	button->status = status;
+    	button->validTick[invStatus] = button->lastTick[invStatus];
+    	if (invStatus && ((button->lastTick[0] - button->validTick[1]) < button->longPressTicks))
+    	{
+    		(((button->validTick[1] - button->validTick[0]) > BUTTON_RESET_TICKS)) ? (button->pulses = 1) : (button->pulses++);
+    	}
     }
-    else
-    {
-        button->lastDownTick = ticks;
-        if (((button->lastDownTick - button->lastUpTick) >= BUTTON_DEBOUNCE_TICKS) && (button->validDownTick >= button->validUpTick))
-        {
-           	button->event = 1;
-        	button->validUpTick = button->lastUpTick;
-            button->pulseDownWidth = button->validUpTick - button->validDownTick;
-            (button->pulseDownWidth > BUTTON_RESET_TICKS) ? (button->pulses = 1) : (button->pulses++);
-        }
-
-    }  
 }
 
-buttonPressType_t buttonGetPress(button_t *button, buttonStatus_t status, uint32_t ticks)
+buttonPressType_t buttonGetPress(button_t *button, uint32_t ticks)
 {
     // Update button status and pulses
-    if ((status == BUTTON_PRESSED) && ((ticks - button->lastUpTick) > BUTTON_DEBOUNCE_TICKS))
-    {
-        if (button->validDownTick >= button->validUpTick)
-        {
-        	button->event = 1;
-        	button->validUpTick = button->lastUpTick;
-            button->pulseDownWidth = (button->validUpTick - button->validDownTick);
-            (button->pulseDownWidth > BUTTON_RESET_TICKS) ? (button->pulses = 1) : (button->pulses++);
-        }
-    }
-    else if ((status == BUTTON_RELEASED) && ((ticks - button->lastDownTick) > BUTTON_DEBOUNCE_TICKS))
-    {
-        if (button->validUpTick >= button->validDownTick)
-        {
-            button->validDownTick = button->lastDownTick;
-            button->pulseUpWidth = button->validDownTick - button->validUpTick;
-        }
-    }
-
     button->press = BUTTON_NO_PRESS;
-    button->status = (button->validUpTick > button->validDownTick) ? BUTTON_PRESSED : BUTTON_RELEASED;
 
     // Check button press type 
-    if ((button->status == BUTTON_PRESSED) && ((ticks - button->validUpTick) > button->longPressTicks) && button->event)
+    if ((button->status == BUTTON_PRESSED) && !button->pulses && ((ticks - button->lastTick[1]) > button->longPressTicks) && button->event)
     {
         button->press = BUTTON_LONG_PRESS;
         button->event = 0;
         button->pulses = 0;
     }
-    else if ((button->status == BUTTON_RELEASED) && ((ticks - button->validDownTick) > BUTTON_RESET_TICKS) && button->event)
+    else if (((ticks - button->validTick[1]) > BUTTON_RESET_TICKS) && button->pulses)
     {
     	switch (button->pulses)
     	{
@@ -129,6 +106,5 @@ buttonPressType_t buttonGetPress(button_t *button, buttonStatus_t status, uint32
     	button->event = 0;
     	button->pulses = 0;
     }
-
     return button->press;
 }
