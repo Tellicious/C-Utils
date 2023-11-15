@@ -89,80 +89,80 @@ queueStatus_t queueInit(queue_t *queue, size_t itemSize, QUEUE_STYPE size);
  * \brief Add data to end of queue
  *
  * \param [in] queue        pointer to queue object
- * \param [in] value        value to be enqueued
+ * \param [in] value        pointer to value to be pushed
  *
- * \return QUEUE_SUCCESS if data can be enqueued correctly, QUEUE_FULL if queue is full
+ * \return QUEUE_SUCCESS if data can be pushed correctly, QUEUE_FULL if queue is full
  */
-queueStatus_t queueEnqueue(queue_t *queue, void *value);
+queueStatus_t queuePush(queue_t *queue, void *value);
 
 /*!
  * \brief Add an array of data to end of queue
  *
  * \param [in] queue        pointer to queue object
- * \param [in] data         pointer to array of data to be enqueued
- * \param [in] num          number of values to be enqueued
+ * \param [in] data         pointer to array of data to be pushed
+ * \param [in] num          number of values to be pushed
  *
- * \return QUEUE_SUCCESS if data can be enqueued correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
+ * \return QUEUE_SUCCESS if data can be pushed correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
  */
-queueStatus_t queueEnqueueArr(queue_t *queue, void *data, QUEUE_STYPE num);
+queueStatus_t queuePushArr(queue_t *queue, void *data, QUEUE_STYPE num);
 
 /*!
  * \brief Add data to beginning of queue
  *
  * \param [in] queue        pointer to queue object
- * \param [in] value        value to be bequeued
+ * \param [in] value        pointer to value to be pushed to front
  *
- * \return QUEUE_SUCCESS if data can be bequeued correctly, QUEUE_FULL if queue is full
+ * \return QUEUE_SUCCESS if data can be pushed to front correctly, QUEUE_FULL if queue is full
  */
-queueStatus_t queueBequeue(queue_t *queue, void *value);
+queueStatus_t queuePushFront(queue_t *queue, void *value);
 
 /*!
  * \brief Add an array of data to beginning of queue
  *
  * \param [in] queue        pointer to queue object
- * \param [in] data         pointer to array of data to be bequeued
- * \param [in] num          number of values to be bequeued
+ * \param [in] data         pointer to array of data to be pushed to front
+ * \param [in] num          number of values to be pushed to front
  *
- * \return QUEUE_SUCCESS if data can be bequeued correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
+ * \return QUEUE_SUCCESS if data can be pushed to front correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
  */
-queueStatus_t queueBequeueArr(queue_t *queue, void *data, QUEUE_STYPE num);
+queueStatus_t queuePushFrontArr(queue_t *queue, void *data, QUEUE_STYPE num);
 
 /*!
  * \brief Read data from beginning of queue, removing it
  *
  * \param [in] queue        pointer to queue object
- * \param [out] value       pointer to value to be dequeued
+ * \param [out] value       pointer to value to be read and removed
  *
- * \return QUEUE_SUCCESS if data can be dequeued correctly, QUEUE_EMPTY if queue is empty
+ * \return QUEUE_SUCCESS if data can be read and removed correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queueDequeue(queue_t *queue, void *value);
+queueStatus_t queuePop(queue_t *queue, void *value);
 
 /*!
  * \brief Read an array of data from beginning of queue, removing it
  *
  * \param [in] queue        pointer to queue object
- * \param [out] data        pointer to array of data to be dequeued
- * \param [in] num          number of values to be dequeued
+ * \param [out] data        pointer to array of data to be read and removed
+ * \param [in] num          number of values to be read and removed
  *
- * \return QUEUE_SUCCESS if data can be bequeued correctly, QUEUE_NOT_ENOUGH_ITEMS if queue doesn't hold all requested items
+ * \return QUEUE_SUCCESS if data can be pushed to front correctly, QUEUE_NOT_ENOUGH_ITEMS if queue doesn't hold all requested items
  */
-queueStatus_t queueDequeueArr(queue_t *queue, void *data, QUEUE_STYPE num);
+queueStatus_t queuePopArr(queue_t *queue, void *data, QUEUE_STYPE num);
 
 /*!
  * \brief Read data from end of queue, removing it
  *
  * \param [in] queue        pointer to queue object
- * \param [out] value       pointer to value to be dequeued
+ * \param [out] value       pointer to value to be read and removed
  *
- * \return QUEUE_SUCCESS if data can be dequeued correctly, QUEUE_EMPTY if queue is empty
+ * \return QUEUE_SUCCESS if data can be read and removed correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queueDequeueRight(queue_t *queue, void *value);
+queueStatus_t queuePopBack(queue_t *queue, void *value);
 
 /*!
  * \brief Read data from beginning of queue, without removing it
  *
  * \param [in] queue        pointer to queue object
- * \param [out] value      pointer to value to be read
+ * \param [out] value       pointer to value to be read
  *
  * \return QUEUE_SUCCESS if data can be read correctly, QUEUE_EMPTY if queue is empty
  */
@@ -176,7 +176,7 @@ queueStatus_t queuePeek(queue_t *queue, void *value);
  *
  * \return QUEUE_SUCCESS if data can be read correctly, QUEUE_EMPTY if queue is empty
  */
-queueStatus_t queuePeekRight(queue_t *queue, void *value);
+queueStatus_t queuePeekBack(queue_t *queue, void *value);
 
 /*!
  * \brief Returns queue info

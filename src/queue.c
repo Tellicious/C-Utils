@@ -58,7 +58,7 @@ queueStatus_t queueInit(queue_t *queue, size_t itemSize, QUEUE_STYPE size)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueEnqueue(queue_t *queue, void *value)
+queueStatus_t queuePush(queue_t *queue, void *value)
 {
     if (queue->items == queue->size)
     {
@@ -77,7 +77,7 @@ queueStatus_t queueEnqueue(queue_t *queue, void *value)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueEnqueueArr(queue_t *queue, void *data, QUEUE_STYPE num)
+queueStatus_t queuePushArr(queue_t *queue, void *data, QUEUE_STYPE num)
 {
     QUEUE_STYPE num2End = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
@@ -110,7 +110,7 @@ queueStatus_t queueEnqueueArr(queue_t *queue, void *data, QUEUE_STYPE num)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueBequeue(queue_t *queue, void *value)
+queueStatus_t queuePushFront(queue_t *queue, void *value)
 {
     if (queue->items == queue->size)
     {
@@ -124,7 +124,7 @@ queueStatus_t queueBequeue(queue_t *queue, void *value)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueBequeueArr(queue_t *queue, void *data, QUEUE_STYPE num)
+queueStatus_t queuePushFrontArr(queue_t *queue, void *data, QUEUE_STYPE num)
 {
     QUEUE_STYPE num2Beg = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
@@ -155,7 +155,7 @@ queueStatus_t queueBequeueArr(queue_t *queue, void *data, QUEUE_STYPE num)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueDequeue(queue_t *queue, void *value)
+queueStatus_t queuePop(queue_t *queue, void *value)
 {
     if(queue->items == 0)
     {
@@ -177,7 +177,7 @@ queueStatus_t queueDequeue(queue_t *queue, void *value)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueDequeueArr(queue_t *queue, void *data, QUEUE_STYPE num)
+queueStatus_t queuePopArr(queue_t *queue, void *data, QUEUE_STYPE num)
 {
     QUEUE_STYPE num2End = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
@@ -209,7 +209,7 @@ queueStatus_t queueDequeueArr(queue_t *queue, void *data, QUEUE_STYPE num)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueDequeueRight(queue_t *queue, void *value)
+queueStatus_t queuePopBack(queue_t *queue, void *value)
 {
     if(queue->items == 0)
     {
@@ -236,7 +236,7 @@ queueStatus_t queuePeek(queue_t *queue, void *value)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePeekRight(queue_t *queue, void *value)
+queueStatus_t queuePeekBack(queue_t *queue, void *value)
 {
     if(queue->items == 0)
     {
