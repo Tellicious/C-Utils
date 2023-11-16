@@ -7,7 +7,8 @@
 - ***matrix:*** handling of matrix objects and matrix operations
 - ***numMethods:*** common numerical methods (to solve linear systems and perform Gauss-Newton sphere approximation)
 - ***timer:*** user-configurable timers
-- ***queue:*** queue structures
+- ***queue:*** queue structure
+- ***list:*** linked list
 - ***quaternion:*** quaternion operations and conversion to Euler angles
 - ***PID:*** PID controller with several anti-windup options (aero-specific, integral-clamping, back-calculation)
 - ***button:*** interrupt-based button object with debounce and multiple press types detection
