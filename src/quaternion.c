@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    quaternion.c
- * \author  Andrea Vivani
- * \brief   Implementation of quaternion manipulation functions
+ * @file    quaternion.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of quaternion manipulation functions
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2022 Andrea Vivani
  *

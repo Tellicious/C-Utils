@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    movingAvg.c
- * \author  Andrea Vivani
- * \brief   Implementation of moving average
+ * @file    movingAvg.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of moving average
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *

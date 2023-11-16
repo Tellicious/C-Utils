@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    numMethods.c
- * \author  Andrea Vivani
- * \brief   Implementation of several numerical methods
+ * @file    numMethods.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of several numerical methods
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2016 Andrea Vivani
  * 

@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    movingAvg.h
- * \author  Andrea Vivani
- * \brief   Implementation of moving average
+ * @file    movingAvg.h
+ * @author  Andrea Vivani
+ * @brief   Implementation of moving average
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -72,43 +72,43 @@ typedef enum
 /* Function prototypes --------------------------------------------------------*/
 
 /*!
- * \brief Init moving average structure
+ * @brief Init moving average structure
  *
- * \param [in] movingAvg    pointer to moving average object
- * \param [in] size         required queue size
+ * @param[in] movingAvg    pointer to moving average object
+ * @param[in] size         required queue size
  */
 movingAvgStatus_t movingAvgInit (movingAvg_t *movingAvg, MOVAVG_IND_TYPE size);
 
 /*!
- * \brief Calculate moving average 
+ * @brief Calculate moving average 
  *
- * \param [in] movingAvg    pointer to moving average object
- * \param [in] value        input value
+ * @param[in] movingAvg    pointer to moving average object
+ * @param[in] value        input value
  * 
- * \return updated moving average
+ * @return updated moving average
  */
 MOVAVG_TYPE movingAvgCalc(movingAvg_t *movingAvg, MOVAVG_TYPE value);
 
 /*!
- * \brief Get latest moving average 
+ * @brief Get latest moving average 
  *
- * \param [in] movingAvg    pointer to moving average object
+ * @param[in] movingAvg    pointer to moving average object
  * 
- * \return latest moving average
+ * @return latest moving average
  */
 static inline MOVAVG_TYPE movingAvgGetLatest(movingAvg_t *movingAvg) {return (movingAvg->sum * movingAvg->inv_size);}
 
 /*!
- * \brief Flush queue setting all values to 0
+ * @brief Flush queue setting all values to 0
  *
- * \param [in] movingAvg    pointer to moving average object
+ * @param[in] movingAvg    pointer to moving average object
  */
 movingAvgStatus_t movingAvgFlush(movingAvg_t *movingAvg);
 
 /*!
- * \brief Delete moving average
+ * @brief Delete moving average
  *
- * \param [in] movingAvg    pointer to moving average object
+ * @param[in] movingAvg    pointer to moving average object
  */
 movingAvgStatus_t movingAvgDelete(movingAvg_t *movingAvg);
 

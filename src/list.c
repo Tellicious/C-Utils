@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    list.c
- * \author  Andrea Vivani
- * \brief   Implementation of linked list with dynamic memory allocation
+ * @file    list.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of linked list with dynamic memory allocation
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *

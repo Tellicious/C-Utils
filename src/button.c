@@ -1,12 +1,12 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    button.c
- * \author  Andrea Vivani
- * \brief   Implementation of button object with debouncing and multiple press 
+ * @file    button.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of button object with debouncing and multiple press 
  *          types detection
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *

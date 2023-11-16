@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    timer.c
- * \author  Andrea Vivani
- * \brief   Implementation of timer functions
+ * @file    timer.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of timer functions
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  * 

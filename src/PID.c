@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    PID.c
- * \author  Andrea Vivani
- * \brief   Implementation of PID controller with several anti-windup options
+ * @file    PID.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of PID controller with several anti-windup options
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2022 Andrea Vivani
  *

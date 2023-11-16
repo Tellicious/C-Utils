@@ -1,12 +1,12 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    button.h
- * \author  Andrea Vivani
- * \brief   Implementation of button object with debouncing and multiple press 
+ * @file    button.h
+ * @author  Andrea Vivani
+ * @brief   Implementation of button object with debouncing and multiple press 
  *          types detection
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -85,30 +85,30 @@ typedef struct
 /* Function prototypes --------------------------------------------------------*/
 
 /*!
- * \brief Init button structure
+ * @brief Init button structure
  *
- * \param [in] button           pointer to button object
- * \param [in] debounceTicks    number of ticks used for debouncing. Use 20ms as a starting point
- * \param [in] longPressTicks   number of ticks that the button needs to be pressed to detect long-press
+ * @param[in] button           pointer to button object
+ * @param[in] debounceTicks    number of ticks used for debouncing. Use 20ms as a starting point
+ * @param[in] longPressTicks   number of ticks that the button needs to be pressed to detect long-press
  */
 void buttonInit(button_t *button, uint32_t debounceTicks, uint32_t longPressTicks);
 
 /*!
- * \brief Button event update, to be called either in an EXT interrupt or in a timer
+ * @brief Button event update, to be called either in an EXT interrupt or in a timer
  *
- * \param [in] button           pointer to button object
- * \param [in] status           current button status
- * \param [in] ticks            current system ticks
+ * @param[in] button           pointer to button object
+ * @param[in] status           current button status
+ * @param[in] ticks            current system ticks
  */
 void buttonEvent(button_t *button, buttonStatus_t status, uint32_t ticks);
 
 /*!
- * \brief Get button status, to be called in the main loop
+ * @brief Get button status, to be called in the main loop
  *
- * \param [in] button           pointer to button object
- * \param [in] ticks            current system ticks
+ * @param[in] button           pointer to button object
+ * @param[in] ticks            current system ticks
  * 
- * \return BUTTON_NO_PRESS, BUTTON_SHORT_PRESS, BUTTON_DOUBLE_PRESS, BUTTON_TRIPLE_PRESS, BUTTON_LONG_PRESS according to current button press type
+ * @return BUTTON_NO_PRESS, BUTTON_SHORT_PRESS, BUTTON_DOUBLE_PRESS, BUTTON_TRIPLE_PRESS, BUTTON_LONG_PRESS according to current button press type
  */
 buttonPressType_t buttonGetPress(button_t *button, uint32_t ticks);
 

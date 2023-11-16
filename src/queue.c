@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    queue.c
- * \author  Andrea Vivani
- * \brief   Implementation of queue structure
+ * @file    queue.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of queue structure
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *

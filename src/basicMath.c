@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    basicMath.c
- * \author  Andrea Vivani
- * \brief   Implementation of useful math operations and constants
+ * @file    basicMath.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of useful math operations and constants
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  * 

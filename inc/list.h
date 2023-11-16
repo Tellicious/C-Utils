@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    list.h
- * \author  Andrea Vivani
- * \brief   Implementation of linked list with dynamic memory allocation
+ * @file    list.h
+ * @author  Andrea Vivani
+ * @brief   Implementation of linked list with dynamic memory allocation
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -81,133 +81,133 @@ typedef enum
 /* Function prototypes --------------------------------------------------------*/
 
 /*!
- * \brief Init list structure
+ * @brief Init list structure
  *
- * \param [in] list          pointer to list object
- * \param [in] itemSize      size in bytes of each item in the list
- * \param [in] size          maximum list size (number of objects)
+ * @param[in] list          pointer to list object
+ * @param[in] itemSize      size in bytes of each item in the list
+ * @param[in] size          maximum list size (number of objects)
  */
 void listInit(list_t *list, size_t itemSize, LIST_STYPE size);
 
 /*!
- * \brief Add data to end of list
+ * @brief Add data to end of list
  *
- * \param [in] list         pointer to list object
- * \param [in] value        pointer to value to be pushed
+ * @param[in] list         pointer to list object
+ * @param[in] value        pointer to value to be pushed
  *
- * \return LIST_SUCCESS if data can be pushed correctly, LIST_FULL if list is full
+ * @return LIST_SUCCESS if data can be pushed correctly, LIST_FULL if list is full
  */
 listStatus_t listPush(list_t *list, void *value);
 
 /*!
- * \brief Add data to beginning of list
+ * @brief Add data to beginning of list
  *
- * \param [in] list         pointer to list object
- * \param [in] value        pointer to value to be pushed to front
+ * @param[in] list         pointer to list object
+ * @param[in] value        pointer to value to be pushed to front
  *
- * \return LIST_SUCCESS if data can be pushed to front correctly, LIST_FULL if list is full
+ * @return LIST_SUCCESS if data can be pushed to front correctly, LIST_FULL if list is full
  */
 listStatus_t listPushFront(list_t *list, void *value);
 
 /*!
- * \brief Add data to a specific position within list
+ * @brief Add data to a specific position within list
  *
- * \param [in] list         pointer to list object
- * \param [in] value        pointer to value to be pushed to front
- * \param [in] position     position where to add data
+ * @param[in] list         pointer to list object
+ * @param[in] value        pointer to value to be pushed to front
+ * @param[in] position     position where to add data
  *
- * \return LIST_SUCCESS if data can be added correctly, LIST_FULL if list is full, LIST_ERROR if position is invalid
+ * @return LIST_SUCCESS if data can be added correctly, LIST_FULL if list is full, LIST_ERROR if position is invalid
  */
 listStatus_t listInsert(list_t *list, void *value, LIST_STYPE position);
 
 /*!
- * \brief Update data at a specific position in the list
+ * @brief Update data at a specific position in the list
  *
- * \param [in] list         pointer to list object
- * \param [in] value        pointer to value to be updated
- * \param [in] position     position where to update data
+ * @param[in] list         pointer to list object
+ * @param[in] value        pointer to value to be updated
+ * @param[in] position     position where to update data
  *
- * \return LIST_SUCCESS if data can be updated correctly, LIST_ERROR if position is invalid
+ * @return LIST_SUCCESS if data can be updated correctly, LIST_ERROR if position is invalid
  */
 listStatus_t listUpdate(list_t *list, void *value, LIST_STYPE position);
 
 /*!
- * \brief Read data from beginning of list, removing it
+ * @brief Read data from beginning of list, removing it
  *
- * \param [in] list         pointer to list object
- * \param [out] value       pointer to value to be read and removed
+ * @param[in] list         pointer to list object
+ * @param[out] value       pointer to value to be read and removed
  *
- * \return LIST_SUCCESS if data can be read and removed correctly, LIST_EMPTY if list is empty
+ * @return LIST_SUCCESS if data can be read and removed correctly, LIST_EMPTY if list is empty
  */
 listStatus_t listPop(list_t *list, void *value);
 
 /*!
- * \brief Read data from end of list, removing it
+ * @brief Read data from end of list, removing it
  *
- * \param [in] list         pointer to list object
- * \param [out] value       pointer to value to be read and removed
+ * @param[in] list         pointer to list object
+ * @param[out] value       pointer to value to be read and removed
  *
- * \return LIST_SUCCESS if data can be read and removed correctly, LIST_EMPTY if list is empty
+ * @return LIST_SUCCESS if data can be read and removed correctly, LIST_EMPTY if list is empty
  */
 listStatus_t listPopBack(list_t *list, void *value);
 
 /*!
- * \brief Read data from a specific position within list, removing it
+ * @brief Read data from a specific position within list, removing it
  *
- * \param [in] list         pointer to list object
- * \param [out] value       pointer to value to be read and removed
- * \param [in] position     position where to read data
+ * @param[in] list         pointer to list object
+ * @param[out] value       pointer to value to be read and removed
+ * @param[in] position     position where to read data
  *
- * \return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty, LIST_ERROR if position is invalid
+ * @return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty, LIST_ERROR if position is invalid
  */
 listStatus_t listRemove(list_t *list, void *value, LIST_STYPE position);
 
 /*!
- * \brief Read data from beginning of list, without removing it
+ * @brief Read data from beginning of list, without removing it
  *
- * \param [in] list         pointer to list object
- * \param [out] value       pointer to value to be read
+ * @param[in] list         pointer to list object
+ * @param[out] value       pointer to value to be read
  *
- * \return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty
+ * @return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty
  */
 listStatus_t listPeek(list_t *list, void *value);
 
 /*!
- * \brief Read data from end of list, without removing it
+ * @brief Read data from end of list, without removing it
  *
- * \param [in] list         pointer to list object
- * \param [out] value       pointer to value to be read
+ * @param[in] list         pointer to list object
+ * @param[out] value       pointer to value to be read
  *
- * \return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty
+ * @return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty
  */
 listStatus_t listPeekBack(list_t *list, void *value);
 
 /*!
- * \brief Read data from a specific position within list, without removing it
+ * @brief Read data from a specific position within list, without removing it
  *
- * \param [in] list         pointer to list object
- * \param [out] value       pointer to value to be read
- * \param [in] position     position where to read data
+ * @param[in] list         pointer to list object
+ * @param[out] value       pointer to value to be read
+ * @param[in] position     position where to read data
  *
- * \return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty, LIST_ERROR if position is invalid
+ * @return LIST_SUCCESS if data can be read correctly, LIST_EMPTY if list is empty, LIST_ERROR if position is invalid
  */
 listStatus_t listPeekAtPos(list_t *list, void *value, LIST_STYPE position);
 
 /*!
- * \brief Returns list info
+ * @brief Returns list info
  *
- * \param [in] list         pointer to list object
- * \param [out] size        pointer to size
- * \param [out] items       pointer to number of items currently in the list
+ * @param[in] list         pointer to list object
+ * @param[out] size        pointer to size
+ * @param[out] items       pointer to number of items currently in the list
  */
 static inline void listInfo(list_t *list, LIST_STYPE *size, LIST_STYPE *items) {*size = list->size; *items = list->items;};
 
 /*!
- * \brief Flush list removing all values
+ * @brief Flush list removing all values
  *
- * \param [in] list        pointer to list object
+ * @param[in] list        pointer to list object
  *
- * \return LIST_SUCCESS if list is flushed correctly, LIST_ERROR if data cannot be flushed
+ * @return LIST_SUCCESS if list is flushed correctly, LIST_ERROR if data cannot be flushed
  */
 listStatus_t listFlush(list_t *list);
 

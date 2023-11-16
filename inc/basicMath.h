@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    basicMath.h
- * \author  Andrea Vivani
- * \brief   Implementation of useful math operations and constants
+ * @file    basicMath.h
+ * @author  Andrea Vivani
+ * @brief   Implementation of useful math operations and constants
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2023 Andrea Vivani
  * 
@@ -111,20 +111,20 @@ extern "C"
 /* Functions ----------------------------------------------------------------*/
 
 /*!
- * \brief Perform square root
+ * @brief Perform square root
  *
- * \param [in] value         input value
+ * @param[in] value         input value
  *
- * \return square root of value
+ * @return square root of value
  */
 float fastSqrt(float value);
 
 /*!
- * \brief Perform fast inverse square root
+ * @brief Perform fast inverse square root
  *
- * \param [in] value         input value
+ * @param[in] value         input value
  *
- * \return inverse square root of value
+ * @return inverse square root of value
  */
 float fastInvSqrt(float value);
 

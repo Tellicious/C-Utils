@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file    matrix.c
- * \author  Andrea Vivani
- * \brief   Implementation of matrix manipulation functions
+ * @file    matrix.c
+ * @author  Andrea Vivani
+ * @brief   Implementation of matrix manipulation functions
  ******************************************************************************
- * \copyright
+ * @copyright
  *
  * Copyright 2016 Andrea Vivani
  * 
