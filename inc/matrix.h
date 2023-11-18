@@ -65,8 +65,8 @@ typedef struct {
  */
 typedef enum
 {
-    MATRIX_SUCCESS = 00,
-    MATRIX_ERROR = 01
+    MATRIX_SUCCESS = 0,
+    MATRIX_ERROR = 1
 } matrixStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/

@@ -65,8 +65,8 @@ typedef struct
  */
 typedef enum
 {
-    MOVINGAVG_SUCCESS = 00,
-    MOVINGAVG_ERROR = 01
+    MOVINGAVG_SUCCESS = 0,
+    MOVINGAVG_ERROR = 1
 } movingAvgStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/

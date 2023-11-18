@@ -72,10 +72,10 @@ typedef struct {
  */
 typedef enum
 {
-    LIST_SUCCESS = 00,
-    LIST_ERROR = 01,
-    LIST_EMPTY = 02,
-    LIST_FULL = 03
+    LIST_SUCCESS = 0,
+    LIST_ERROR = 1,
+    LIST_EMPTY = 2,
+    LIST_FULL = 3
 } listStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/

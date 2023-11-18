@@ -64,12 +64,12 @@ typedef struct
  */
 typedef enum
 {
-    QUEUE_SUCCESS = 00,
-    QUEUE_ERROR = 01,
-    QUEUE_EMPTY = 02,
-    QUEUE_FULL = 03,
-    QUEUE_NOT_ENOUGH_ITEMS = 04,
-    QUEUE_NOT_ENOUGH_SPACE = 05
+    QUEUE_SUCCESS = 0,
+    QUEUE_ERROR = 1,
+    QUEUE_EMPTY = 2,
+    QUEUE_FULL = 3,
+    QUEUE_NOT_ENOUGH_ITEMS = 4,
+    QUEUE_NOT_ENOUGH_SPACE = 5
 } queueStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/
