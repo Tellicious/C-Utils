@@ -86,6 +86,11 @@ buttonPressType_t buttonGetPress(button_t *button, uint32_t ticks)
         button->event = 0;
         button->pulses = 0;
     }
+    else if ((button->status == BUTTON_RELEASED) && !button->pulses && ((ticks - button->lastTick[0]) > button->debounceTicks) && !button->event)
+	{
+    	button->press = BUTTON_RELEASE_PRESS;
+    	button->event = 1;
+	}
     else if (((ticks - button->validTick[1]) > BUTTON_RESET_TICKS) && button->pulses)
     {
     	switch (button->pulses)
@@ -100,7 +105,7 @@ buttonPressType_t buttonGetPress(button_t *button, uint32_t ticks)
     		button->press = BUTTON_TRIPLE_PRESS;
     		break;
     	default:
-    		button->press = BUTTON_NO_PRESS;
+    		button->press = BUTTON_MULTIPLE_PRESS;
     		break;
     	}
     	button->event = 0;

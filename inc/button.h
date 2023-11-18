@@ -55,8 +55,8 @@ extern "C"
  */
 typedef enum
 {
-    BUTTON_RELEASED = 00,
-    BUTTON_PRESSED = 01,
+    BUTTON_RELEASED = 0,
+    BUTTON_PRESSED = 1,
 } buttonStatus_t;
 
 /*!
@@ -64,11 +64,13 @@ typedef enum
  */
 typedef enum
 {
-    BUTTON_NO_PRESS = 00,
-    BUTTON_SHORT_PRESS = 01,
-    BUTTON_DOUBLE_PRESS = 02,
-    BUTTON_TRIPLE_PRESS = 03,
-    BUTTON_LONG_PRESS = 04,
+    BUTTON_NO_PRESS = 0,
+    BUTTON_SHORT_PRESS = 1,
+    BUTTON_DOUBLE_PRESS = 2,
+    BUTTON_TRIPLE_PRESS = 3,
+	BUTTON_MULTIPLE_PRESS = 4,
+    BUTTON_LONG_PRESS = 9,
+	BUTTON_RELEASE_PRESS = 10,
 } buttonPressType_t;
 
 /*!
