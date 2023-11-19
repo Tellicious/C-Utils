@@ -80,7 +80,7 @@ extern "C"
 #define DEG2RAD(x) ((x) * 0.0174533f)
 
 // Conversion between rad/s and milliDegrees-per-second
-#define RADPS_TO_MDPS(x) ((x) * 57295.779513f)
+#define RADPS2MDPS(x) ((x) * 57295.779513f)
 
 // Conversion between milliDegrees-per-second and rad/s
 #define MDPS2RADPS(x) ((x) * 1.745329252e-5f)
@@ -100,13 +100,13 @@ extern "C"
 /* Constants -----------------------------------------------------------------*/
 
 // Pi value
-#define PI              3.141592654f
+#define constPI              3.141592654f
 
 // G value in m/s^2
-#define G               9.80665f
+#define constG               9.80665f
 
 // e value
-#define E               2.71828182845904523536028747135266249f
+#define constE               2.71828182845904523536028747135266249f
 
 /* Functions ----------------------------------------------------------------*/
 
