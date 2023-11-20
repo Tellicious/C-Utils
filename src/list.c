@@ -55,8 +55,8 @@ listStatus_t listPush(list_t *list, void *value)
         return LIST_FULL;
     }
 
-    node_t *ptr;
-    ptr = malloc(sizeof(node_t));
+    listNode_t *ptr;
+    ptr = malloc(sizeof(listNode_t));
     ptr->data = calloc(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
@@ -81,8 +81,8 @@ listStatus_t listPushFront(list_t *list, void *value)
         return LIST_FULL;
     }
 
-    node_t *ptr;
-    ptr = malloc(sizeof(node_t));
+    listNode_t *ptr;
+    ptr = malloc(sizeof(listNode_t));
     ptr->data = calloc(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
@@ -115,8 +115,8 @@ listStatus_t listInsert(list_t *list, void *value, LIST_STYPE position)
         return LIST_ERROR;
     }
 
-    node_t *ptr;
-    ptr = malloc(sizeof(node_t));
+    listNode_t *ptr;
+    ptr = malloc(sizeof(listNode_t));
     ptr->data = calloc(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
@@ -133,7 +133,7 @@ listStatus_t listInsert(list_t *list, void *value, LIST_STYPE position)
     else 
     {   
         //search for node at position - 1
-        node_t *prev = list->_front;
+        listNode_t *prev = list->_front;
         for (ii = 1; ii < position; ii++)
         {
             prev = prev->next;
@@ -155,7 +155,7 @@ listStatus_t listUpdate(list_t *list, void *value, LIST_STYPE position)
         return LIST_ERROR;
     }
 
-    node_t *ptr = list->_front;
+    listNode_t *ptr = list->_front;
 
     //search for node at position
     for (ii = 0; ii < position; ii++)
@@ -175,7 +175,7 @@ listStatus_t listPop(list_t *list, void *value)
         return LIST_EMPTY;
     }
 
-    node_t *ptr = list->_front;
+    listNode_t *ptr = list->_front;
     memcpy(value, ptr->data, list->itemSize);
     list->_front = ptr->next;
     free(ptr->data);
@@ -201,7 +201,7 @@ listStatus_t listPopBack(list_t *list, void *value)
     memcpy(value, list->_rear->data, list->itemSize);
 
     //search for node at end - 1
-    node_t *prev = list->_front;
+    listNode_t *prev = list->_front;
     for (ii = 2; ii < list->items; ii++)
     {
         prev = prev->next;
@@ -234,8 +234,8 @@ listStatus_t listRemove(list_t *list, void *value, LIST_STYPE position)
         return LIST_ERROR;
     }
 
-    node_t *prev = NULL;
-    node_t *ptr = list->_front;
+    listNode_t *prev = NULL;
+    listNode_t *ptr = list->_front;
 
     //search for node at position - 1 and node at position
     for (ii = 0; ii < position; ii++)
@@ -308,7 +308,7 @@ listStatus_t listPeekAtPos(list_t *list, void *value, LIST_STYPE position)
         return LIST_ERROR;
     }
 
-    node_t *ptr = list->_front;
+    listNode_t *ptr = list->_front;
 
     //search for node at position
     for (ii = 0; ii < position; ii++)
@@ -328,7 +328,7 @@ listStatus_t listFlush(list_t *list)
         return LIST_EMPTY;
     }
 
-    node_t *ptr = list->_front;
+    listNode_t *ptr = list->_front;
     while (ptr != NULL)
     {
         list->_front = ptr->next;

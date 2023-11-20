@@ -55,17 +55,16 @@ extern "C"
 typedef struct node_str{
     void *data;
     struct node_str *next;
-} node_t;
+} listNode_t;
 
 /*!
  * List struct
  */
 typedef struct {
     uint8_t itemSize;
-    node_t *_front, *_rear;
+    listNode_t *_front, *_rear;
     LIST_STYPE size, items;
 } list_t;
-
 
 /*!
  * List return status
