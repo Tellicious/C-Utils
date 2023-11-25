@@ -50,15 +50,24 @@ extern "C"
 /* Typedefs ------------------------------------------------------------------*/
 
  /*
- * Hash-table entry struct
+ * Hash-Table entry struct
  */
 typedef struct {
     char *key;  // key is NULL if this slot is empty
     void *value;
 } lkHashTableEntry_t;
 
+ /*
+ * Hash-Table struct
+ */
+typedef struct {
+    list_t *entries;  // hash slots
+    uint32_t size, items;
+    size_t itemSize;
+} lkHashTable_t;
+
 /*!
- * Hash-table return status
+ * Hash-Table return status
  */
 typedef enum
 {
@@ -77,14 +86,6 @@ typedef enum
     LKHT_REMOVE_ITEM = 0,
     LKHT_DO_NOT_REMOVE_ITEM = 1
 } lkHashTableRemoval_t;
-
- /*
- * Hash-table struct
- */
-typedef struct {
-    list_t *entries;  // hash slots
-    uint32_t size, items, itemSize;
-} lkHashTable_t;
 
 /* Function prototypes --------------------------------------------------------*/
 

@@ -7,7 +7,7 @@
  ******************************************************************************
  * @copyright
  *
- * Copyright 202x Andrea Vivani
+ * Copyright 2023 Andrea Vivani
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to
@@ -125,30 +125,29 @@ lkHashTableStatus_t lkHashTableGet(lkHashTable_t *lkht, char *key, void *value, 
         return LKHT_BUCKET_EMPTY;
     }
 
-    lkHashTableEntry_t entry;
-
     // check if entry exists and return it
-    LIST_STYPE idx;
+    lkHashTableEntry_t entry;
+    listIterator_t iterator;
 
-    for (idx = 0; idx < lkht->entries[ii].items; idx++)
+    listIt(&iterator, &(lkht->entries[ii]));
+
+    while(listItNext(&iterator) == LIST_SUCCESS)
     {
-        if (listPeekAtPos(&(lkht->entries[ii]), &entry, idx) == LIST_SUCCESS)
-        {
-            if (!strcmp(key, entry.key))
+        memcpy(&entry, iterator.ptr->data, sizeof(lkHashTableEntry_t));
+
+        if (!strcmp(key, entry.key))
             {
+                memcpy(value, entry.value, lkht->itemSize);
                 if (remove == LKHT_REMOVE_ITEM)
                 {
-                    listRemove(&(lkht->entries[ii]), &entry, idx);
+                    listRemove(&(lkht->entries[ii]), &entry, iterator.idx);
                     lkht->items--;
-                    memcpy(value, entry.value, lkht->itemSize);
                     free(entry.key);
                     free(entry.value);
                     return LKHT_SUCCESS;
                 }
-                memcpy(value, entry.value, lkht->itemSize);
                 return LKHT_SUCCESS;
             }
-        }
     }
     
     return LKHT_ERROR;
@@ -160,7 +159,7 @@ lkHashTableStatus_t lkHashTableFlush(lkHashTable_t *lkht)
 
     if (!lkht->items)
     {
-        return LKHT_EMPTY;
+        return LKHT_SUCCESS;
     }
 
     lkHashTableEntry_t entry;
@@ -170,7 +169,7 @@ lkHashTableStatus_t lkHashTableFlush(lkHashTable_t *lkht)
     {
          idx = lkht->entries[ii].items;
 
-        while(idx--)
+        while (idx--)
         {
             listPop(&(lkht->entries[ii]), &entry);
             free(entry.key);
@@ -178,8 +177,6 @@ lkHashTableStatus_t lkHashTableFlush(lkHashTable_t *lkht)
         }
     }
 
-    free(lkht->entries);
-    lkht->entries = NULL;
     lkht->items = 0;
 
     return LKHT_SUCCESS;
