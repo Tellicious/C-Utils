@@ -12,4 +12,8 @@
 - ***quaternion:*** quaternion operations and conversion to Euler angles
 - ***PID:*** PID controller with several anti-windup options (aero-specific, integral-clamping, back-calculation)
 - ***button:*** interrupt-based button object with debounce and multiple press types detection
+- ***LPHashTable:*** linear-probing hash-table object with auto-resize capability
+- ***LKHashTable:*** dynamic linked hash-table object (based on _list_)
+
+
 
