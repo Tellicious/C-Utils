@@ -341,3 +341,29 @@ listStatus_t listFlush(list_t *list)
 
     return LIST_SUCCESS;
 }
+
+void listIt(listIterator_t *it, list_t *list)
+{
+    it->_list = list;
+    it->idx = 0;
+    it->_prev = NULL;
+    it->ptr = NULL;
+}
+
+listStatus_t listItNext(listIterator_t *it)
+{
+    if (it->ptr == NULL)
+    {
+        it->ptr = it->_list->_front;
+        it->idx = 0;
+        return LIST_SUCCESS;
+    }
+    else if (it->ptr->next != NULL)
+    {
+        it->_prev = it->ptr;
+        it->ptr = it->ptr->next;
+        it->idx++;
+        return LIST_SUCCESS;
+    }
+    return LIST_ERROR;
+}

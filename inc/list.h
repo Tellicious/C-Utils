@@ -67,6 +67,15 @@ typedef struct {
 } list_t;
 
 /*!
+ * List iterator 
+ */
+typedef struct {   
+    list_t *_list;
+    listNode_t *_prev, *ptr;
+    LIST_STYPE idx;
+} listIterator_t;
+
+/*!
  * List return status
  */
 typedef enum
@@ -209,6 +218,23 @@ static inline void listInfo(list_t *list, LIST_STYPE *size, LIST_STYPE *items) {
  * @return LIST_SUCCESS if list is flushed correctly, LIST_ERROR if data cannot be flushed
  */
 listStatus_t listFlush(list_t *list);
+
+/*!
+ * @brief Create new iterator
+ *
+ * @param[in] it           pointer to iterator object
+ * @param[in] list         pointer to list object
+ */
+void listIt(listIterator_t *it, list_t *list);
+
+/*!
+ * @brief Move iterator to next item in list
+ *
+ * @param[in] it           pointer to iterator object
+ *
+ * @return LIST_SUCCESS if iterator is moved to next value, LIST_ERROR if there are no more items
+ */
+listStatus_t listItNext(listIterator_t *it);
 
 #ifdef __cplusplus
 }
