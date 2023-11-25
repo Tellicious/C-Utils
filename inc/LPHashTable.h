@@ -52,25 +52,6 @@ extern "C"
 
 /* Typedefs ------------------------------------------------------------------*/
 
- /*
- * Hash-table entry struct
- */
-typedef struct {
-    char *key;  // key is NULL if this slot is empty
-    void *value;
-} lpHashTableEntry_t;
-
-/*!
- * Hash-table return status
- */
-typedef enum
-{
-    LPHT_SUCCESS = 0,
-    LPHT_ERROR = 1,
-    LPHT_EMPTY = 2,
-    LPHT_FULL = 3
-} lpHashTableStatus_t;
-
 /*!
  * Hash-Table resizability setting
  */
@@ -80,21 +61,21 @@ typedef enum
     LPHT_RESIZABLE = 1
 } lpHashTableResizable_t;
 
-/*!
- * Hash-Table removal setting
+ /*
+ * Hash-Table entry struct
  */
-typedef enum
-{
-    LPHT_REMOVE_ITEM = 0,
-    LPHT_DO_NOT_REMOVE_ITEM = 1
-} lpHashTableRemoval_t;
+typedef struct {
+    char *key;  // key is NULL if this slot is empty
+    void *value;
+} lpHashTableEntry_t;
 
  /*
- * Hash-table struct
+ * Hash-Table struct
  */
 typedef struct {
     lpHashTableEntry_t *entries;  // hash slots
-    uint32_t size, items, itemSize;
+    uint32_t size, items;
+    size_t itemSize;
     lpHashTableResizable_t resizable;
 } lpHashTable_t;
 
@@ -107,6 +88,26 @@ typedef struct {
     lpHashTable_t *_lpht;
     uint32_t _index;
 } lpHashTableIterator_t;
+
+/*!
+ * Hash-Table return status
+ */
+typedef enum
+{
+    LPHT_SUCCESS = 0,
+    LPHT_ERROR = 1,
+    LPHT_EMPTY = 2,
+    LPHT_FULL = 3
+} lpHashTableStatus_t;
+
+/*!
+ * Hash-Table removal setting
+ */
+typedef enum
+{
+    LPHT_REMOVE_ITEM = 0,
+    LPHT_DO_NOT_REMOVE_ITEM = 1
+} lpHashTableRemoval_t;
 
 /* Function prototypes --------------------------------------------------------*/
 
@@ -166,20 +167,19 @@ lpHashTableStatus_t lpHashTableFlush(lpHashTable_t *lpht);
 /*!
  * @brief Create new iterator
  *
+ * @param[in] it           pointer to iterator object
  * @param[in] lpht         pointer to hash-table object
- *
- * @return pointer to hash-table iterator
  */
-lpHashTableIterator_t lpHashTableIt(lpHashTable_t *lpht);
+void lpHashTableIt(lpHashTableIterator_t *it, lpHashTable_t *lpht);
 
 /*!
  * @brief Move iterator to next item in hash table
  *
- * @param[in] it         pointer to iterator object
+ * @param[in] it           pointer to iterator object
  *
  * @return LPHT_SUCCESS if iterator is moved to next value, LPHT_ERROR if there are no more items
  */
-lpHashTableStatus_t lpHashTableItNext(lpHashTableIterator_t* it);
+lpHashTableStatus_t lpHashTableItNext(lpHashTableIterator_t *it);
 
 #ifdef __cplusplus
 }

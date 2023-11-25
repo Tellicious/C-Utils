@@ -151,8 +151,6 @@ lpHashTableStatus_t lpHashTableFlush(lpHashTable_t *lpht)
         lpht->entries[ii].value = NULL;
     }
 
-    free(lpht->entries);
-    lpht->entries = NULL;
     lpht->items = 0;
 
     return LPHT_SUCCESS;
@@ -260,31 +258,26 @@ static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t *lpht, uint8_t increas
     return LPHT_SUCCESS;
 }
 
-lpHashTableIterator_t lpHashTableIt(lpHashTable_t *lpht)
+void lpHashTableIt(lpHashTableIterator_t *it, lpHashTable_t *lpht)
 {
-    lpHashTableIterator_t it;
-    it._lpht = lpht;
-    it._index = 0;
-    return it;
+    it->_lpht = lpht;
+    it->_index = 0;
+    return;
 }
 
 lpHashTableStatus_t lpHashTableItNext(lpHashTableIterator_t *it)
 {
-    // Loop till we've hit end of entries array.
-    lpHashTable_t *table = it->_lpht;
-
-    while (it->_index < table->size)
+    while (it->_index < it->_lpht->size)
     {
-        if (table->entries[it->_index].key != NULL)
+        if (it->_lpht->entries[it->_index].key != NULL)
         {
             // Found next non-empty item, update iterator key and value.
-            lpHashTableEntry_t entry = table->entries[it->_index];
+            lpHashTableEntry_t entry = it->_lpht->entries[it->_index];
             it->key = entry.key;
             it->value = entry.value;
 
             return LPHT_SUCCESS;
         }
-
         it->_index++;
     }
     return LPHT_ERROR;
