@@ -49,7 +49,7 @@ void buttonInit(button_t *button, uint32_t debounceTicks, uint32_t longPressTick
     button->lastTick[0] = 0;
     button->lastTick[1] = 0;
     button->pulses = 0;
-    button->event = 0;
+    button->event = 1;
 	button->debounceTicks = debounceTicks;
     button->longPressTicks = longPressTicks;
 }
