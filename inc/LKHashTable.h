@@ -107,7 +107,7 @@ lkHashTableStatus_t lkHashTableInit(lkHashTable_t *lkht, size_t itemSize, uint32
  * @param[in] key           pointer to key
  * @param[in] value         pointer to value to be written
  * 
- * @return LKHT_SUCCESS if data is written correctly, LKHT_ERROR if data 
+ * @return LKHT_SUCCESS if data is written correctly, LKHT_ERROR otherwise
  */
 lkHashTableStatus_t lkHashTablePut(lkHashTable_t *lkht, char *key, void *value);
 
