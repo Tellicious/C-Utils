@@ -40,9 +40,10 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-void buttonInit(button_t *button, uint32_t debounceTicks, uint32_t longPressTicks)
+void buttonInit(button_t *button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks, uint32_t longPressTicks, uint32_t veryLongPressTicks)
 {
-    button->status = BUTTON_RELEASED;
+    button->type = type;
+	button->status = BUTTON_RELEASED;
     button->press = BUTTON_NO_PRESS;
     button->validTick[0] = 1;
     button->validTick[1] = 0;
@@ -51,7 +52,9 @@ void buttonInit(button_t *button, uint32_t debounceTicks, uint32_t longPressTick
     button->pulses = 0;
     button->event = 1;
 	button->debounceTicks = debounceTicks;
+	button->resetTicks = (resetTicks < debounceTicks) ? debounceTicks : resetTicks;
     button->longPressTicks = longPressTicks;
+	button->veryLongPressTicks = veryLongPressTicks;
 }
 
 void buttonEvent(button_t *button, buttonStatus_t status, uint32_t ticks)
@@ -62,14 +65,14 @@ void buttonEvent(button_t *button, buttonStatus_t status, uint32_t ticks)
 		return;
 	}
 	button->lastTick[status] = ticks;
+	button->status = status;
     if (((button->lastTick[status] - button->lastTick[invStatus]) >= button->debounceTicks))
     {
     	button->event |= status;
-    	button->status = status;
     	button->validTick[invStatus] = button->lastTick[invStatus];
-    	if (invStatus && ((button->lastTick[0] - button->validTick[1]) < button->longPressTicks))
+    	if (invStatus && ((button->type == BUTTON_TYPE_PULSATING) || ((button->lastTick[0] - button->validTick[1]) < button->veryLongPressTicks)))
     	{
-    		(((button->validTick[1] - button->validTick[0]) > BUTTON_RESET_TICKS)) ? (button->pulses = 1) : (button->pulses++);
+    		(((button->validTick[1] - button->validTick[0]) > button->resetTicks)) ? (button->pulses = 1) : (button->pulses++);
     	}
     }
 }
@@ -79,37 +82,58 @@ buttonPressType_t buttonGetPress(button_t *button, uint32_t ticks)
     // Update button status and pulses
     button->press = BUTTON_NO_PRESS;
 
-    // Check button press type 
-    if ((button->status == BUTTON_PRESSED) && !button->pulses && ((ticks - button->lastTick[1]) > button->longPressTicks) && button->event)
-    {
-        button->press = BUTTON_LONG_PRESS;
-        button->event = 0;
-        button->pulses = 0;
-    }
-    else if ((button->status == BUTTON_RELEASED) && !button->pulses && ((ticks - button->lastTick[0]) > button->debounceTicks) && !button->event)
+    // Check button press type
+	if (button->type == BUTTON_TYPE_NORMAL)
 	{
-    	button->press = BUTTON_RELEASE_PRESS;
-    	button->event = 1;
+		if ((button->status == BUTTON_PRESSED) && !button->pulses && ((ticks - button->lastTick[1]) > button->veryLongPressTicks) && button->event)
+		{
+			button->press = BUTTON_VERYLONG_PRESS;
+			button->event = 0;
+			button->pulses = 0;
+		}
+		else if ((button->pulses == 1) && ((button->lastTick[0] - button->validTick[1]) > button->longPressTicks))
+		{
+			button->press = BUTTON_LONG_PRESS;
+			button->event = 0;
+			button->pulses = 0;
+		}
+		else if ((button->status == BUTTON_RELEASED) && !button->pulses && ((ticks - button->lastTick[0]) > button->debounceTicks) && !button->event)
+		{
+			button->press = BUTTON_RELEASE_PRESS;
+			button->event = 1;
+		}
+		else if (((ticks - button->validTick[1]) > button->resetTicks) && button->pulses)
+		{
+			switch (button->pulses)
+			{
+			case 1:
+				button->press = BUTTON_SHORT_PRESS;
+				break;
+			case 2:
+				button->press = BUTTON_DOUBLE_PRESS;
+				break;
+			case 3:
+				button->press = BUTTON_TRIPLE_PRESS;
+				break;
+			default:
+				button->press = BUTTON_MULTIPLE_PRESS;
+				break;
+			}
+			button->event = 0;
+			button->pulses = 0;
+		}
 	}
-    else if (((ticks - button->validTick[1]) > BUTTON_RESET_TICKS) && button->pulses)
-    {
-    	switch (button->pulses)
-    	{
-    	case 1:
-    		button->press = BUTTON_SHORT_PRESS;
-    		break;
-    	case 2:
-    		button->press = BUTTON_DOUBLE_PRESS;
-    		break;
-    	case 3:
-    		button->press = BUTTON_TRIPLE_PRESS;
-    		break;
-    	default:
-    		button->press = BUTTON_MULTIPLE_PRESS;
-    		break;
-    	}
-    	button->event = 0;
-    	button->pulses = 0;
-    }
+	else
+	{
+		if (button->pulses && (button->status == BUTTON_RELEASED) && ((ticks - button->lastTick[0]) > button->resetTicks))
+		{
+			button->press = BUTTON_RELEASE_PRESS;
+			button->pulses = 0;
+		}
+		else if (button->pulses)
+		{
+			button->press = BUTTON_PULSATING_PRESS;
+		}
+	}
     return button->press;
 }
