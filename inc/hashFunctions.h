@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    hashFunctions.h
- * @author  Andrea Vivani
- * @brief   Collection of different hash functions
+ * \file            hashFunctions.h
+ * \author          Andrea Vivani
+ * \brief           Collection of different hash functions
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -36,8 +36,7 @@
 #define __HASHFUNCTIONS_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 
@@ -49,36 +48,36 @@ extern "C"
 
 /* Function prototypes --------------------------------------------------------*/
 
-/*!
- * @brief 64-bit FNV-1a hash for key (NUL-terminated)
+/**
+ * \brief           64-bit FNV-1a hash for key (NUL-terminated)
  *
- * @param[in] key          pointer to key string
+ * \param[in]       key: pointer to key string
  * 
- * @return hash
+ * \return          hash
  */
 
-uint32_t hash_FNV1A(char *key);
+uint32_t hash_FNV1A(char* key);
 
-/*!
- * @brief Dan Bernstein hash for key (from comp.lang.c)
+/**
+ * \brief           Dan Bernstein hash for key (from comp.lang.c)
  *
- * @param[in] key          pointer to key string
+ * \param[in]       key: pointer to key string
  * 
- * @return hash
+ * \return          hash
  */
-uint32_t hash_djb(char *key);
+uint32_t hash_djb(char* key);
 
-/*!
- * @brief sdbm hash for key (from sdbm database library)
+/**
+ * \brief           sdbm hash for key (from sdbm database library)
  *
- * @param[in] key          pointer to key string
+ * \param[in]       key: pointer to key string
  * 
- * @return hash
+ * \return          hash
  */
-uint32_t hash_sdbm(char *key);
+uint32_t hash_sdbm(char* key);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __HASHFUNCTIONS_H__
+#endif /* __HASHFUNCTIONS_H__ */

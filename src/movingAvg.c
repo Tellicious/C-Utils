@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    movingAvg.c
- * @author  Andrea Vivani
- * @brief   Implementation of moving average
+ * \file            movingAvg.c
+ * \author          Andrea Vivani
+ * \brief   Implementation of moving average
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -39,27 +39,24 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-movingAvgStatus_t movingAvgInit (movingAvg_t *movingAvg, MOVAVG_IND_TYPE size)
-{
+movingAvgStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
     movingAvg->data = NULL;
     movingAvg->data = calloc(size, sizeof(MOVAVG_TYPE));
-    //movingAvg->data = malloc(size * sizeof(MOVAVG_TYPE));
-    if (movingAvg->data == NULL)
-    {
+    /* movingAvg->data = malloc(size * sizeof(MOVAVG_TYPE)); */
+    if (movingAvg->data == NULL) {
         movingAvg->size = 0;
         return MOVINGAVG_ERROR;
     }
-    
+
     movingAvg->size = size;
     movingAvg->sum = 0;
-    movingAvg->inv_size = (MOVAVG_TYPE) 1.0 / size;
+    movingAvg->inv_size = (MOVAVG_TYPE)1.0 / size;
     movingAvg->_write = 0;
     return MOVINGAVG_SUCCESS;
-
 }
 
-MOVAVG_TYPE movingAvgCalc(movingAvg_t *movingAvg, MOVAVG_TYPE value)
-{
+MOVAVG_TYPE
+movingAvgCalc(movingAvg_t* movingAvg, MOVAVG_TYPE value) {
     movingAvg->sum -= movingAvg->data[movingAvg->_write];
     movingAvg->sum += value;
     movingAvg->data[movingAvg->_write] = value;
@@ -68,31 +65,26 @@ MOVAVG_TYPE movingAvgCalc(movingAvg_t *movingAvg, MOVAVG_TYPE value)
     return (movingAvg->sum * movingAvg->inv_size);
 }
 
-movingAvgStatus_t movingAvgFlush(movingAvg_t *movingAvg)
-{
-    if(movingAvg->data == NULL)
-    {
+movingAvgStatus_t movingAvgFlush(movingAvg_t* movingAvg) {
+    if (movingAvg->data == NULL) {
         return MOVINGAVG_ERROR;
     }
 
     memset(movingAvg->data, 0x00, movingAvg->size * sizeof(MOVAVG_TYPE));
-    
+
     movingAvg->sum = 0;
     movingAvg->_write = 0;
-    
+
     return MOVINGAVG_SUCCESS;
 }
 
+movingAvgStatus_t movingAvgDelete(movingAvg_t* movingAvg) {
 
-movingAvgStatus_t movingAvgDelete(movingAvg_t *movingAvg)
-{ 
-    
-    if(movingAvg->data == NULL)
-    {
+    if (movingAvg->data == NULL) {
         return MOVINGAVG_ERROR;
     }
-    
+
     free(movingAvg->data);
-    
+
     return MOVINGAVG_SUCCESS;
 }

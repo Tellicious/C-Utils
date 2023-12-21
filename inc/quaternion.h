@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    quaternion.h
- * @author  Andrea Vivani
- * @brief   Implementation of quaternion manipulation functions
+ * \file            quaternion.h
+ * \author          Andrea Vivani
+ * \brief           Implementation of quaternion manipulation functions
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2022 Andrea Vivani
  *
@@ -36,8 +36,7 @@
 #define __QUATERNION_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -58,51 +57,51 @@ typedef struct {
 
 /* Function prototypes -------------------------------------------------------*/
 
-/*!
- * @brief Normalize quaternion (in place)
+/**
+ * \brief           Normalize quaternion (in place)
  *
- * @param[in] q        pointer to quaternion object
+ * \param[in]       q: pointer to quaternion object
  */
-void quaternionNorm(quaternion_t *q);
+void quaternionNorm(quaternion_t* q);
 
-/*!
- * @brief Quaternion multiplication qo = qa * qb
+/**
+ * \brief           Quaternion multiplication qo = qa * qb
  *
- * @param[in] qa       pointer to left-hand side quaternion object
- * @param[in] qb       pointer to right-hand side quaternion object
- * @param[out] qo     pointer to result quaternion object
+ * \param[in]       qa: pointer to left-hand side quaternion object
+ * \param[in]       qb: pointer to right-hand side quaternion object
+ * \param[out]      qo: pointer to result quaternion object
  *
- * @attention qo can be different from qa/qb, or the same as qa/qb
+ * \attention       qo can be different from qa/qb, or the same as qa/qb
  */
-void quaternionMult(quaternion_t *qa, quaternion_t *qb, quaternion_t *qo);
+void quaternionMult(quaternion_t* qa, quaternion_t* qb, quaternion_t* qo);
 
-/*!
- * @brief Quaternion rotation
+/**
+ * \brief           Quaternion rotation
  *
- * @param[in] qr       pointer to rotation quaternion object
- * @param[in] qv       pointer to quaternion object to rotate
- * @param[out] qo     pointer to result quaternion object qo = qr' * qv * qr
+ * \param[in]       qr: pointer to rotation quaternion object
+ * \param[in]       qv: pointer to quaternion object to rotate
+ * \param[out]      qo: pointer to result quaternion object qo = qr' * qv * qr
  */
-void quaternionRotation(quaternion_t *qr, quaternion_t *qv, quaternion_t *qo);
+void quaternionRotation(quaternion_t* qr, quaternion_t* qv, quaternion_t* qo);
 
-/*!
- * @brief Quaternion conjugate
+/**
+ * \brief           Quaternion conjugate
  *
- * @param[in] qa       pointer to left-hand side quaternion object
- * @param[out] qo     pointer to result quaternion object
+ * \param[in]       qa: pointer to left-hand side quaternion object
+ * \param[out]      qo: pointer to result quaternion object
  */
-void quaternionConj(quaternion_t *qa, quaternion_t *qo);
+void quaternionConj(quaternion_t* qa, quaternion_t* qo);
 
-/*!
- * @brief Convert quaternion to Euler angles
+/**
+ * \brief           Convert quaternion to Euler angles
  *
- * @param[in] qr       pointer to input quaternion object
- * @param[out] ea     pointer to result euler angles
+ * \param[in]       qr: pointer to input quaternion object
+ * \param[out]      ea: pointer to result euler angles
  */
-void quaternionToEuler(quaternion_t *qr, eulerAngles_t *ea);
+void quaternionToEuler(quaternion_t* qr, eulerAngles_t* ea);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __QUATERNION_H__
+#endif /* __QUATERNION_H__ */

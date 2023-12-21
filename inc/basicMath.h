@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    basicMath.h
- * @author  Andrea Vivani
- * @brief   Implementation of useful math operations and constants
+ * \file            basicMath.h
+ * \author          Andrea Vivani
+ * \brief           Implementation of useful math operations and constants
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  * 
@@ -36,8 +36,7 @@
 #define __BASIC_MATH_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 
@@ -45,86 +44,87 @@ extern "C"
 
 /* Macros --------------------------------------------------------------------*/
 
-// Absolute value
-#define ABS(value)  (((value) >= 0) ? (value) : (-value))
+/* Absolute value */
+#define ABS(value)                  (((value) >= 0) ? (value) : (-value))
 
-// Constrain value between low and high
-#define CONSTRAIN(value, low, high) ((value) < (low) ? (low) :((value) > (high) ? (high) : (value)))
+/* Constrain value between low and high */
+#define CONSTRAIN(value, low, high) ((value) < (low) ? (low) : ((value) > (high) ? (high) : (value)))
 
-// Re-map value according to new scale
-#define MAP(x, fromLow, fromHigh, toLow, toHigh) (((x) - (fromLow)) * ((toHigh) - (toLow)) / ((fromHigh) - (fromLow)) + (fromLow))
+/* Re-map value according to new scale */
+#define MAP(x, fromLow, fromHigh, toLow, toHigh)                                                                       \
+    (((x) - (fromLow)) * ((toHigh) - (toLow)) / ((fromHigh) - (fromLow)) + (fromLow))
 
-// Get sign of value
+/* Get sign of value */
 #define SIGN(x) (((x) >= 0) ? 1 : -1)
 
-// Get maximum between 2 values
-#define MAX(a,b)             \
-({                           \
-    __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a > _b ? _a : _b;       \
-})
+/* Get maximum between 2 values */
+#define MAX(a, b)                                                                                                      \
+    ({                                                                                                                 \
+        __typeof__(a) _a = (a);                                                                                        \
+        __typeof__(b) _b = (b);                                                                                        \
+        _a > _b ? _a : _b;                                                                                             \
+    })
 
-// Get minimum between 2 values
-#define MIN(a,b)             \
-({                           \
-    __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a < _b ? _a : _b;       \
-})
+/* Get minimum between 2 values */
+#define MIN(a, b)                                                                                                      \
+    ({                                                                                                                 \
+        __typeof__(a) _a = (a);                                                                                        \
+        __typeof__(b) _b = (b);                                                                                        \
+        _a < _b ? _a : _b;                                                                                             \
+    })
 
-// Conversion between rad and deg
-#define RAD2DEG(x) ((x) * 57.29578f)
+/* Conversion between rad and deg */
+#define RAD2DEG(x)    ((x) * 57.29578f)
 
-// Conversion between deg and rad
-#define DEG2RAD(x) ((x) * 0.0174533f)
+/* Conversion between deg and rad */
+#define DEG2RAD(x)    ((x) * 0.0174533f)
 
-// Conversion between rad/s and milliDegrees-per-second
+/* Conversion between rad/s and milliDegrees-per-second */
 #define RADPS2MDPS(x) ((x) * 57295.779513f)
 
-// Conversion between milliDegrees-per-second and rad/s
+/* Conversion between milliDegrees-per-second and rad/s */
 #define MDPS2RADPS(x) ((x) * 1.745329252e-5f)
 
-// Conversion between C and K
-#define C2K(x) ((x) + 273.15f)
+/* Conversion between C and K */
+#define C2K(x)        ((x) + 273.15f)
 
-// Conversion between K and C
-#define K2C(x) ((x) - 273.15f)
+/* Conversion between K and C */
+#define K2C(x)        ((x)-273.15f)
 
-// Conversion between milliG and m/s^2
-#define MG2MS2(x) ((x) * 0.00980665f)
+/* Conversion between milliG and m/s^2 */
+#define MG2MS2(x)     ((x) * 0.00980665f)
 
-// Conversion between m/s^2 and milliG 
-#define MS22MG(x) ((x) * 101.9716212978f)
+/* Conversion between m/s^2 and milliG  */
+#define MS22MG(x)     ((x) * 101.9716212978f)
 
 /* Constants -----------------------------------------------------------------*/
 
-// Pi value
-#define constPI              3.141592654f
+/* Pi value */
+#define constPI       3.141592654f
 
-// G value in m/s^2
-#define constG               9.80665f
+/* G value in m/s^2 */
+#define constG        9.80665f
 
-// e value
-#define constE               2.71828182845904523536028747135266249f
+/* e value */
+#define constE        2.71828182845904523536028747135266249f
 
 /* Functions ----------------------------------------------------------------*/
 
-/*!
- * @brief Perform square root
+/**
+ * \brief           Perform square root
  *
- * @param[in] value         input value
+ * \param[in]       value: input value
  *
- * @return square root of value
+ * \return          square root of value
  */
 float fastSqrt(float value);
 
-/*!
- * @brief Perform fast inverse square root
+/**
+ * \brief           Perform fast inverse square root
  *
- * @param[in] value         input value
+ * \param[in]       value: input value
  *
- * @return inverse square root of value
+ * \return          inverse square root of value
  */
 float fastInvSqrt(float value);
 
@@ -132,4 +132,4 @@ float fastInvSqrt(float value);
 }
 #endif
 
-#endif // __BASIC_MATH_H__
+#endif /* __BASIC_MATH_H__ */

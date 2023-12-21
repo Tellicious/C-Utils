@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    numMethods.c
- * @author  Andrea Vivani
- * @brief   Implementation of several numerical methods
+ * \file            numMethods.c
+ * \author          Andrea Vivani
+ * \brief   Implementation of several numerical methods
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2016 Andrea Vivani
  * 
@@ -35,11 +35,10 @@
 #include "numMethods.h"
 #include "math.h"
 
-//-------------------Forward substitution----------------------//
-// assumes that the matrix A is already a lower triangular one. No check!
+/* -------------------Forward substitution---------------------- */
+/* assumes that the matrix A is already a lower triangular one. No check! */
 
-void fwsub(matrix_t *A, matrix_t *B, matrix_t *result)
-{
+void fwsub(matrix_t* A, matrix_t* B, matrix_t* result) {
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
@@ -55,31 +54,29 @@ void fwsub(matrix_t *A, matrix_t *B, matrix_t *result)
     return;
 }
 
-//---------------Forward substitution with permutation-------------------//
-// assumes that the matrix A is already a lower triangular one. No check!
+/* ---------------Forward substitution with permutation------------------- */
+/* assumes that the matrix A is already a lower triangular one. No check! */
 
-void fwsubPerm(matrix_t *A, matrix_t *B, matrix_t *P, matrix_t *result)
-{
+void fwsubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
-        ELEMP(result, 0, k) = ELEMP(B, (uint8_t) ELEMP(P, 0, 0), k) / ELEMP(A, 0, 0);
+        ELEMP(result, 0, k) = ELEMP(B, (uint8_t)ELEMP(P, 0, 0), k) / ELEMP(A, 0, 0);
         for (i = 1; i < A->rows; i++) {
             tmp = 0.0;
             for (j = 0; j < i; j++) {
                 tmp += ELEMP(A, i, j) * ELEMP(result, j, k);
             }
-            ELEMP(result, i, k) = (ELEMP(B, (uint8_t) ELEMP(P, i, 0), k) - tmp) / ELEMP(A, i, i);
+            ELEMP(result, i, k) = (ELEMP(B, (uint8_t)ELEMP(P, i, 0), k) - tmp) / ELEMP(A, i, i);
         }
     }
     return;
 }
 
-//-------------------Backward substitution----------------------//
-// assumes that the matrix A is already an upper triangular one. No check!
+/* -------------------Backward substitution---------------------- */
+/* assumes that the matrix A is already an upper triangular one. No check! */
 
-void bksub(matrix_t *A, matrix_t *B, matrix_t *result)
-{
+void bksub(matrix_t* A, matrix_t* B, matrix_t* result) {
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
@@ -95,31 +92,30 @@ void bksub(matrix_t *A, matrix_t *B, matrix_t *result)
     return;
 }
 
-//--------------Backward substitution with permutation-----------------//
-// assumes that the matrix A is already an upper triangular one. No check!
+/* --------------Backward substitution with permutation----------------- */
+/* assumes that the matrix A is already an upper triangular one. No check! */
 
-void bksubPerm(matrix_t *A, matrix_t *B, matrix_t *P, matrix_t *result)
-{
+void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
-        ELEMP(result, A->cols - 1, k) = ELEMP(B, (uint8_t) ELEMP(P, A->cols - 1, 0), k) / ELEMP(A, A->cols - 1, A->cols - 1);
+        ELEMP(result, A->cols - 1, k) =
+            ELEMP(B, (uint8_t)ELEMP(P, A->cols - 1, 0), k) / ELEMP(A, A->cols - 1, A->cols - 1);
         for (i = A->rows - 2; i >= 0; i--) {
             tmp = 0.0;
             for (j = A->cols - 1; j > i; j--) {
                 tmp += ELEMP(A, i, j) * ELEMP(result, j, k);
             }
-            ELEMP(result, i, k) = (ELEMP(B, (uint8_t) ELEMP(P, i, 0), k) - tmp) / ELEMP(A, i, i);
+            ELEMP(result, i, k) = (ELEMP(B, (uint8_t)ELEMP(P, i, 0), k) - tmp) / ELEMP(A, i, i);
         }
     }
     return;
 }
 
-//-------------------------LU factorization using Crout's Method--------------------------------//
-// factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L
+/* -------------------------LU factorization using Crout's Method-------------------------------- */
+/* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
-matrixStatus_t LU_Crout(matrix_t *A, matrix_t *L, matrix_t *U)
-{
+matrixStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
     int16_t ii, jj, kk;
     float sum = 0.0;
     matrixIdentity(U);
@@ -132,7 +128,7 @@ matrixStatus_t LU_Crout(matrix_t *A, matrix_t *L, matrix_t *U)
             }
             ELEMP(L, ii, jj) = ELEMP(A, ii, jj) - sum;
         }
-        
+
         for (ii = jj; ii < A->rows; ii++) {
             sum = 0;
             for (kk = 0; kk < jj; kk++) {
@@ -147,11 +143,10 @@ matrixStatus_t LU_Crout(matrix_t *A, matrix_t *L, matrix_t *U)
     return MATRIX_SUCCESS;
 }
 
-//-------------------------LU factorization using Cormen's Method--------------------------------//
-// factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L
+/* -------------------------LU factorization using Cormen's Method-------------------------------- */
+/* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
-matrixStatus_t LU_Cormen(matrix_t *A, matrix_t *L, matrix_t *U)
-{
+matrixStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
     int16_t i, j, k;
     float tmp;
     matrix_t A_cp;
@@ -159,10 +154,10 @@ matrixStatus_t LU_Cormen(matrix_t *A, matrix_t *L, matrix_t *U)
     matrixCopy(A, &A_cp);
     matrixZeros(U);
     matrixIdentity(L);
-    
+
     for (k = 0; k < A_cp.rows; k++) {
         ELEMP(U, k, k) = ELEM(A_cp, k, k);
-        if (ELEM(A_cp, k,k) == 0) {
+        if (ELEM(A_cp, k, k) == 0) {
             matrixDelete(&A_cp);
             return MATRIX_ERROR;
         }
@@ -181,30 +176,29 @@ matrixStatus_t LU_Cormen(matrix_t *A, matrix_t *L, matrix_t *U)
     return MATRIX_SUCCESS;
 }
 
-//-----------------------LUP factorization using Cormen's Method------------------------------//
-// factorizes the A matrix as the product of a upper triangular matrix U and a unit lower triangular matrix L
-// returns the factor that has to be multiplied to the determinant of U in order to obtain the correct value
+/* -----------------------LUP factorization using Cormen's Method------------------------------ */
+/* factorizes the A matrix as the product of a upper triangular matrix U and a unit lower triangular matrix L */
+/* returns the factor that has to be multiplied to the determinant of U in order to obtain the correct value */
 
-int8_t LUP_Cormen(matrix_t *A, matrix_t *L, matrix_t *U, matrix_t *P)
-{
+int8_t LUP_Cormen(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P) {
     int16_t i, j, k;
     float tmp, tmp2;
     int16_t pivrow;
-    int8_t d_mult = 1; // determinant multiplying factor
+    int8_t d_mult = 1; /* determinant multiplying factor */
     matrix_t A_cp;
     matrixInit(&A_cp, A->rows, A->cols);
     matrixCopy(A, &A_cp);
     matrixZeros(U);
     matrixIdentity(L);
-    // initialization
+    /* initialization */
     for (i = 0; i < A_cp.rows; i++) {
         ELEMP(P, i, 0) = i;
     }
-    
-    // outer loop over diagonal pivots
+
+    /* outer loop over diagonal pivots */
     for (k = 0; k < A_cp.rows - 1; k++) {
-        
-        // inner loop to find the largest pivot
+
+        /* inner loop to find the largest pivot */
         pivrow = k;
         tmp = fabsf(ELEM(A_cp, k, k));
         for (i = k + 1; i < A_cp.rows; i++) {
@@ -214,19 +208,19 @@ int8_t LUP_Cormen(matrix_t *A, matrix_t *L, matrix_t *U, matrix_t *P)
                 pivrow = i;
             }
         }
-        // check for singularity
+        /* check for singularity */
         if (ELEM(A_cp, pivrow, k) == 0) {
             matrixDelete(&A_cp);
             return 0;
         }
-        
-        // swap rows
+
+        /* swap rows */
         if (pivrow != k) {
             tmp = ELEMP(P, k, 0);
             ELEMP(P, k, 0) = ELEMP(P, pivrow, 0);
             ELEMP(P, pivrow, 0) = tmp;
             d_mult *= -1;
-            
+
             for (j = 0; j < A_cp.rows; j++) {
                 tmp = ELEM(A_cp, k, j);
                 ELEM(A_cp, k, j) = ELEM(A_cp, pivrow, j);
@@ -234,10 +228,10 @@ int8_t LUP_Cormen(matrix_t *A, matrix_t *L, matrix_t *U, matrix_t *P)
             }
         }
         tmp = 1.0 / ELEM(A_cp, k, k);
-        // Gaussian elimination
-        for (i = k + 1; i < A_cp.rows; i++) { // iterate down rows
+        /* Gaussian elimination */
+        for (i = k + 1; i < A_cp.rows; i++) { /* iterate down rows */
             ELEM(A_cp, i, k) *= tmp;
-            for (j = k + 1; j < A_cp.rows; j++) { // iterate across rows
+            for (j = k + 1; j < A_cp.rows; j++) { /* iterate across rows */
                 ELEM(A_cp, i, j) -= ELEM(A_cp, i, k) * ELEM(A_cp, k, j);
             }
         }
@@ -253,36 +247,34 @@ int8_t LUP_Cormen(matrix_t *A, matrix_t *L, matrix_t *U, matrix_t *P)
     return d_mult;
 }
 
-//-----------------------Linear system solver using LU factorization---------------------------//
-// solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X
+/* -----------------------Linear system solver using LU factorization--------------------------- */
+/* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
-void LinSolveLU(matrix_t *A, matrix_t *B, matrix_t *result)
-{
+void LinSolveLU(matrix_t* A, matrix_t* B, matrix_t* result) {
     matrix_t L, U;
     matrixInit(&L, A->rows, A->cols);
     matrixInit(&U, A->cols, A->cols);
-    //matrix_t *tmp1 = matrixInit(A->rows, B->cols);
+    /* matrix_t *tmp1 = matrixInit(A->rows, B->cols); */
     LU_Cormen(A, &L, &U);
-    //fwsub(L, B, tmp1);
-    //bksub(U, tmp1, result);
+    /* fwsub(L, B, tmp1); */
+    /* bksub(U, tmp1, result); */
     fwsub(&L, B, result);
-    bksub(&U, result, result); //hope it can work in-place
+    bksub(&U, result, result); /* hope it can work in-place */
     matrixDelete(&L);
     matrixDelete(&U);
     return;
 }
 
-//----------------------Linear system solver using LUP factorization--------------------------//
-// solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X
+/* ----------------------Linear system solver using LUP factorization-------------------------- */
+/* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
-void LinSolveLUP(matrix_t *A, matrix_t *B, matrix_t *result)
-{
+void LinSolveLUP(matrix_t* A, matrix_t* B, matrix_t* result) {
     matrix_t L, U, P, tmp;
     matrixInit(&L, A->rows, A->cols);
     matrixInit(&U, A->cols, A->cols);
     matrixInit(&P, A->rows, 1);
     matrixInit(&tmp, A->rows, B->cols);
-    
+
     LUP_Cormen(A, &L, &U, &P);
     fwsubPerm(&L, B, &P, &tmp);
     bksub(&U, &tmp, result);
@@ -293,70 +285,68 @@ void LinSolveLUP(matrix_t *A, matrix_t *B, matrix_t *result)
     return;
 }
 
-//------------Linear system solver using Gauss elimination with partial pivoting---------------//
-// solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X
+/* ------------Linear system solver using Gauss elimination with partial pivoting--------------- */
+/* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
-void LinSolveGauss(matrix_t *A, matrix_t *B, matrix_t *result)
-{
-    uint8_t pivrow = 0;     // keeps track of current pivot row
-    uint8_t k, i, j; // k: overall index along diagonals; i: row index; j: col index
-    float tmp;      // used for finding max value and making row swaps
-    float tmp2; // used to store abs when finding max value and to store coefficient value when eliminating values
+void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
+    uint8_t pivrow = 0; /* keeps track of current pivot row */
+    uint8_t k, i, j;    /* k: overall index along diagonals; i: row index; j: col index */
+    float tmp;          /* used for finding max value and making row swaps */
+    float tmp2; /* used to store abs when finding max value and to store coefficient value when eliminating values */
     matrix_t A_cp, B_cp;
     matrixInit(&A_cp, A->rows, A->cols);
     matrixInit(&B_cp, B->rows, B->cols);
     matrixCopy(A, &A_cp);
     matrixCopy(B, &B_cp);
-    
+
     for (k = 0; k < (A_cp.cols - 1); k++) {
-        
-        // find pivot row, the row with biggest entry in current column
+
+        /* find pivot row, the row with biggest entry in current column */
         tmp = fabsf(ELEM(A_cp, k, k));
         pivrow = k;
         for (i = k + 1; i < A_cp.cols; i++) {
-            tmp2 = fabsf(ELEM(A_cp, i, k)); // 'Avoid using other functions inside abs()?'
+            tmp2 = fabsf(ELEM(A_cp, i, k)); /* 'Avoid using other functions inside abs()?' */
             if (tmp2 > tmp) {
                 tmp = tmp2;
                 pivrow = i;
             }
         }
-        
-        // check for singular Matrix
+
+        /* check for singular Matrix */
         if (ELEM(A_cp, pivrow, k) == 0.0) {
             matrixZeros(result);
             return;
         }
-        
-        // Execute pivot (row swap) if needed
+
+        /* Execute pivot (row swap) if needed */
         if (pivrow != k) {
-            // swap row k of matrix A with pivrow
+            /* swap row k of matrix A with pivrow */
             for (j = k; j < A_cp.cols; j++) {
                 tmp = ELEM(A_cp, k, j);
                 ELEM(A_cp, k, j) = ELEM(A_cp, pivrow, j);
                 ELEM(A_cp, pivrow, j) = tmp;
             }
-            // swap row k of matrix B with pivrow
+            /* swap row k of matrix B with pivrow */
             for (j = 0; j < B_cp.cols; j++) {
                 tmp = ELEM(B_cp, k, j);
                 ELEM(B_cp, k, j) = ELEM(B_cp, pivrow, j);
                 ELEM(B_cp, pivrow, j) = tmp;
             }
         }
-        
-        // Row reduction
-        tmp = 1.0 / ELEM(A_cp, k, k);    // invert pivot element
-        for (i = k + 1; i < A_cp.cols; i++) { // along rows
+
+        /* Row reduction */
+        tmp = 1.0 / ELEM(A_cp, k, k);         /* invert pivot element */
+        for (i = k + 1; i < A_cp.cols; i++) { /* along rows */
             tmp2 = ELEM(A_cp, i, k) * tmp;
-            // Perform row reduction of A
-            for (j = k + 1; j < A_cp.cols; j++) { //along columns of A
+            /* Perform row reduction of A */
+            for (j = k + 1; j < A_cp.cols; j++) { /* along columns of A */
                 ELEM(A_cp, i, j) -= tmp2 * ELEM(A_cp, k, j);
             }
-            // Perform row reduction of B
-            for (j = 0; j < B_cp.cols; j++) { //along columns of B
+            /* Perform row reduction of B */
+            for (j = 0; j < B_cp.cols; j++) { /* along columns of B */
                 ELEM(B_cp, i, j) -= tmp2 * ELEM(B_cp, k, j);
             }
         }
-        
     }
     bksub(&A_cp, &B_cp, result);
     matrixDelete(&A_cp);
@@ -364,10 +354,10 @@ void LinSolveGauss(matrix_t *A, matrix_t *B, matrix_t *result)
     return;
 }
 
-//------------Gauss-Newton sensors calibration with 9 parameters---------------//
-// approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
-// Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis
-// X0 is the starting guess vector (usually [0 0 0 1 0 0 1 0 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine)
+/* ------------Gauss-Newton sensors calibration with 9 parameters--------------- */
+/* approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric) */
+/* Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis */
+/* X0 is the starting guess vector (usually [0 0 0 1 0 0 1 0 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine) */
 /*b1=out(0,0);
  b2=out(1,0);
  b3=out(2,0);
@@ -378,8 +368,8 @@ void LinSolveGauss(matrix_t *A, matrix_t *B, matrix_t *result)
  s23=out(7,0);
  s33=out(8,0);*/
 
-matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uint16_t nmax, float tol, matrix_t *result)
-{
+matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                      matrix_t* result) {
     matrixCopy(X0, result);
     float d1, d2, d3, rx1, rx2, rx3, t1, t2, t3;
     float k2 = k * k;
@@ -390,7 +380,7 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uin
     matrixInit(&res, Data->rows, 1);
     matrixInit(&delta, 9, 1);
     matrixInit(&tmp1, 9, Data->rows);
-    
+
     if ((Data->rows < 9) || (Data->cols != 3)) {
         matrixDelete(&Jr);
         matrixDelete(&res);
@@ -398,7 +388,7 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uin
         matrixDelete(&tmp1);
         return MATRIX_ERROR;
     }
-    
+
     for (n_iter = 0; n_iter < nmax; n_iter++) {
         for (jj = 0; jj < Data->rows; jj++) {
             d1 = ELEMP(Data, jj, 0) - ELEMP(result, 0, 0);
@@ -416,9 +406,9 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uin
             ELEM(Jr, jj, 6) = -d2 * rx2;
             ELEM(Jr, jj, 7) = -d3 * rx2 - d2 * rx3;
             ELEM(Jr, jj, 8) = -d3 * rx3;
-            t1 = ELEMP(result, 3, 0) * d1 + ELEMP(result, 4,0) * d2 + ELEMP(result, 5, 0) * d3;
-            t2 = ELEMP(result, 4, 0) * d1 + ELEMP(result, 6,0) * d2 + ELEMP(result, 7, 0) * d3;
-            t3 = ELEMP(result, 5, 0) * d1 + ELEMP(result, 7,0) * d2 + ELEMP(result, 8, 0) * d3;
+            t1 = ELEMP(result, 3, 0) * d1 + ELEMP(result, 4, 0) * d2 + ELEMP(result, 5, 0) * d3;
+            t2 = ELEMP(result, 4, 0) * d1 + ELEMP(result, 6, 0) * d2 + ELEMP(result, 7, 0) * d3;
+            t3 = ELEMP(result, 5, 0) * d1 + ELEMP(result, 7, 0) * d2 + ELEMP(result, 8, 0) * d3;
             ELEM(res, jj, 0) = t1 * t1 + t2 * t2 + t3 * t3 - k2;
         }
         matrixPseudo_inv(&Jr, &tmp1);
@@ -439,10 +429,10 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uin
     return MATRIX_SUCCESS;
 }
 
-//------------Gauss-Newton sensors calibration with 6 parameters---------------//
-// approximates Data to a sphere of radius k by calculating 3 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S diagonal)
-// Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis
-// X0 is the starting guess vector (usually [0 0 0 1 1 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine)
+/* ------------Gauss-Newton sensors calibration with 6 parameters--------------- */
+/* approximates Data to a sphere of radius k by calculating 3 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S diagonal) */
+/* Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis */
+/* X0 is the starting guess vector (usually [0 0 0 1 1 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine) */
 /*b1=out(0,0);
  b2=out(1,0);
  b3=out(2,0);
@@ -450,20 +440,20 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t *Data, float k, matrix_t *X0, uin
  s22=out(4,0);
  s33=out(5,0);*/
 
-matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t *Data, float k, matrix_t *X0, uint16_t nmax, float tol, matrix_t *result)
-{
+matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                      matrix_t* result) {
     matrixCopy(X0, result);
     float d1, d2, d3, t1, t2, t3;
     float k2 = k * k;
     uint16_t n_iter;
     uint8_t jj;
-    
+
     matrix_t Jr, res, delta, tmp1;
     matrixInit(&Jr, Data->rows, 6);
     matrixInit(&res, Data->rows, 1);
     matrixInit(&delta, 6, 1);
     matrixInit(&tmp1, 6, Data->rows);
-    
+
     if ((Data->rows < 6) || (Data->cols != 3)) {
         matrixDelete(&Jr);
         matrixDelete(&res);
@@ -471,7 +461,7 @@ matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t *Data, float k, matrix_t *X0, uin
         matrixDelete(&tmp1);
         return MATRIX_ERROR;
     }
-    
+
     for (n_iter = 0; n_iter < nmax; n_iter++) {
         for (jj = 0; jj < Data->rows; jj++) {
             d1 = ELEMP(Data, jj, 0) - ELEMP(result, 0, 0);
@@ -506,11 +496,10 @@ matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t *Data, float k, matrix_t *X0, uin
     return MATRIX_SUCCESS;
 }
 
-//------------------Quadratic form (sort of)----------------------//
-// returns matrix C=A*B*(~A)
+/* ------------------Quadratic form (sort of)---------------------- */
+/* returns matrix C=A*B*(~A) */
 
-void QuadProd(matrix_t *A, matrix_t *B, matrix_t *result)
-{
+void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result) {
     int16_t i, j, n, ii;
     float tmp;
     matrixZeros(result);

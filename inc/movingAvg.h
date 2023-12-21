@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    movingAvg.h
- * @author  Andrea Vivani
- * @brief   Implementation of moving average
+ * \file            movingAvg.h
+ * \author          Andrea Vivani
+ * \brief           Implementation of moving average
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -36,8 +36,7 @@
 #define __MOVINGAVG_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
 
@@ -45,75 +44,70 @@ extern "C"
 
 /* Macros --------------------------------------------------------------------*/
 
-#define MOVAVG_TYPE float
+#define MOVAVG_TYPE     float
 #define MOVAVG_IND_TYPE uint16_t
 
 /* Typedefs ------------------------------------------------------------------*/
 
-/*!
+/**
  * Moving average struct
  */
-typedef struct
-{
-    MOVAVG_TYPE *data;
+typedef struct {
+    MOVAVG_TYPE* data;
     MOVAVG_TYPE sum, inv_size;
     MOVAVG_IND_TYPE size, _write;
 } movingAvg_t;
 
-/*!
+/**
  * Moving Average return status
  */
-typedef enum
-{
-    MOVINGAVG_SUCCESS = 0,
-    MOVINGAVG_ERROR = 1
-} movingAvgStatus_t;
+typedef enum { MOVINGAVG_SUCCESS = 0, MOVINGAVG_ERROR = 1 } movingAvgStatus_t;
 
 /* Function prototypes --------------------------------------------------------*/
 
-/*!
- * @brief Init moving average structure
+/**
+ * \brief           Init moving average structure
  *
- * @param[in] movingAvg    pointer to moving average object
- * @param[in] size         required queue size
+ * \param[in]       movingAvg: pointer to moving average object
+ * \param[in]       size: required queue size
  */
-movingAvgStatus_t movingAvgInit (movingAvg_t *movingAvg, MOVAVG_IND_TYPE size);
+movingAvgStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size);
 
-/*!
- * @brief Calculate moving average 
+/**
+ * \brief           Calculate moving average 
  *
- * @param[in] movingAvg    pointer to moving average object
- * @param[in] value        input value
+ * \param[in]       movingAvg: pointer to moving average object
+ * \param[in]       value: input value
  * 
- * @return updated moving average
+ * \return          updated moving average
  */
-MOVAVG_TYPE movingAvgCalc(movingAvg_t *movingAvg, MOVAVG_TYPE value);
+MOVAVG_TYPE movingAvgCalc(movingAvg_t* movingAvg, MOVAVG_TYPE value);
 
-/*!
- * @brief Get latest moving average 
+/**
+ * \brief           Get latest moving average 
  *
- * @param[in] movingAvg    pointer to moving average object
+ * \param[in]       movingAvg: pointer to moving average object
  * 
- * @return latest moving average
+ * \return          latest moving average
  */
-static inline MOVAVG_TYPE movingAvgGetLatest(movingAvg_t *movingAvg) {return (movingAvg->sum * movingAvg->inv_size);}
+static inline MOVAVG_TYPE movingAvgGetLatest(movingAvg_t* movingAvg) { return (movingAvg->sum * movingAvg->inv_size); }
 
-/*!
- * @brief Flush queue setting all values to 0
+/**
+ * \brief           Flush queue setting all values to 0
  *
- * @param[in] movingAvg    pointer to moving average object
+ * \param[in]       movingAvg: pointer to moving average object
  */
-movingAvgStatus_t movingAvgFlush(movingAvg_t *movingAvg);
+movingAvgStatus_t movingAvgFlush(movingAvg_t* movingAvg);
 
-/*!
- * @brief Delete moving average
+/**
+ * \brief           Delete moving average
  *
- * @param[in] movingAvg    pointer to moving average object
+ * \param[in]       movingAvg: pointer to moving average object
  */
-movingAvgStatus_t movingAvgDelete(movingAvg_t *movingAvg);
+movingAvgStatus_t movingAvgDelete(movingAvg_t* movingAvg);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __QUEUE_H__
+#endif /* __QUEUE_H__ */

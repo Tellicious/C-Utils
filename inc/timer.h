@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    timer.h
- * @author  Andrea Vivani
- * @brief   Implementation of timer functions
+ * \file            timer.h
+ * \author          Andrea Vivani
+ * \brief           Implementation of timer functions
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -36,8 +36,7 @@
 #define __TIMER_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -55,58 +54,64 @@ typedef volatile struct {
 
 /* Function prototypes --------------------------------------------------------*/
 
-/*!
- * @brief Setup timer object
+/**
+ * \brief           Setup timer object
  *
- * @param[in] t             pointer to timer object
- * @param[in] interval  	 required timer interval
+ * \param[in]       t: pointer to timer object
+ * \param[in]       interval: required timer interval
  */
-static inline void timerInit(userTimer_t *t, uint32_t interval) {t->interval = interval; t->flag = 0; t->event_cnt = 0;};
+static inline void timerInit(userTimer_t* t, uint32_t interval) {
+    t->interval = interval;
+    t->flag = 0;
+    t->event_cnt = 0;
+};
 
-/*!
- * @brief Start timer object
+/**
+ * \brief           Start timer object
  *
- * @param[in] t             pointer to timer object
- * @param[in] currentTick   value of current tick
+ * \param[in]       t: pointer to timer object
+ * \param[in]       currentTick: value of current tick
  */
-static inline void timerStart(userTimer_t *t, uint32_t currentTick) {t->target_tick = currentTick + t->interval; t->flag = 1;};
+static inline void timerStart(userTimer_t* t, uint32_t currentTick) {
+    t->target_tick = currentTick + t->interval;
+    t->flag = 1;
+};
 
-/*!
- * @brief Stop timer object
+/**
+ * \brief           Stop timer object
  *
- * @param[in] t 			 pointer to timer object
+ * \param[in]       t: pointer to timer object
  */
-static inline void timerStop(userTimer_t *t) {t->flag = 0;};
+static inline void timerStop(userTimer_t* t) { t->flag = 0; };
 
-/*!
- * @brief Reset timer object
+/**
+ * \brief           Reset timer object
  *
- * @param[in] t             pointer to timer object
+ * \param[in]       t: pointer to timer object
  */
-static inline void timerClear(userTimer_t *t) {t->event_cnt = 0;};
+static inline void timerClear(userTimer_t* t) { t->event_cnt = 0; };
 
-/*!
- * @brief Process timer object
+/**
+ * \brief           Process timer object
  *
- * @param[in] t             pointer to timer object
- * @param[in] currentTick   value of current tick
+ * \param[in]       t: pointer to timer object
+ * \param[in]       currentTick: value of current tick
  *
- * @attention to be called on a regular basis to update timers
+ * \attention       to be called on a regular basis to update timers
  */
-void timerProcess(userTimer_t *t, uint32_t currentTick);
+void timerProcess(userTimer_t* t, uint32_t currentTick);
 
-/*!
- * @brief Check if any timer event exists
+/**
+ * \brief           Check if any timer event exists
  *
- * @param[in] t             pointer to timer object
+ * \param[in]       t: pointer to timer object
  *
- * @return number of events for the specified timer
- *
+ * \return          number of events for the specified timer
  */
-static inline uint16_t timerEventExists(userTimer_t *t) {return t->event_cnt;};
+static inline uint16_t timerEventExists(userTimer_t* t) { return t->event_cnt; };
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __TIMER_H__
+#endif /* __TIMER_H__ */

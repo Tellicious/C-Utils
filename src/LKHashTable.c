@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    LKHashTable.c
- * @author  Andrea Vivani
- * @brief   Implementation of a simple dynamic linked hash-table
+ * \file            LKHashTable.c
+ * \author          Andrea Vivani
+ * \brief   Implementation of a simple dynamic linked hash-table
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -44,133 +44,113 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-lkHashTableStatus_t lkHashTableInit(lkHashTable_t *lkht, size_t itemSize, uint32_t size)
-{
+lkHashTableStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size) {
     uint32_t ii;
     lkht->items = 0;
     lkht->size = size;
     lkht->itemSize = itemSize;
 
     lkht->entries = calloc(lkht->size, sizeof(list_t));
-    if (lkht->entries == NULL)
-    {
+    if (lkht->entries == NULL) {
         return LKHT_ERROR;
     }
 
-    for (ii = 0; ii < lkht->size; ii++)
-    {
+    for (ii = 0; ii < lkht->size; ii++) {
         listInit(&(lkht->entries[ii]), sizeof(lkHashTableEntry_t), UINT16_MAX);
     }
 
     return LKHT_SUCCESS;
 }
 
-lkHashTableStatus_t lkHashTablePut(lkHashTable_t *lkht, char *key, void *value)
-{
-    if ((value == NULL) || (key == NULL)) 
-    {
+lkHashTableStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
+    if ((value == NULL) || (key == NULL)) {
         return LKHT_ERROR;
     }
-    
-    if (lkht->items == lkht->size)
-    {
+
+    if (lkht->items == lkht->size) {
         return LKHT_FULL;
     }
 
-    // limit hash to current memory size
+    /* limit hash to current memory size */
     uint32_t ii = LPHT_HASHFUN(key) & (lkht->size - 1);
 
     lkHashTableEntry_t entry;
 
-    // check if entry exists and update it
+    /* check if entry exists and update it */
     LIST_STYPE idx;
 
-    for (idx = 0; idx < lkht->entries[ii].items; idx++)
-    {
-        if (listPeekAtPos(&(lkht->entries[ii]), &entry, idx) == LIST_SUCCESS)
-        {
-            if (!strcmp(key, entry.key))
-            {
+    for (idx = 0; idx < lkht->entries[ii].items; idx++) {
+        if (listPeekAtPos(&(lkht->entries[ii]), &entry, idx) == LIST_SUCCESS) {
+            if (!strcmp(key, entry.key)) {
                 memcpy(entry.value, value, lkht->itemSize);
                 return LKHT_SUCCESS;
             }
         }
     }
-    
-    // Set entry and update length
+
+    /* set entry and update length */
     entry.key = strdup(key);
     entry.value = calloc(1, lkht->itemSize);
     memcpy(entry.value, value, lkht->itemSize);
 
-    if (listPush(&(lkht->entries[ii]), &entry) == LIST_SUCCESS)
-    {
+    if (listPush(&(lkht->entries[ii]), &entry) == LIST_SUCCESS) {
         lkht->items++;
         return LKHT_SUCCESS;
     }
     return LKHT_ERROR;
 }
 
-lkHashTableStatus_t lkHashTableGet(lkHashTable_t *lkht, char *key, void *value, lkHashTableRemoval_t remove)
-{
-    
-    if (!lkht->items)
-    {
+lkHashTableStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHashTableRemoval_t remove) {
+
+    if (!lkht->items) {
         return LKHT_EMPTY;
     }
-    
+
     uint32_t ii = LPHT_HASHFUN(key) & (lkht->size - 1);
 
-    if(!lkht->entries[ii].items)
-    {
+    if (!lkht->entries[ii].items) {
         return LKHT_BUCKET_EMPTY;
     }
 
-    // check if entry exists and return it
+    /* check if entry exists and return it */
     lkHashTableEntry_t entry;
     listIterator_t iterator;
 
     listIt(&iterator, &(lkht->entries[ii]));
 
-    while(listItNext(&iterator) == LIST_SUCCESS)
-    {
+    while (listItNext(&iterator) == LIST_SUCCESS) {
         memcpy(&entry, iterator.ptr->data, sizeof(lkHashTableEntry_t));
 
-        if (!strcmp(key, entry.key))
-            {
-                memcpy(value, entry.value, lkht->itemSize);
-                if (remove == LKHT_REMOVE_ITEM)
-                {
-                    listRemove(&(lkht->entries[ii]), &entry, iterator.idx);
-                    lkht->items--;
-                    free(entry.key);
-                    free(entry.value);
-                    return LKHT_SUCCESS;
-                }
+        if (!strcmp(key, entry.key)) {
+            memcpy(value, entry.value, lkht->itemSize);
+            if (remove == LKHT_REMOVE_ITEM) {
+                listRemove(&(lkht->entries[ii]), &entry, iterator.idx);
+                lkht->items--;
+                free(entry.key);
+                free(entry.value);
                 return LKHT_SUCCESS;
             }
+            return LKHT_SUCCESS;
+        }
     }
-    
+
     return LKHT_ERROR;
 }
 
-lkHashTableStatus_t lkHashTableFlush(lkHashTable_t *lkht)
-{
+lkHashTableStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
     uint32_t ii;
 
-    if (!lkht->items)
-    {
+    if (!lkht->items) {
         return LKHT_SUCCESS;
     }
 
     lkHashTableEntry_t entry;
     LIST_STYPE idx;
 
-    for (ii = 0; ii < lkht->size; ii++)
-    {
-         idx = lkht->entries[ii].items;
+    for (ii = 0; ii < lkht->size; ii++) {
+        idx = lkht->entries[ii].items;
 
-        while (idx--)
-        {
+        while (idx--) {
             listPop(&(lkht->entries[ii]), &entry);
             free(entry.key);
             free(entry.value);

@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    matrix.c
- * @author  Andrea Vivani
- * @brief   Implementation of matrix manipulation functions
+ * \file            matrix.c
+ * \author          Andrea Vivani
+ * \brief   Implementation of matrix manipulation functions
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2016 Andrea Vivani
  * 
@@ -38,38 +38,34 @@
 #include "matrix.h"
 #include "numMethods.h"
 
-//==========================================Assignment=============================================//
+/* ==========================================Assignment============================================= */
 
-//-----------------------Constructor-----------------------//
-matrixStatus_t matrixInit(matrix_t *matrix, uint8_t rows, uint8_t cols)
-{
+/* -----------------------Constructor----------------------- */
+matrixStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols) {
     matrix->rows = rows;
     matrix->cols = cols;
     matrix->data = calloc(rows * cols, sizeof(float));
 
-    if (matrix->data == NULL)
-    {
+    if (matrix->data == NULL) {
         return MATRIX_ERROR;
     }
-    
-    return MATRIX_SUCCESS;
 
+    return MATRIX_SUCCESS;
 }
 
-//---------------------Identity Matrix----------------------//
-void matrixIdentity(matrix_t *matrix)
-{
+/* ---------------------Identity Matrix---------------------- */
+void matrixIdentity(matrix_t* matrix) {
     uint16_t ii;
     matrixZeros(matrix);
-    for (ii = 0; ii < ((matrix->cols < matrix->rows)? matrix->cols : matrix->rows); ii++)
+    for (ii = 0; ii < ((matrix->cols < matrix->rows) ? matrix->cols : matrix->rows); ii++) {
         ELEMP(matrix, ii, ii) = 1.0f;
+    }
     return;
 }
 
-//==========================================Operations=============================================//
-//--------------------matrix_t addition----------------------//
-void matrixAdd(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
-{
+/* ==========================================Operations============================================= */
+/* --------------------matrix_t addition---------------------- */
+void matrixAdd(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] + rhs->data[ii];
@@ -77,9 +73,8 @@ void matrixAdd(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
     return;
 }
 
-//--------------------Scalar addition----------------------//
-void matrixAddScalar(matrix_t *lhs, float sc, matrix_t *result)
-{
+/* --------------------Scalar addition---------------------- */
+void matrixAddScalar(matrix_t* lhs, float sc, matrix_t* result) {
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] + sc;
@@ -87,9 +82,8 @@ void matrixAddScalar(matrix_t *lhs, float sc, matrix_t *result)
     return;
 }
 
-//------------------matrix_t subtraction--------------------//
-void matrixSub(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
-{
+/* ------------------matrix_t subtraction-------------------- */
+void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] - rhs->data[ii];
@@ -97,62 +91,58 @@ void matrixSub(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
     return;
 }
 
-//---------------matrix_t multiplication------------------//
-matrixStatus_t matrixMult(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
-{
-    //	uint8_t i, j, k;
+/* ---------------matrix_t multiplication------------------ */
+matrixStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+    /* 	uint8_t i, j, k; */
     if (lhs->cols != rhs->rows) {
         return MATRIX_ERROR;
     }
-    //	matrixZeros(result);
-    //	for (i = 0; i < lhs->rows; i++)
-    //		for (j = 0; j < rhs->cols; j++)
-    //			for (k = 0; k < lhs->cols; k++)
-    //				ELEMP(result, i, j) += ELEMP(lhs, i, k) * ELEMP(rhs, k, j);
-    float *pIn1 = lhs->data;                /* input data matrix pointer A */
-    float *pIn2 = rhs->data;                /* input data matrix pointer B */
-    float *pInA = lhs->data;                /* input data matrix pointer A  */
-    float *pOut = result->data;                 /* output data matrix pointer */
-    float *px;                                 /* Temporary output data matrix pointer */
-    float sum;                                 /* Accumulator */
-    
+    /* 	matrixZeros(result); */
+    /* 	for (i = 0; i < lhs->rows; i++) */
+    /* 		for (j = 0; j < rhs->cols; j++) */
+    /* 			for (k = 0; k < lhs->cols; k++) */
+    /* 				ELEMP(result, i, j) += ELEMP(lhs, i, k) * ELEMP(rhs, k, j); */
+    float* pIn1 = lhs->data;    /* input data matrix pointer A */
+    float* pIn2 = rhs->data;    /* input data matrix pointer B */
+    float* pInA = lhs->data;    /* input data matrix pointer A  */
+    float* pOut = result->data; /* output data matrix pointer */
+    float* px;                  /* Temporary output data matrix pointer */
+    float sum;                  /* Accumulator */
+
     /* Run the below code for Cortex-M4 and Cortex-M3 */
-    
+
     float in1, in2, in3, in4;
-    uint16_t col, i = 0u, j, row = lhs->rows, colCnt;      /* loop counters */
-    
+    uint16_t col, i = 0u, j, row = lhs->rows, colCnt; /* loop counters */
+
     {
         /* The following loop performs the dot-product of each row in lhs with each column in rhs */
         /* row loop */
-        do
-        {
+        do {
             /* Output pointer is set to starting address of the row being processed */
             px = pOut + i;
-            
+
             /* For every row wise process, the column loop counter is to be initiated */
             col = rhs->cols;
-            
+
             /* For every row wise process, the pIn2 pointer is set
-             ** to the starting address of the rhs data */
+             * to the starting address of the rhs data */
             pIn2 = rhs->data;
-            
+
             j = 0u;
-            
+
             /* column loop */
-            do
-            {
+            do {
                 /* Set the variable sum, that acts as accumulator, to zero */
                 sum = 0.0f;
-                
+
                 /* Initiate the pointer pIn1 to point to the starting address of the column being processed */
                 pIn1 = pInA;
-                
+
                 /* Apply loop unrolling and compute 4 MACs simultaneously. */
                 colCnt = lhs->cols >> 2u;
-                
+
                 /* matrix multiplication        */
-                while(colCnt > 0u)
-                {
+                while (colCnt > 0u) {
                     /* c(m,n) = a(1,1)*b(1,1) + a(1,2) * b(2,1) + .... + a(m,p)*b(p,n) */
                     in3 = *pIn2;
                     pIn2 += rhs->cols;
@@ -162,7 +152,7 @@ matrixStatus_t matrixMult(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
                     in4 = *pIn2;
                     pIn2 += rhs->cols;
                     sum += in2 * in4;
-                    
+
                     in3 = *pIn2;
                     pIn2 += rhs->cols;
                     in1 = pIn1[2];
@@ -172,82 +162,83 @@ matrixStatus_t matrixMult(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
                     pIn2 += rhs->cols;
                     sum += in2 * in4;
                     pIn1 += 4u;
-                    
+
                     /* Decrement the loop count */
                     colCnt--;
                 }
-                
+
                 /* If the columns of lhs is not a multiple of 4, compute any remaining MACs here.
-                 ** No loop unrolling is used. */
+                 * No loop unrolling is used. */
                 colCnt = lhs->cols % 0x4u;
-                
-                while(colCnt > 0u)
-                {
+
+                while (colCnt > 0u) {
                     /* c(m,n) = a(1,1)*b(1,1) + a(1,2) * b(2,1) + .... + a(m,p)*b(p,n) */
                     sum += *pIn1++ * (*pIn2);
                     pIn2 += rhs->cols;
-                    
+
                     /* Decrement the loop counter */
                     colCnt--;
                 }
-                
+
                 /* Store the result in the destination buffer */
                 *px++ = sum;
-                
+
                 /* Update the pointer pIn2 to point to the  starting address of the next column */
                 j++;
                 pIn2 = rhs->data + j;
-                
+
                 /* Decrement the column loop counter */
                 col--;
-                
-            } while(col > 0u);
+
+            } while (col > 0u);
             /* Update the pointer pInA to point to the  starting address of the next row */
             i = i + rhs->cols;
             pInA = pInA + lhs->cols;
-            
+
             /* Decrement the row loop counter */
             row--;
-            
-        } while(row > 0u);
+
+        } while (row > 0u);
     }
     return MATRIX_SUCCESS;
-    
 }
 
-//------matrix_t multiplication with lhs transposed------//
-matrixStatus_t matrixMult_lhsT(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
-{
+/* ------matrix_t multiplication with lhs transposed------ */
+matrixStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     uint8_t i, j, k;
     if (lhs->rows != rhs->rows) {
         return MATRIX_ERROR;
     }
     matrixZeros(result);
-    for (i = 0; i < lhs->cols; i++)
-        for (j = 0; j < rhs->cols; j++)
-            for (k = 0; k < lhs->rows; k++)
+    for (i = 0; i < lhs->cols; i++) {
+        for (j = 0; j < rhs->cols; j++) {
+            for (k = 0; k < lhs->rows; k++) {
                 ELEMP(result, i, j) += ELEMP(lhs, k, i) * ELEMP(rhs, k, j);
+            }
+        }
+    }
     return MATRIX_SUCCESS;
 }
 
-//------matrix_t multiplication with rhs transposed------//
-matrixStatus_t matrixMult_rhsT(matrix_t *lhs, matrix_t *rhs, matrix_t *result)
-{
+/* ------matrix_t multiplication with rhs transposed------ */
+matrixStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     uint8_t i, j, k;
     if (lhs->cols != rhs->cols) {
         return MATRIX_ERROR;
     }
     matrixZeros(result);
-    for (i = 0; i < lhs->rows; i++)
-        for (j = 0; j < rhs->rows; j++)
-            for (k = 0; k < lhs->cols; k++)
+    for (i = 0; i < lhs->rows; i++) {
+        for (j = 0; j < rhs->rows; j++) {
+            for (k = 0; k < lhs->cols; k++) {
                 ELEMP(result, i, j) += ELEMP(lhs, i, k) * ELEMP(rhs, j, k);
+            }
+        }
+    }
     return MATRIX_SUCCESS;
 }
 
-//---------------Scalar multiplication------------------//
-void matrixMultScalar(matrix_t *lhs, float sc, matrix_t *result)
-{
+/* ---------------Scalar multiplication------------------ */
+void matrixMultScalar(matrix_t* lhs, float sc, matrix_t* result) {
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] * sc;
@@ -255,49 +246,46 @@ void matrixMultScalar(matrix_t *lhs, float sc, matrix_t *result)
     return;
 }
 
-//--------------------Inverse LU------------------------//
-void matrixInversed(matrix_t *lhs, matrix_t *result)
-{
+/* --------------------Inverse LU------------------------ */
+void matrixInversed(matrix_t* lhs, matrix_t* result) {
     matrix_t Eye;
-    matrixInit(&Eye,lhs->rows, lhs->cols);
+    matrixInit(&Eye, lhs->rows, lhs->cols);
     matrixIdentity(&Eye);
     LinSolveLU(lhs, &Eye, result);
     matrixDelete(&Eye);
     return;
 }
 
-//-----------------Robust Inverse LUP-------------------//
-void matrixInversed_rob(matrix_t *lhs, matrix_t *result)
-{
+/* -----------------Robust Inverse LUP------------------- */
+void matrixInversed_rob(matrix_t* lhs, matrix_t* result) {
     matrix_t Eye;
-    matrixInit(&Eye,lhs->rows, lhs->cols);
+    matrixInit(&Eye, lhs->rows, lhs->cols);
     matrixIdentity(&Eye);
     LinSolveLUP(lhs, &Eye, result);
     matrixDelete(&Eye);
     return;
 }
 
-//-----------------Transposed--------------------//
-void matrixTrans(matrix_t *lhs, matrix_t *result)
-{
+/* -----------------Transposed-------------------- */
+void matrixTrans(matrix_t* lhs, matrix_t* result) {
     uint8_t ii, jj;
-    for (ii = 0; ii < lhs->rows; ii++)
-        for (jj = 0; jj < lhs->cols; jj++)
+    for (ii = 0; ii < lhs->rows; ii++) {
+        for (jj = 0; jj < lhs->cols; jj++) {
             ELEMP(result, jj, ii) = ELEMP(lhs, ii, jj);
+        }
+    }
     return;
 }
 
-//-----------------Nomalized--------------------//
-void matrixNormalized(matrix_t *lhs, matrix_t *result)
-{
+/* -----------------Nomalized-------------------- */
+void matrixNormalized(matrix_t* lhs, matrix_t* result) {
     float k = 1.0f / matrixNorm(lhs);
     matrixMultScalar(lhs, k, result);
     return;
 }
 
-//-------Moore-Penrose pseudo inverse---------//
-void matrixPseudo_inv(matrix_t *lhs, matrix_t *result)
-{
+/* -------Moore-Penrose pseudo inverse--------- */
+void matrixPseudo_inv(matrix_t* lhs, matrix_t* result) {
     matrix_t tran, mult1;
     matrixInit(&tran, lhs->cols, lhs->rows);
     matrixInit(&mult1, lhs->cols, lhs->cols);
@@ -309,11 +297,10 @@ void matrixPseudo_inv(matrix_t *lhs, matrix_t *result)
     return;
 }
 
-//=======================================matrix_t Data=========================================//
+/* =======================================matrix_t Data========================================= */
 
-//-----------Returns the determinant----------//
-float matrixDet(matrix_t *matrix)
-{
+/* -----------Returns the determinant---------- */
+float matrixDet(matrix_t* matrix) {
     matrix_t L, U, P;
     matrixInit(&L, matrix->rows, matrix->rows);
     matrixInit(&U, matrix->rows, matrix->rows);
@@ -321,20 +308,20 @@ float matrixDet(matrix_t *matrix)
     int16_t ii;
     int8_t det_f;
     float determinant = 1.0f;
-    
+
     if (matrix->rows != matrix->cols) {
         matrixDelete(&L);
         matrixDelete(&U);
         matrixDelete(&P);
         return 0.0f;
     }
-    
+
     if (LU_Cormen(matrix, &L, &U)) {
         for (ii = 0; ii < matrix->rows; ii++) {
             determinant *= ELEM(U, ii, ii);
         }
     }
-    
+
     else {
         det_f = LUP_Cormen(matrix, &L, &U, &P);
         if (det_f) {
@@ -342,22 +329,20 @@ float matrixDet(matrix_t *matrix)
                 determinant *= ELEM(U, ii, ii);
             }
             determinant *= det_f;
-        }
-        else {
+        } else {
             determinant = 0.0f;
         }
     }
-    
+
     matrixDelete(&L);
     matrixDelete(&U);
     matrixDelete(&P);
-    
+
     return determinant;
 }
 
-//-------------Returns the norm--------------//
-float matrixNorm(matrix_t *matrix)
-{
+/* -------------Returns the norm-------------- */
+float matrixNorm(matrix_t* matrix) {
     float result = 0.0f;
     uint16_t i;
     for (i = 0; i < (matrix->rows * matrix->cols); i++) {
@@ -367,15 +352,13 @@ float matrixNorm(matrix_t *matrix)
     return result;
 }
 
-//-------------Deletes the data--------------//
-matrixStatus_t matrixDelete(matrix_t *matrix)
-{
-    if(matrix->data == NULL)
-    {
+/* -------------Deletes the data-------------- */
+matrixStatus_t matrixDelete(matrix_t* matrix) {
+    if (matrix->data == NULL) {
         return MATRIX_ERROR;
     }
-    
+
     free(matrix->data);
-    
+
     return MATRIX_SUCCESS;
 }

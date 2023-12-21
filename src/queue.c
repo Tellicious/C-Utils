@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    queue.c
- * @author  Andrea Vivani
- * @brief   Implementation of queue structure
+ * \file            queue.c
+ * \author          Andrea Vivani
+ * \brief           Implementation of queue structure
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -39,17 +39,15 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-queueStatus_t queueInit(queue_t *queue, size_t itemSize, QUEUE_STYPE size)
-{
+queueStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size) {
     queue->data = NULL;
     queue->data = calloc(size, itemSize);
-    //queue->data = malloc(size * itemSize);
-    if (queue->data == NULL)
-    {
+    /* queue->data = malloc(size * itemSize); */
+    if (queue->data == NULL) {
         queue->size = 0;
         return QUEUE_ERROR;
     }
-    
+
     queue->size = size * itemSize;
     queue->itemSize = itemSize;
     queue->items = 0;
@@ -58,219 +56,183 @@ queueStatus_t queueInit(queue_t *queue, size_t itemSize, QUEUE_STYPE size)
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePush(queue_t *queue, void *value)
-{
-    if (queue->items == queue->size)
-    {
+queueStatus_t queuePush(queue_t* queue, void* value) {
+    if (queue->items == queue->size) {
         return QUEUE_FULL;
     }
-    
-    if (queue->_rear >= queue->size)
-    {
+
+    if (queue->_rear >= queue->size) {
         queue->_rear = 0;
     }
-    
+
     memcpy(&(queue->data[queue->_rear]), value, queue->itemSize);
     queue->_rear += queue->itemSize;
     queue->items += queue->itemSize;
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePushArr(queue_t *queue, void *data, QUEUE_STYPE num)
-{
+queueStatus_t queuePushArr(queue_t* queue, void* data, QUEUE_STYPE num) {
     QUEUE_STYPE num2End = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
-    
-    if ((queue->size - queue->items) < numBytes)
-    {
+
+    if ((queue->size - queue->items) < numBytes) {
         return QUEUE_NOT_ENOUGH_SPACE;
     }
-    
-    if (queue->_rear >= queue->size)
-    {
+
+    if (queue->_rear >= queue->size) {
         queue->_rear = 0;
     }
-    
+
     num2End = queue->size - queue->_rear;
-    
-    if (num2End < numBytes)
-    {
+
+    if (num2End < numBytes) {
         memcpy(&(queue->data[queue->_rear]), data, num2End);
-        memcpy(queue->data, ((uint8_t*) data + num2End), (numBytes - num2End));
+        memcpy(queue->data, ((uint8_t*)data + num2End), (numBytes - num2End));
         queue->_rear = numBytes - num2End;
-    }
-    else
-    {
+    } else {
         memcpy(&(queue->data[queue->_rear]), data, numBytes);
         queue->_rear += numBytes;
     }
     queue->items += numBytes;
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePushFront(queue_t *queue, void *value)
-{
-    if (queue->items == queue->size)
-    {
+queueStatus_t queuePushFront(queue_t* queue, void* value) {
+    if (queue->items == queue->size) {
         return QUEUE_FULL;
     }
-    
+
     queue->_front = ((queue->_front == 0) ? (queue->size - queue->itemSize) : (queue->_front - queue->itemSize));
     memcpy(&(queue->data[queue->_front]), value, queue->itemSize);
     queue->items += queue->itemSize;
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePushFrontArr(queue_t *queue, void *data, QUEUE_STYPE num)
-{
+queueStatus_t queuePushFrontArr(queue_t* queue, void* data, QUEUE_STYPE num) {
     QUEUE_STYPE num2Beg = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
 
-    if ((queue->size - queue->items) < numBytes)
-    {
+    if ((queue->size - queue->items) < numBytes) {
         return QUEUE_NOT_ENOUGH_SPACE;
     }
-    
+
     queue->_front = ((queue->_front == 0) ? (queue->size - queue->itemSize) : (queue->_front - queue->itemSize));
-    
+
     num2Beg = queue->_front + queue->itemSize;
-    
-    if (num2Beg < numBytes)
-    {
+
+    if (num2Beg < numBytes) {
         QUEUE_STYPE numFromEnd = numBytes - num2Beg;
-        memcpy(queue->data, ((uint8_t*) data + numFromEnd), num2Beg);
+        memcpy(queue->data, ((uint8_t*)data + numFromEnd), num2Beg);
         memcpy(&(queue->data[queue->size - numFromEnd]), data, numFromEnd);
         queue->_front = queue->size - numFromEnd;
-    }
-    else
-    {
+    } else {
         memcpy(&(queue->data[num2Beg - numBytes]), data, numBytes);
         queue->_front -= (numBytes - queue->itemSize);
     }
     queue->items += numBytes;
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePop(queue_t *queue, void *value)
-{
-    if(queue->items == 0)
-    {
+queueStatus_t queuePop(queue_t* queue, void* value) {
+    if (queue->items == 0) {
         return QUEUE_EMPTY;
     }
-    
+
     memcpy(value, &(queue->data[queue->_front]), queue->itemSize);
     queue->items -= queue->itemSize;
-    
-    if (queue->_front >= queue->size - queue->itemSize)
-    {
+
+    if (queue->_front >= queue->size - queue->itemSize) {
         queue->_front = 0;
-    }
-    else
-    {
+    } else {
         queue->_front += queue->itemSize;
     }
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePopArr(queue_t *queue, void *data, QUEUE_STYPE num)
-{
+queueStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num) {
     QUEUE_STYPE num2End = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
-    
-    if(queue->items < numBytes)
-    {
+
+    if (queue->items < numBytes) {
         return QUEUE_NOT_ENOUGH_ITEMS;
     }
-    
+
     num2End = queue->size - queue->_front;
-    
-    if (num2End < numBytes)
-    {
+
+    if (num2End < numBytes) {
         memcpy(data, &(queue->data[queue->_front]), num2End);
-        memcpy(((uint8_t*) data + num2End), queue->data, (numBytes - num2End));
+        memcpy(((uint8_t*)data + num2End), queue->data, (numBytes - num2End));
         queue->_front = numBytes - num2End;
-    }
-    else
-    {
+    } else {
         memcpy(data, &(queue->data[queue->_front]), numBytes);
         queue->_front += numBytes;
-        if (queue->_front >= queue->size)
-        {
+        if (queue->_front >= queue->size) {
             queue->_front = 0;
         }
     }
     queue->items -= numBytes;
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePopBack(queue_t *queue, void *value)
-{
-    if(queue->items == 0)
-    {
+queueStatus_t queuePopBack(queue_t* queue, void* value) {
+    if (queue->items == 0) {
         return QUEUE_EMPTY;
     }
-    
+
     queue->_rear = ((queue->_rear == 0) ? (queue->size - queue->itemSize) : (queue->_rear - queue->itemSize));
     memcpy(value, &(queue->data[queue->_rear]), queue->itemSize);
     queue->items -= queue->itemSize;
-    
+
     return QUEUE_SUCCESS;
-    
 }
 
-queueStatus_t queuePeek(queue_t *queue, void *value)
-{
-    if(queue->items == 0)
-    {
+queueStatus_t queuePeek(queue_t* queue, void* value) {
+    if (queue->items == 0) {
         return QUEUE_EMPTY;
     }
-    
+
     memcpy(value, &(queue->data[queue->_front]), queue->itemSize);
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queuePeekBack(queue_t *queue, void *value)
-{
-    if(queue->items == 0)
-    {
+queueStatus_t queuePeekBack(queue_t* queue, void* value) {
+    if (queue->items == 0) {
         return QUEUE_EMPTY;
     }
-    
-    memcpy(value, &(queue->data[((queue->_rear == 0) ? (queue->size - queue->itemSize) : (queue->_rear - queue->itemSize))]), queue->itemSize);
+
+    memcpy(value,
+           &(queue->data[((queue->_rear == 0) ? (queue->size - queue->itemSize) : (queue->_rear - queue->itemSize))]),
+           queue->itemSize);
 
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueFlush(queue_t *queue)
-{
-    if(queue->data == NULL)
-    {
+queueStatus_t queueFlush(queue_t* queue) {
+    if (queue->data == NULL) {
         return QUEUE_ERROR;
     }
     memset(queue->data, 0x00, queue->size);
     queue->items = 0;
     queue->_front = 0;
     queue->_rear = 0;
-    
+
     return QUEUE_SUCCESS;
 }
 
-queueStatus_t queueDelete(queue_t *queue)
-{
-    
-    if(queue->data == NULL)
-    {
+queueStatus_t queueDelete(queue_t* queue) {
+
+    if (queue->data == NULL) {
         return QUEUE_ERROR;
     }
-    
+
     free(queue->data);
-    
+
     return QUEUE_SUCCESS;
 }

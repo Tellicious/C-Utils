@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    list.c
- * @author  Andrea Vivani
- * @brief   Implementation of linked list with dynamic memory allocation
+ * \file            list.c
+ * \author          Andrea Vivani
+ * \brief   Implementation of linked list with dynamic memory allocation
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  *
@@ -39,8 +39,7 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-void listInit(list_t *list, size_t itemSize, LIST_STYPE size)
-{
+void listInit(list_t* list, size_t itemSize, LIST_STYPE size) {
     list->_front = NULL;
     list->_rear = NULL;
     list->itemSize = itemSize;
@@ -48,25 +47,20 @@ void listInit(list_t *list, size_t itemSize, LIST_STYPE size)
     list->items = 0;
 }
 
-listStatus_t listPush(list_t *list, void *value)
-{
-    if (list->items >= list->size)
-    {
+listStatus_t listPush(list_t* list, void* value) {
+    if (list->items >= list->size) {
         return LIST_FULL;
     }
 
-    listNode_t *ptr;
+    listNode_t* ptr;
     ptr = malloc(sizeof(listNode_t));
     ptr->data = calloc(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
-    if ((list->_front == NULL) && (list->_rear == NULL))
-    {
+    if ((list->_front == NULL) && (list->_rear == NULL)) {
         list->_front = list->_rear = ptr;
-    }
-    else
-    {
+    } else {
         list->_rear->next = ptr;
         list->_rear = ptr;
     }
@@ -74,25 +68,20 @@ listStatus_t listPush(list_t *list, void *value)
     return LIST_SUCCESS;
 }
 
-listStatus_t listPushFront(list_t *list, void *value)
-{
-    if (list->items >= list->size)
-    {
+listStatus_t listPushFront(list_t* list, void* value) {
+    if (list->items >= list->size) {
         return LIST_FULL;
     }
 
-    listNode_t *ptr;
+    listNode_t* ptr;
     ptr = malloc(sizeof(listNode_t));
     ptr->data = calloc(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
-    if ((list->_front == NULL) && (list->_rear == NULL))
-    {
+    if ((list->_front == NULL) && (list->_rear == NULL)) {
         list->_front = list->_rear = ptr;
-    }
-    else
-    {
+    } else {
         ptr->next = list->_front;
         list->_front = ptr;
     }
@@ -101,43 +90,34 @@ listStatus_t listPushFront(list_t *list, void *value)
     return LIST_SUCCESS;
 }
 
-listStatus_t listInsert(list_t *list, void *value, LIST_STYPE position)
-{
+listStatus_t listInsert(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
-    if (list->items >= list->size)
-    {
+    if (list->items >= list->size) {
         return LIST_FULL;
     }
 
-    if (position > list->items) 
-    {
+    if (position > list->items) {
         return LIST_ERROR;
     }
 
-    listNode_t *ptr;
+    listNode_t* ptr;
     ptr = malloc(sizeof(listNode_t));
     ptr->data = calloc(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
-    if ((list->_front == NULL) && (list->_rear == NULL))
-    {
+    if ((list->_front == NULL) && (list->_rear == NULL)) {
         list->_front = list->_rear = ptr;
-    } 
-    else if (position == list->items)
-    {
+    } else if (position == list->items) {
         list->_rear->next = ptr;
         list->_rear = ptr;
-    }
-    else 
-    {   
-        //search for node at position - 1
-        listNode_t *prev = list->_front;
-        for (ii = 1; ii < position; ii++)
-        {
+    } else {
+        /* search for node at position - 1 */
+        listNode_t* prev = list->_front;
+        for (ii = 1; ii < position; ii++) {
             prev = prev->next;
-        } 
+        }
         ptr->next = prev->next;
         prev->next = ptr;
     }
@@ -146,20 +126,17 @@ listStatus_t listInsert(list_t *list, void *value, LIST_STYPE position)
     return LIST_SUCCESS;
 }
 
-listStatus_t listUpdate(list_t *list, void *value, LIST_STYPE position)
-{
+listStatus_t listUpdate(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
-    if ((position + 1) > list->items)
-    {
+    if ((position + 1) > list->items) {
         return LIST_ERROR;
     }
 
-    listNode_t *ptr = list->_front;
+    listNode_t* ptr = list->_front;
 
-    //search for node at position
-    for (ii = 0; ii < position; ii++)
-    {
+    /* search for node at position */
+    for (ii = 0; ii < position; ii++) {
         ptr = ptr->next;
     }
 
@@ -168,42 +145,36 @@ listStatus_t listUpdate(list_t *list, void *value, LIST_STYPE position)
     return LIST_SUCCESS;
 }
 
-listStatus_t listPop(list_t *list, void *value)
-{
-    if (!list->items)
-    {
+listStatus_t listPop(list_t* list, void* value) {
+    if (!list->items) {
         return LIST_EMPTY;
     }
 
-    listNode_t *ptr = list->_front;
+    listNode_t* ptr = list->_front;
     memcpy(value, ptr->data, list->itemSize);
     list->_front = ptr->next;
     free(ptr->data);
     free(ptr);
 
     list->items--;
-    if(!list->items)
-    {
+    if (!list->items) {
         list->_rear = NULL;
     }
     return LIST_SUCCESS;
 }
 
-listStatus_t listPopBack(list_t *list, void *value)
-{
+listStatus_t listPopBack(list_t* list, void* value) {
     LIST_STYPE ii;
 
-    if (!list->items)
-    {
+    if (!list->items) {
         return LIST_EMPTY;
     }
-    
+
     memcpy(value, list->_rear->data, list->itemSize);
 
-    //search for node at end - 1
-    listNode_t *prev = list->_front;
-    for (ii = 2; ii < list->items; ii++)
-    {
+    /* search for node at end - 1 */
+    listNode_t* prev = list->_front;
+    for (ii = 2; ii < list->items; ii++) {
         prev = prev->next;
     }
     prev->next = NULL;
@@ -213,49 +184,39 @@ listStatus_t listPopBack(list_t *list, void *value)
     list->_rear = prev;
 
     list->items--;
-    if(!list->items)
-    {
+    if (!list->items) {
         list->_front = list->_rear = NULL;
     }
     return LIST_SUCCESS;
 }
 
-listStatus_t listRemove(list_t *list, void *value, LIST_STYPE position)
-{
+listStatus_t listRemove(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
-    if (!list->items)
-    {
+    if (!list->items) {
         return LIST_EMPTY;
     }
 
-    if ((position + 1) > list->items)
-    {
+    if ((position + 1) > list->items) {
         return LIST_ERROR;
     }
 
-    listNode_t *prev = NULL;
-    listNode_t *ptr = list->_front;
+    listNode_t* prev = NULL;
+    listNode_t* ptr = list->_front;
 
-    //search for node at position - 1 and node at position
-    for (ii = 0; ii < position; ii++)
-    {
+    /* search for node at position - 1 and node at position */
+    for (ii = 0; ii < position; ii++) {
         prev = ptr;
         ptr = ptr->next;
     }
     memcpy(value, ptr->data, list->itemSize);
-    
-    if (position == 0)
-    {
+
+    if (position == 0) {
         list->_front = ptr->next;
-    } 
-    else if ((position + 1) == list->items)
-    {
+    } else if ((position + 1) == list->items) {
         prev->next = NULL;
         list->_rear = prev;
-    }
-    else
-    {
+    } else {
         prev->next = ptr->next;
     }
 
@@ -263,56 +224,47 @@ listStatus_t listRemove(list_t *list, void *value, LIST_STYPE position)
     free(ptr);
 
     list->items--;
-    if(!list->items)
-    {
+    if (!list->items) {
         list->_front = list->_rear = NULL;
     }
     return LIST_SUCCESS;
 }
 
-listStatus_t listPeek(list_t *list, void *value)
-{
-    if(list->items == 0)
-    {
+listStatus_t listPeek(list_t* list, void* value) {
+    if (list->items == 0) {
         return LIST_EMPTY;
     }
-    
+
     memcpy(value, list->_front->data, list->itemSize);
-    
+
     return LIST_SUCCESS;
 }
 
-listStatus_t listPeekBack(list_t *list, void *value)
-{
-    if(list->items == 0)
-    {
+listStatus_t listPeekBack(list_t* list, void* value) {
+    if (list->items == 0) {
         return LIST_EMPTY;
     }
-    
+
     memcpy(value, list->_rear->data, list->itemSize);
 
     return LIST_SUCCESS;
 }
 
-listStatus_t listPeekAtPos(list_t *list, void *value, LIST_STYPE position)
-{
+listStatus_t listPeekAtPos(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
-    if(list->items == 0)
-    {
+    if (list->items == 0) {
         return LIST_EMPTY;
     }
 
-    if ((position + 1) > list->items)
-    {
+    if ((position + 1) > list->items) {
         return LIST_ERROR;
     }
 
-    listNode_t *ptr = list->_front;
+    listNode_t* ptr = list->_front;
 
-    //search for node at position
-    for (ii = 0; ii < position; ii++)
-    {
+    /* search for node at position */
+    for (ii = 0; ii < position; ii++) {
         ptr = ptr->next;
     }
 
@@ -321,16 +273,13 @@ listStatus_t listPeekAtPos(list_t *list, void *value, LIST_STYPE position)
     return LIST_SUCCESS;
 }
 
-listStatus_t listFlush(list_t *list)
-{
-    if (!list->items)
-    {
+listStatus_t listFlush(list_t* list) {
+    if (!list->items) {
         return LIST_EMPTY;
     }
 
-    listNode_t *ptr = list->_front;
-    while (ptr != NULL)
-    {
+    listNode_t* ptr = list->_front;
+    while (ptr != NULL) {
         list->_front = ptr->next;
         free(ptr->data);
         free(ptr);
@@ -342,24 +291,19 @@ listStatus_t listFlush(list_t *list)
     return LIST_SUCCESS;
 }
 
-void listIt(listIterator_t *it, list_t *list)
-{
+void listIt(listIterator_t* it, list_t* list) {
     it->_list = list;
     it->idx = 0;
     it->_prev = NULL;
     it->ptr = NULL;
 }
 
-listStatus_t listItNext(listIterator_t *it)
-{
-    if (it->ptr == NULL)
-    {
+listStatus_t listItNext(listIterator_t* it) {
+    if (it->ptr == NULL) {
         it->ptr = it->_list->_front;
         it->idx = 0;
         return LIST_SUCCESS;
-    }
-    else if (it->ptr->next != NULL)
-    {
+    } else if (it->ptr->next != NULL) {
         it->_prev = it->ptr;
         it->ptr = it->ptr->next;
         it->idx++;

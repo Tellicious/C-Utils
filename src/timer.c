@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    timer.c
- * @author  Andrea Vivani
- * @brief   Implementation of timer functions
+ * \file            timer.c
+ * \author          Andrea Vivani
+ * \brief           Implementation of timer functions
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  * 
@@ -37,12 +37,11 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-void timerProcess(userTimer_t *t, uint32_t currentTick)
-{
+void timerProcess(userTimer_t* t, uint32_t currentTick) {
     uint32_t k;
     if (t->flag && currentTick >= t->target_tick) {
         t->event_cnt++;
-        k = t->target_tick; // to prevent Warning volatile access in IAR EWARM  
+        k = t->target_tick; /* to prevent Warning volatile access in IAR EWARM   */
         t->target_tick = k + t->interval;
     }
 }

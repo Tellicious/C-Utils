@@ -1,11 +1,11 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * @file    basicMath.c
- * @author  Andrea Vivani
- * @brief   Implementation of useful math operations and constants
+ * \file            basicMath.c
+ * \author          Andrea Vivani
+ * \brief   Implementation of useful math operations and constants
  ******************************************************************************
- * @copyright
+ * \copyright
  *
  * Copyright 2023 Andrea Vivani
  * 
@@ -37,35 +37,37 @@
 
 /* Private  functions ---------------------------------------------------------*/
 
-// Fast square-root
-float fastSqrt(float value)
-{
+/* Fast square-root*/
+float fastSqrt(float value) {
     union {
         int i;
         float x;
     } u;
+
     u.x = value;
     u.i = (1 << 29) + (u.i >> 1) - (1 << 22);
-    
-    // Two Babylonian Steps (simplified from:)
-    // u.x = 0.5f * (u.x + x/u.x);
-    // u.x = 0.5f * (u.x + x/u.x);
+
+    /* Two Babylonian Steps (simplified from:) 
+     * u.x = 0.5f * (u.x + x/u.x);
+     * u.x = 0.5f * (u.x + x/u.x); */
     u.x = u.x + value / u.x;
     u.x = 0.25f * u.x + value / u.x;
-    
+
     return u.x;
 }
 
-// Fast inverse square-root
-// See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
+/* 
+ * Fast inverse square-root
+ * See: http:/* en.wikipedia.org/wiki/Fast_inverse_square_root
+ */
 
-float fastInvSqrt(float value)
-{
+float fastInvSqrt(float value) {
     union {
-        float    f;
+        float f;
         uint32_t i;
-    } conv = { .f = value };
-    conv.i  = 0x5f3759df - (conv.i >> 1);
+    } conv = {.f = value};
+
+    conv.i = 0x5f3759df - (conv.i >> 1);
     conv.f *= 1.5f - (value * 0.5f * conv.f * conv.f);
     return conv.f;
 }
