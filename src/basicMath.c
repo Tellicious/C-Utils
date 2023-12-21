@@ -58,7 +58,7 @@ float fastSqrt(float value) {
 
 /* 
  * Fast inverse square-root
- * See: http:/* en.wikipedia.org/wiki/Fast_inverse_square_root
+ * See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
  */
 
 float fastInvSqrt(float value) {

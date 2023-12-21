@@ -42,7 +42,7 @@
 
 /* 
  * Return 32-bit FNV-1a hash for key (NUL-terminated). See description:
- * https:/* en.wikipedia.org/wiki/Fowler–Noll–Vo_hash_function
+ * https://en.wikipedia.org/wiki/Fowler–Noll–Vo_hash_function
  */
 uint32_t hash_FNV1A(char* key) {
 
