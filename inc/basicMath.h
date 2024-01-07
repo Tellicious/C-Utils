@@ -47,6 +47,9 @@ extern "C" {
 /* Absolute value */
 #define ABS(value)                  (((value) >= 0) ? (value) : (-value))
 
+/* Get sign of value */
+#define SIGN(x)                     (((x) >= 0) ? 1 : -1)
+
 /* Constrain value between low and high */
 #define CONSTRAIN(value, low, high) ((value) < (low) ? (low) : ((value) > (high) ? (high) : (value)))
 
@@ -54,24 +57,25 @@ extern "C" {
 #define MAP(x, fromLow, fromHigh, toLow, toHigh)                                                                       \
     (((x) - (fromLow)) * ((toHigh) - (toLow)) / ((fromHigh) - (fromLow)) + (fromLow))
 
-/* Get sign of value */
-#define SIGN(x) (((x) >= 0) ? 1 : -1)
+/* Apply a deadband to value */
+#define DEADBAND(value, threshold)                                                                                     \
+    ((ABS(value) <= threshold) ? 0 : ((value > 0) ? (value - threshold) : (value + threshold)))
 
 /* Get maximum between 2 values */
 #define MAX(a, b)                                                                                                      \
-    ({                                                                                                                 \
+    do {                                                                                                               \
         __typeof__(a) _a = (a);                                                                                        \
         __typeof__(b) _b = (b);                                                                                        \
         _a > _b ? _a : _b;                                                                                             \
-    })
+    } while (0)
 
 /* Get minimum between 2 values */
 #define MIN(a, b)                                                                                                      \
-    ({                                                                                                                 \
+    do {                                                                                                               \
         __typeof__(a) _a = (a);                                                                                        \
         __typeof__(b) _b = (b);                                                                                        \
         _a < _b ? _a : _b;                                                                                             \
-    })
+    } while (0)
 
 /* Conversion between rad and deg */
 #define RAD2DEG(x)    ((x) * 57.29578f)
