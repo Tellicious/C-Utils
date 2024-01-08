@@ -1,9 +1,9 @@
 /* BEGIN Header */
 /**
  ******************************************************************************
- * \file            movingAvg.c
+ * \file            IIRFilters.c
  * \author          Andrea Vivani
- * \brief   Implementation of moving average
+ * \brief           Implementation of simple discrete-time IIR filters
  ******************************************************************************
  * \copyright
  *
@@ -33,57 +33,39 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include <stdlib.h>
-#include <string.h>
-#include "movingAvg.h"
+#include "IIRFilters.h"
 
 /* Private  functions ---------------------------------------------------------*/
 
-movingAvgStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
-    movingAvg->data = NULL;
-    movingAvg->data = calloc(size, sizeof(MOVAVG_TYPE));
-    /* movingAvg->data = malloc(size * sizeof(MOVAVG_TYPE)); */
-    if (movingAvg->data == NULL) {
-        movingAvg->size = 0;
-        return MOVINGAVG_ERROR;
-    }
+void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, float n3, float d1, float d2, float d3) {
+    /* Store filter coefficients */
+    filter->n0 = n0;
+    filter->n1 = n1;
+    filter->n2 = n2;
+    filter->n3 = n3;
 
-    movingAvg->size = size;
-    movingAvg->sum = 0;
-    movingAvg->inv_size = (MOVAVG_TYPE)1.0 / size;
-    movingAvg->_write = 0;
-    return MOVINGAVG_SUCCESS;
+    filter->d1 = d1;
+    filter->d2 = d2;
+    filter->d3 = d3;
+
+    /* Initialize state variables */
+    filter->i1 = filter->i2 = filter->i3 = filter->o1 = filter->o2 = filter->o3 = 0.0;
 }
 
-MOVAVG_TYPE movingAvgCalc(movingAvg_t* movingAvg, MOVAVG_TYPE value) {
-    movingAvg->sum -= movingAvg->data[movingAvg->_write];
-    movingAvg->sum += value;
-    movingAvg->data[movingAvg->_write] = value;
-    movingAvg->_write++;
-    movingAvg->_write %= movingAvg->size;
-    return (movingAvg->sum * movingAvg->inv_size);
-}
+float IIRFilterProcess(IIRFilterGeneric_t* filter, float input) {
+    /* Apply the IIR filter equation */
+    float output;
 
-movingAvgStatus_t movingAvgFlush(movingAvg_t* movingAvg) {
-    if (movingAvg->data == NULL) {
-        return MOVINGAVG_ERROR;
-    }
+    output = filter->n0 * input + filter->n1 * filter->i1 + filter->n2 * filter->i2 + filter->n3 * filter->i3
+             - filter->d1 * filter->o1 - filter->d2 * filter->o2 - filter->d3 * filter->o3;
 
-    memset(movingAvg->data, 0x00, movingAvg->size * sizeof(MOVAVG_TYPE));
+    /* Update state variables */
+    filter->i3 = filter->i2;
+    filter->i2 = filter->i1;
+    filter->i1 = input;
+    filter->o3 = filter->o2;
+    filter->o2 = filter->o1;
+    filter->o1 = output;
 
-    movingAvg->sum = 0;
-    movingAvg->_write = 0;
-
-    return MOVINGAVG_SUCCESS;
-}
-
-movingAvgStatus_t movingAvgDelete(movingAvg_t* movingAvg) {
-
-    if (movingAvg->data == NULL) {
-        return MOVINGAVG_ERROR;
-    }
-
-    free(movingAvg->data);
-
-    return MOVINGAVG_SUCCESS;
+    return output;
 }

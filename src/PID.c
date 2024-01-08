@@ -40,11 +40,11 @@
 
 void PID_init(PID_t* PID, float kp_val, float ki_val, float kd_val, float nd_val, float kb_val, float dT_ms,
               float sat_min, float sat_max) {
-    PID->dT = dT_ms * 1e-3;
+    PID->dT = dT_ms * 1e-3f;
     PID->kp = kp_val;
-    PID->ki = 0.5 * ki_val * PID->dT;
+    PID->ki = 0.5f * ki_val * PID->dT;
     PID->nd = nd_val;
-    PID->kb = 0.5 * kb_val * PID->dT;
+    PID->kb = 0.5f * kb_val * PID->dT;
     PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT);
     PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);
     PID_setIntegralSaturation(PID, sat_min, sat_max);
