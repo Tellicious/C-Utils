@@ -69,67 +69,67 @@ typedef struct {
  * \brief           PID initialization
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       kp_val: proportional gain
- * \param[in]       ki_val: integral gain
- * \param[in]       kd_val: derivative gain
- * \param[in]       nd_val: derivative filter constant N: derivative in Laplace=s/(1+s/N)
- * \param[in]       kb_val: back-calculation coefficient value. Set to 0 if PID_calcBackCalc() is not used
+ * \param[in]       kpVal: proportional gain
+ * \param[in]       kiVal: integral gain
+ * \param[in]       kdVal: derivative gain
+ * \param[in]       ndVal: derivative filter constant N: derivative in Laplace=s/(1+s/N)
+ * \param[in]       kbVal: back-calculation coefficient value. Set to 0 if PID_calcBackCalc() is not used
  * \param[in]       dT_ms: loop time in ms
- * \param[in]       sat_min: lower saturation limit
- * \param[in]       sat_max: upper saturation limit
+ * \param[in]       satMin: lower saturation limit
+ * \param[in]       satMax: upper saturation limit
  */
-void PID_init(PID_t* PID, float kp_val, float ki_val, float kd_val, float nd_val, float kb_val, float dT_ms,
-              float sat_min, float sat_max);
+void PID_init(PID_t* PID, float kpVal, float kiVal, float kdVal, float ndVal, float kbVal, float dT_ms, float satMin,
+              float satMax);
 
 /**
  * \brief           PID calculation without anti-windup (with output clamping)
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       set_point: set point value
+ * \param[in]       setPoint: set point value
  * \param[in]       measure: measure value
  * 
  * \attention       to be called regularly every dT ms
  */
-void PID_calc(PID_t* PID, float set_point, float measure);
+void PID_calc(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           PID calculation with aero-specific anti-windup, clamping only integral term
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       set_point: set point value
+ * \param[in]       setPoint: set point value
  * \param[in]       measure: measure value
  * 
  * \attention       to be called regularly every dT ms
  * 
  * \return          0 if success, 1 if integral term is saturated
  */
-uint8_t PID_calcAeroClamp(PID_t* PID, float set_point, float measure);
+uint8_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           PID calculation with integral-clamping anti-windup, clamping entire output
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       set_point: set point value
+ * \param[in]       setPoint: set point value
  * \param[in]       measure: measure value
  * 
  * \attention       to be called regularly every dT ms
  * 
  * \return          0 if success, 1 if integral term is saturated
  */
-uint8_t PID_calcIntegralClamp(PID_t* PID, float set_point, float measure);
+uint8_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           PID calculation with back-calculation anti-windup, clamping entire output
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       set_point: set point value
+ * \param[in]       setPoint: set point value
  * \param[in]       measure: measure value
  * 
  * \attention       to be called regularly every dT ms
  * 
  * \return          0 if success, 1 if integral term is saturated
  */
-uint8_t PID_calcBackCalc(PID_t* PID, float set_point, float measure);
+uint8_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           Return PID output value
@@ -171,38 +171,38 @@ static inline float PID_getKd(PID_t* PID) { return (0.5 * (2 + PID->nd * PID->dT
  * \brief           Set proportional gain value
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       kp_val: proportional gain value
+ * \param[in]       kpVal: proportional gain value
  */
-static inline void PID_setKp(PID_t* PID, float kp_val) { PID->kp = kp_val; };
+static inline void PID_setKp(PID_t* PID, float kpVal) { PID->kp = kpVal; };
 
 /**
  * \brief           Set integral gain value
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       ki_val: integral gain value
+ * \param[in]       kiVal: integral gain value
  */
-static inline void PID_setKi(PID_t* PID, float ki_val) { PID->ki = 0.5 * ki_val * PID->dT; };
+static inline void PID_setKi(PID_t* PID, float kiVal) { PID->ki = 0.5 * kiVal * PID->dT; };
 
 /**
  * \brief           Set derivative gain value
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       kd_val: derivative gain value
- * \param[in]       nd_val: derivative filter constant N: derivative in Laplace=s/(1+s/N)
+ * \param[in]       kdVal: derivative gain value
+ * \param[in]       ndVal: derivative filter constant N: derivative in Laplace=s/(1+s/N)
  */
-static inline void PID_setKd(PID_t* PID, float kd_val, float nd_val) {
-    PID->nd = nd_val;
-    PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT);
-    PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);
+static inline void PID_setKd(PID_t* PID, float kdVal, float ndVal) {
+    PID->nd = ndVal;
+    PID->kd = (2 * kdVal * ndVal) / (2 + ndVal * PID->dT);
+    PID->kf = (2 - ndVal * PID->dT) / (2 + ndVal * PID->dT);
 };
 
 /**
  * \brief           Set back-calculation coefficient
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       kb_val: back-calculation coefficient value
+ * \param[in]       kbVal: back-calculation coefficient value
  */
-static inline void PID_setKb(PID_t* PID, float kb_val) { PID->kb = 0.5 * kb_val * PID->dT; };
+static inline void PID_setKb(PID_t* PID, float kbVal) { PID->kb = 0.5 * kbVal * PID->dT; };
 
 /**
  * \brief           Set integral component value
@@ -216,12 +216,12 @@ static inline void PID_setIntegralValue(PID_t* PID, float value) { PID->DuI = va
  * \brief           Set output saturation values
  *
  * \param[in]       PID: pointer to PID object
- * \param[in]       sat_min: lower saturation limit
- * \param[in]       sat_max: upper saturation limit
+ * \param[in]       satMin: lower saturation limit
+ * \param[in]       satMax: upper saturation limit
  */
-static inline void PID_setIntegralSaturation(PID_t* PID, float sat_min, float sat_max) {
-    PID->satMin = sat_min;
-    PID->satMax = sat_max;
+static inline void PID_setIntegralSaturation(PID_t* PID, float satMin, float satMax) {
+    PID->satMin = satMin;
+    PID->satMax = satMax;
 };
 
 /**

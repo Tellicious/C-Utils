@@ -38,32 +38,32 @@
 
 /* Functions -----------------------------------------------------------------*/
 
-void PID_init(PID_t* PID, float kp_val, float ki_val, float kd_val, float nd_val, float kb_val, float dT_ms,
-              float sat_min, float sat_max) {
+void PID_init(PID_t* PID, float kpVal, float kiVal, float kdVal, float ndVal, float kbVal, float dT_ms, float satMin,
+              float satMax) {
     PID->dT = dT_ms * 1e-3f;
-    PID->kp = kp_val;
-    PID->ki = 0.5f * ki_val * PID->dT;
-    PID->nd = nd_val;
-    PID->kb = 0.5f * kb_val * PID->dT;
-    PID->kd = (2 * kd_val * nd_val) / (2 + nd_val * PID->dT);
-    PID->kf = (2 - nd_val * PID->dT) / (2 + nd_val * PID->dT);
-    PID_setIntegralSaturation(PID, sat_min, sat_max);
+    PID->kp = kpVal;
+    PID->ki = 0.5f * kiVal * PID->dT;
+    PID->nd = ndVal;
+    PID->kb = 0.5f * kbVal * PID->dT;
+    PID->kd = (2 * kdVal * ndVal) / (2 + ndVal * PID->dT);
+    PID->kf = (2 - ndVal * PID->dT) / (2 + ndVal * PID->dT);
+    PID_setIntegralSaturation(PID, satMin, satMax);
     PID->oldE = 0;
     PID->DuD = 0;
     PID->DuI = 0;
     PID->tmp = 0;
 }
 
-void PID_calc(PID_t* PID, float set_point, float measure) {
-    float e = set_point - measure;
+void PID_calc(PID_t* PID, float setPoint, float measure) {
+    float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->oldE);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->oldE = e;
     PID->output = CONSTRAIN(PID->kp * e + PID->DuI + PID->DuD, PID->satMin, PID->satMax);
 }
 
-uint8_t PID_calcAeroClamp(PID_t* PID, float set_point, float measure) {
-    float e = set_point - measure;
+uint8_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure) {
+    float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->oldE);
     PID->DuI = CONSTRAIN(PID->DuI, PID->satMin, PID->satMax);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
@@ -75,8 +75,8 @@ uint8_t PID_calcAeroClamp(PID_t* PID, float set_point, float measure) {
     return 0;
 }
 
-uint8_t PID_calcIntegralClamp(PID_t* PID, float set_point, float measure) {
-    float e = set_point - measure;
+uint8_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
+    float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->tmp);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
@@ -92,9 +92,9 @@ uint8_t PID_calcIntegralClamp(PID_t* PID, float set_point, float measure) {
     return ((PID->tmp == 0) ? 1 : 0);
 }
 
-uint8_t PID_calcBackCalc(PID_t* PID, float set_point, float measure) {
+uint8_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure) {
     float bcVal;
-    float e = set_point - measure;
+    float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->oldE);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
