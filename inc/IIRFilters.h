@@ -101,6 +101,18 @@ void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, flo
 float IIRFilterProcess(IIRFilterGeneric_t* filter, float input);
 
 /**
+ * \brief           Reset generic IIR filter
+ *
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ *
+ */
+static inline void IIRFilterReset(IIRFilterGeneric_t* filter) {
+    /* Initialize state variables */
+    filter->i1 = filter->i2 = filter->i3 = filter->o1 = filter->o2 = filter->o3 = 0.0;
+}
+
+/**
  * \brief           Initialize derivative IIR filter
  *
  *
@@ -135,6 +147,18 @@ static inline float IIRFilterDerivativeProcess(IIRFilterDerivative_t* filter, fl
 }
 
 /**
+ * \brief           Reset derivative IIR filter
+ *
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ *
+ */
+static inline void IIRFilterDerivativeReset(IIRFilterDerivative_t* filter) {
+    /* Initialize state variables */
+    filter->i1 = filter->output = 0.0;
+}
+
+/**
  * \brief           Initialize integrator IIR filter
  *
  *
@@ -164,6 +188,18 @@ static inline float IIRFilterIntegratorProcess(IIRFilterIntegrator_t* filter, fl
     filter->output += filter->n0 * (input + filter->i1);
     filter->i1 = input;
     return filter->output;
+}
+
+/**
+ * \brief           Reset integrator IIR filter
+ *
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ *
+ */
+static inline void IIRFilterIntegratorReset(IIRFilterIntegrator_t* filter) {
+    /* Initialize state variables */
+    filter->i1 = filter->output = 0.0;
 }
 
 #ifdef __cplusplus

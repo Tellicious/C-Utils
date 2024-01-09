@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.4.0
+
+**Improvements:**
+- Added reset functions to IIRFilters
+
+## v1.3.0
+
+**New features:**
+- Added IIR filter objects (generic, derivative and integrator)
+
+**Improvements:**
+- Fixed snippets
+- Renamed a few variables inside PID object
+
+
+## v1.2.0
+
+**Improvements:**
+- Added deadband macro to basicMath and minor changes
+
 ## v1.1.1
 
 **Improvements:**
