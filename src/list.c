@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            list.c
  * \author          Andrea Vivani
- * \brief   Implementation of linked list with dynamic memory allocation
+ * \brief           Implementation of linked list with dynamic memory allocation
  ******************************************************************************
  * \copyright
  *
@@ -37,7 +37,7 @@
 #include <string.h>
 #include "list.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 void listInit(list_t* list, size_t itemSize, LIST_STYPE size) {
     list->_front = NULL;

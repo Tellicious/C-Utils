@@ -37,7 +37,7 @@
 #include <string.h>
 #include "queue.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 queueStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size) {
     queue->data = NULL;

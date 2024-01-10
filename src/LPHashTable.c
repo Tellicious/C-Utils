@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            LPHashTable.c
  * \author          Andrea Vivani
- * \brief   Implementation of a simple linear probing hash-table
+ * \brief           Implementation of a simple linear probing hash-table
  ******************************************************************************
  * \copyright
  *
@@ -47,7 +47,7 @@
 static lpHashTableStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
 static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase);
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 lpHashTableStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items,
                                     lpHashTableResizable_t resizable) {

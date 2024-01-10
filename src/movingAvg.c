@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            movingAvg.c
  * \author          Andrea Vivani
- * \brief   Implementation of moving average
+ * \brief           Implementation of moving average
  ******************************************************************************
  * \copyright
  *
@@ -37,7 +37,7 @@
 #include <string.h>
 #include "movingAvg.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 movingAvgStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
     movingAvg->data = NULL;

@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            LKHashTable.c
  * \author          Andrea Vivani
- * \brief   Implementation of a simple dynamic linked hash-table
+ * \brief           Implementation of a simple dynamic linked hash-table
  ******************************************************************************
  * \copyright
  *
@@ -42,7 +42,7 @@
 
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 lkHashTableStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size) {
     uint32_t ii;

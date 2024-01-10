@@ -35,7 +35,7 @@
 
 #include "timer.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 void timerProcess(userTimer_t* t, uint32_t currentTick) {
     uint32_t k;

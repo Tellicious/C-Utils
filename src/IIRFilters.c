@@ -35,7 +35,7 @@
 
 #include "IIRFilters.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, float n3, float d1, float d2, float d3) {
     /* Store filter coefficients */

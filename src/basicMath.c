@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            basicMath.c
  * \author          Andrea Vivani
- * \brief   Implementation of useful math operations and constants
+ * \brief           Implementation of useful math operations and constants
  ******************************************************************************
  * \copyright
  *
@@ -35,7 +35,7 @@
 
 #include "basicMath.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 /* Fast square-root*/
 float fastSqrt(float value) {

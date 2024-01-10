@@ -3,7 +3,8 @@
  ******************************************************************************
  * \file            PID.c
  * \author          Andrea Vivani
- * \brief           Implementation of PID controller with several anti-windup options
+ * \brief           Implementation of PID controller with several anti-windup
+ *                  options
  ******************************************************************************
  * \copyright
  *

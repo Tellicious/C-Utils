@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            hashFunctions.c
  * \author          Andrea Vivani
- * \brief   Collection of different hash functions
+ * \brief           Collection of different hash functions
  ******************************************************************************
  * \copyright
  *
@@ -35,7 +35,7 @@
 
 #include "hashFunctions.h"
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions -----------------------------------------------------------------*/
 
 #define FNV_OFFSET 14695981039346656037UL
 #define FNV_PRIME  1099511628211UL

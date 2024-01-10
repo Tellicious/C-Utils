@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            numMethods.c
  * \author          Andrea Vivani
- * \brief   Implementation of several numerical methods
+ * \brief           Implementation of several numerical methods
  ******************************************************************************
  * \copyright
  *

@@ -3,8 +3,8 @@
  ******************************************************************************
  * \file            button.c
  * \author          Andrea Vivani
- * \brief   Implementation of button object with debouncing and multiple press 
- *          types detection
+ * \brief           Implementation of button object with debouncing and multiple
+ *                  press types detection
  ******************************************************************************
  * \copyright
  *
@@ -38,7 +38,7 @@
 
 /* Macros ---------------------------------------------------------------------*/
 
-/* Private  functions ---------------------------------------------------------*/
+/* Functions ------------------------------------------------------------------*/
 
 void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks,
                 uint32_t longPressTicks, uint32_t veryLongPressTicks) {

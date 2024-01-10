@@ -3,7 +3,7 @@
  ******************************************************************************
  * \file            matrix.c
  * \author          Andrea Vivani
- * \brief   Implementation of matrix manipulation functions
+ * \brief           Implementation of matrix manipulation functions
  ******************************************************************************
  * \copyright
  *
