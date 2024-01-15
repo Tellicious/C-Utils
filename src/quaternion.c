@@ -43,10 +43,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 
-#ifdef AVOID_GIMBAL_LOCK
-static eulerAngles_t ea_pre;
-#endif
-
 /* Functions -----------------------------------------------------------------*/
 
 void quaternionNorm(quaternion_t* q) {
@@ -105,13 +101,14 @@ void quaternionConj(quaternion_t* qa, quaternion_t* qo) {
     qo->q3 = -qa->q3;
 }
 
-void quaternionToEuler(quaternion_t* qr, eulerAngles_t* ea) {
+void quaternionToEuler(quaternion_t* qr, axis3f_t* ea) {
     float q0q0, q1q1, q2q2, q3q3;
     float dq0, dq1, dq2;
     float dq1q3, dq0q2;
     float dq0q1, dq2q3;
 #ifdef AVOID_GIMBAL_LOCK
     float dq1q2, dq0q3;
+    static axis3f_t ea_pre;
 #endif
 
     q0q0 = qr->q0 * qr->q0;
@@ -130,20 +127,20 @@ void quaternionToEuler(quaternion_t* qr, eulerAngles_t* ea) {
     dq0q3 = dq0 * qr->q3;
 #endif
 
-    ea->thx = atan2f(dq0q1 + dq2q3, q0q0 + q3q3 - q1q1 - q2q2);
-    ea->thy = asinf(dq0q2 - dq1q3);
+    ea->x = atan2f(dq0q1 + dq2q3, q0q0 + q3q3 - q1q1 - q2q2);
+    ea->y = asinf(dq0q2 - dq1q3);
 
     /* This part is needed  to manage angle >90 deg */
 #ifdef AVOID_GIMBAL_LOCK
-    if (ea->thx > PI_2 || ea->thx < -PI_2) {
-        ea->thx = ea_pre.thx;
+    if (ea->x > PI_2 || ea->x < -PI_2) {
+        ea->x = ea_pre.x;
     }
-    if (ea->thy > PI_2 || ea->thy < -PI_2) {
-        ea->thy = ea_pre.thy;
+    if (ea->y > PI_2 || ea->y < -PI_2) {
+        ea->y = ea_pre.y;
     }
 
-    ea_pre.thx = ea->thx;
-    ea_pre.thy = ea->thy;
-    ea->thz = atan2f(dq1q2 + dq0q3, q0q0 + q1q1 - q2q2 - q3q3);
+    ea_pre.x = ea->x;
+    ea_pre.y = ea->y;
+    ea->z = atan2f(dq1q2 + dq0q3, q0q0 + q1q1 - q2q2 - q3q3);
 #endif
 }

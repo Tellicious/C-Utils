@@ -40,6 +40,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "commonTypes.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -47,13 +48,14 @@ extern "C" {
 
 /* Typedefs ------------------------------------------------------------------*/
 
+#ifndef _QUATERNION_TYPEDEF_
+#define _QUATERNION_TYPEDEF_
+
 typedef struct {
     float q0, q1, q2, q3;
 } quaternion_t;
 
-typedef struct {
-    float thx, thy, thz;
-} eulerAngles_t;
+#endif
 
 /* Function prototypes -------------------------------------------------------*/
 
@@ -69,7 +71,7 @@ void quaternionNorm(quaternion_t* q);
  *
  * \param[in]       qa: pointer to left-hand side quaternion object
  * \param[in]       qb: pointer to right-hand side quaternion object
- * \param[out]      qo: pointer to result quaternion object
+ * \param[out]      qo: pointer to resulting quaternion object
  *
  * \attention       qo can be different from qa/qb, or the same as qa/qb
  */
@@ -80,7 +82,7 @@ void quaternionMult(quaternion_t* qa, quaternion_t* qb, quaternion_t* qo);
  *
  * \param[in]       qr: pointer to rotation quaternion object
  * \param[in]       qv: pointer to quaternion object to rotate
- * \param[out]      qo: pointer to result quaternion object qo = qr' * qv * qr
+ * \param[out]      qo: pointer to resulting quaternion object qo = qr' * qv * qr
  */
 void quaternionRotation(quaternion_t* qr, quaternion_t* qv, quaternion_t* qo);
 
@@ -88,7 +90,7 @@ void quaternionRotation(quaternion_t* qr, quaternion_t* qv, quaternion_t* qo);
  * \brief           Quaternion conjugate
  *
  * \param[in]       qa: pointer to left-hand side quaternion object
- * \param[out]      qo: pointer to result quaternion object
+ * \param[out]      qo: pointer to resulting quaternion object
  */
 void quaternionConj(quaternion_t* qa, quaternion_t* qo);
 
@@ -96,9 +98,9 @@ void quaternionConj(quaternion_t* qa, quaternion_t* qo);
  * \brief           Convert quaternion to Euler angles
  *
  * \param[in]       qr: pointer to input quaternion object
- * \param[out]      ea: pointer to result euler angles
+ * \param[out]      ea: pointer to resulting euler angles
  */
-void quaternionToEuler(quaternion_t* qr, eulerAngles_t* ea);
+void quaternionToEuler(quaternion_t* qr, axis3f_t* ea);
 
 #ifdef __cplusplus
 }

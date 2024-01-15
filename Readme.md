@@ -15,6 +15,7 @@
 - ***LPHashTable:*** linear-probing hash-table object with auto-resize capability
 - ***LKHashTable:*** dynamic linked hash-table object (based on _list_)
 - ***IIRFilters:*** simple discrete-time IIR filters, with on-the-fly conversion continuous -> discrete of derivative and integrator
+- ***commonTypes:*** collection of common type definitions
 
 
 

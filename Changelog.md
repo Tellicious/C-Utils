@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.5.0
+
+**New features:**
+- Added commonTypes.h containing common typedefs (`axis3f_t`)
+
+**Breaking changes:**
+- Updated quaternion object to use commonTypes.h
+
 ## v1.4.0
 
 **Improvements:**
