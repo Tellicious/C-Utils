@@ -42,7 +42,8 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "stdint.h"
+#include <stdint.h>
+#include "commonTypes.h"
 
 /* Typedefs ------------------------------------------------------------------*/
 
@@ -101,9 +102,9 @@ void PID_calc(PID_t* PID, float setPoint, float measure);
  * 
  * \attention       to be called regularly every dT ms
  * 
- * \return          0 if success, 1 if integral term is saturated
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_FULL if integral term is saturated
  */
-uint8_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure);
+utilsStatus_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           PID calculation with integral-clamping anti-windup, clamping entire output
@@ -114,9 +115,9 @@ uint8_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure);
  * 
  * \attention       to be called regularly every dT ms
  * 
- * \return          0 if success, 1 if integral term is saturated
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_FULL if integral term is saturated
  */
-uint8_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure);
+utilsStatus_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           PID calculation with back-calculation anti-windup, clamping entire output
@@ -127,9 +128,9 @@ uint8_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure);
  * 
  * \attention       to be called regularly every dT ms
  * 
- * \return          0 if success, 1 if integral term is saturated
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_FULL if integral term is saturated
  */
-uint8_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure);
+utilsStatus_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure);
 
 /**
  * \brief           Return PID output value

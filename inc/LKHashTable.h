@@ -42,9 +42,8 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
+#include "commonTypes.h"
 #include "list.h"
-
-/* Macros --------------------------------------------------------------------*/
 
 /* Typedefs ------------------------------------------------------------------*/
 
@@ -66,22 +65,11 @@ typedef struct {
 } lkHashTable_t;
 
 /**
- * Hash-Table return status
- */
-typedef enum {
-    LKHT_SUCCESS = 0,
-    LKHT_ERROR = 1,
-    LKHT_EMPTY = 2,
-    LKHT_FULL = 3,
-    LKHT_BUCKET_EMPTY = 4
-} lkHashTableStatus_t;
-
-/**
  * Hash-Table removal setting
  */
 typedef enum { LKHT_REMOVE_ITEM = 0, LKHT_DO_NOT_REMOVE_ITEM = 1 } lkHashTableRemoval_t;
 
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Init linked hash-table structure
@@ -90,9 +78,9 @@ typedef enum { LKHT_REMOVE_ITEM = 0, LKHT_DO_NOT_REMOVE_ITEM = 1 } lkHashTableRe
  * \param[in]       itemSize: size of items to be handled by hash-table
  * \param[in]       size: max number of items that can be allocated in the hash-table
  * 
- * \return          LKHT_SUCCESS if hash-table was initialized, LKHT_ERROR if data was not allocated correctly
+ * \return          UTILS_STATUS_SUCCESS if hash-table was initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
-lkHashTableStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size);
+utilsStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size);
 
 /**
  * \brief           Set item with given key to value. If not already present in table, key is copied to newly allocated memory, otherwise it is only updated.
@@ -101,9 +89,9 @@ lkHashTableStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32
  * \param[in]       key: pointer to key
  * \param[in]       value: pointer to value to be written
  * 
- * \return          LKHT_SUCCESS if data is written correctly, LKHT_ERROR otherwise
+ * \return          UTILS_STATUS_SUCCESS if data is written correctly, UTILS_STATUS_ERROR otherwise
  */
-lkHashTableStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value);
+utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value);
 
 /**
  * \brief           Get item with given key from hash table
@@ -113,9 +101,9 @@ lkHashTableStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value);
  * \param[out]      value: pointer to value to be read
  * \param[in]       remove: LKHT_REMOVE_ITEM if item should be removed after being read, LKHT_DO_NOT_REMOVE_ITEM if item should not be removed
  * 
- * \return          LKHT_SUCCESS if data is read correctly, LKHT_ERROR if data 
+ * \return          UTILS_STATUS_SUCCESS if data is read correctly, UTILS_STATUS_ERROR if data 
  */
-lkHashTableStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHashTableRemoval_t remove);
+utilsStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHashTableRemoval_t remove);
 
 /**
  * \brief           Returns hash-table info
@@ -134,9 +122,9 @@ static inline void lkHashTableInfo(lkHashTable_t* lkht, uint32_t* size, uint32_t
  *
  * \param[in]       lkht: pointer to hash-table object
  *
- * \return          LKHT_SUCCESS if list is flushed correctly, LKHT_ERROR if data cannot be flushed
+ * \return          UTILS_STATUS_SUCCESS if list is flushed correctly, UTILS_STATUS_ERROR if data cannot be flushed
  */
-lkHashTableStatus_t lkHashTableFlush(lkHashTable_t* lkht);
+utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht);
 
 #ifdef __cplusplus
 }

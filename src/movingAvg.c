@@ -33,26 +33,26 @@
 
 /* Includes ------------------------------------------------------------------*/
 
+#include "movingAvg.h"
 #include <stdlib.h>
 #include <string.h>
-#include "movingAvg.h"
 
 /* Functions -----------------------------------------------------------------*/
 
-movingAvgStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
+utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
     movingAvg->data = NULL;
     movingAvg->data = calloc(size, sizeof(MOVAVG_TYPE));
     /* movingAvg->data = malloc(size * sizeof(MOVAVG_TYPE)); */
     if (movingAvg->data == NULL) {
         movingAvg->size = 0;
-        return MOVINGAVG_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     movingAvg->size = size;
     movingAvg->sum = 0;
     movingAvg->inv_size = (MOVAVG_TYPE)1.0 / size;
     movingAvg->_write = 0;
-    return MOVINGAVG_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 MOVAVG_TYPE movingAvgCalc(movingAvg_t* movingAvg, MOVAVG_TYPE value) {
@@ -64,9 +64,9 @@ MOVAVG_TYPE movingAvgCalc(movingAvg_t* movingAvg, MOVAVG_TYPE value) {
     return (movingAvg->sum * movingAvg->inv_size);
 }
 
-movingAvgStatus_t movingAvgFlush(movingAvg_t* movingAvg) {
+utilsStatus_t movingAvgFlush(movingAvg_t* movingAvg) {
     if (movingAvg->data == NULL) {
-        return MOVINGAVG_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     memset(movingAvg->data, 0x00, movingAvg->size * sizeof(MOVAVG_TYPE));
@@ -74,16 +74,16 @@ movingAvgStatus_t movingAvgFlush(movingAvg_t* movingAvg) {
     movingAvg->sum = 0;
     movingAvg->_write = 0;
 
-    return MOVINGAVG_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-movingAvgStatus_t movingAvgDelete(movingAvg_t* movingAvg) {
+utilsStatus_t movingAvgDelete(movingAvg_t* movingAvg) {
 
     if (movingAvg->data == NULL) {
-        return MOVINGAVG_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     free(movingAvg->data);
 
-    return MOVINGAVG_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }

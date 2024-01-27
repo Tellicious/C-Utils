@@ -75,7 +75,7 @@ typedef struct {
     float output; /* output values */
 } IIRFilterIntegrator_t;
 
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Initialize generic IIR filter with custom coefficients

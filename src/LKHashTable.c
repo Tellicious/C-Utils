@@ -44,7 +44,7 @@
 
 /* Functions -----------------------------------------------------------------*/
 
-lkHashTableStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size) {
+utilsStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size) {
     uint32_t ii;
     lkht->items = 0;
     lkht->size = size;
@@ -52,23 +52,23 @@ lkHashTableStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32
 
     lkht->entries = calloc(lkht->size, sizeof(list_t));
     if (lkht->entries == NULL) {
-        return LKHT_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     for (ii = 0; ii < lkht->size; ii++) {
         listInit(&(lkht->entries[ii]), sizeof(lkHashTableEntry_t), UINT16_MAX);
     }
 
-    return LKHT_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-lkHashTableStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
+utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
     if ((value == NULL) || (key == NULL)) {
-        return LKHT_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     if (lkht->items == lkht->size) {
-        return LKHT_FULL;
+        return UTILS_STATUS_FULL;
     }
 
     /* limit hash to current memory size */
@@ -80,10 +80,10 @@ lkHashTableStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) 
     LIST_STYPE idx;
 
     for (idx = 0; idx < lkht->entries[ii].items; idx++) {
-        if (listPeekAtPos(&(lkht->entries[ii]), &entry, idx) == LIST_SUCCESS) {
+        if (listPeekAtPos(&(lkht->entries[ii]), &entry, idx) == UTILS_STATUS_SUCCESS) {
             if (!strcmp(key, entry.key)) {
                 memcpy(entry.value, value, lkht->itemSize);
-                return LKHT_SUCCESS;
+                return UTILS_STATUS_SUCCESS;
             }
         }
     }
@@ -93,23 +93,23 @@ lkHashTableStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) 
     entry.value = calloc(1, lkht->itemSize);
     memcpy(entry.value, value, lkht->itemSize);
 
-    if (listPush(&(lkht->entries[ii]), &entry) == LIST_SUCCESS) {
+    if (listPush(&(lkht->entries[ii]), &entry) == UTILS_STATUS_SUCCESS) {
         lkht->items++;
-        return LKHT_SUCCESS;
+        return UTILS_STATUS_SUCCESS;
     }
-    return LKHT_ERROR;
+    return UTILS_STATUS_ERROR;
 }
 
-lkHashTableStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHashTableRemoval_t remove) {
+utilsStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHashTableRemoval_t remove) {
 
     if (!lkht->items) {
-        return LKHT_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     uint32_t ii = LPHT_HASHFUN(key) & (lkht->size - 1);
 
     if (!lkht->entries[ii].items) {
-        return LKHT_BUCKET_EMPTY;
+        return UTILS_STATUS_BUCKET_EMPTY;
     }
 
     /* check if entry exists and return it */
@@ -118,7 +118,7 @@ lkHashTableStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, 
 
     listIt(&iterator, &(lkht->entries[ii]));
 
-    while (listItNext(&iterator) == LIST_SUCCESS) {
+    while (listItNext(&iterator) == UTILS_STATUS_SUCCESS) {
         memcpy(&entry, iterator.ptr->data, sizeof(lkHashTableEntry_t));
 
         if (!strcmp(key, entry.key)) {
@@ -128,20 +128,20 @@ lkHashTableStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, 
                 lkht->items--;
                 free(entry.key);
                 free(entry.value);
-                return LKHT_SUCCESS;
+                return UTILS_STATUS_SUCCESS;
             }
-            return LKHT_SUCCESS;
+            return UTILS_STATUS_SUCCESS;
         }
     }
 
-    return LKHT_ERROR;
+    return UTILS_STATUS_ERROR;
 }
 
-lkHashTableStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
+utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
     uint32_t ii;
 
     if (!lkht->items) {
-        return LKHT_SUCCESS;
+        return UTILS_STATUS_SUCCESS;
     }
 
     lkHashTableEntry_t entry;
@@ -159,5 +159,5 @@ lkHashTableStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
 
     lkht->items = 0;
 
-    return LKHT_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }

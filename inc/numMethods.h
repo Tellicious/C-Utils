@@ -97,9 +97,9 @@ void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result);
  * \param[out]      L: pointer to L matrix object
  * \param[out]      U: pointer to U matrix object
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if errors
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
  */
-matrixStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U);
+utilsStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U);
 
 /**
  * \brief           Calculate L (lower triangular) and U (upper triangular) matrices such that A = LU with Cormen's Method
@@ -108,9 +108,9 @@ matrixStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U);
  * \param[out]      L: pointer to L matrix object
  * \param[out]      U: pointer to U matrix object
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if errors
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
  */
-matrixStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U);
+utilsStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U);
 
 /**
  * \brief           Calculate L (lower triangular), U (upper triangular) and P (permutation) matrices such that A = LUP with Cormen's Method
@@ -181,9 +181,9 @@ void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to result matrix object S
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if errors
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
  */
-matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
                                       matrix_t* result);
 
 /**
@@ -204,9 +204,9 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uin
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to result matrix object S
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if errors
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
  */
-matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
                                       matrix_t* result);
 
 #ifdef __cplusplus

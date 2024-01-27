@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.6.0
+
+**New features:**
+- Added `utilsStatus_t` to commonTypes.h
+
+**Breaking changes:**
+- Updated all libraries to use `utilsStatus_t` instead of their own status enum
+
+**Improvements:**
+- Minor formatting changes
+
 ## v1.5.0
 
 **New features:**

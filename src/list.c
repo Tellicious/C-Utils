@@ -33,9 +33,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 
+#include "list.h"
 #include <stdlib.h>
 #include <string.h>
-#include "list.h"
 
 /* Functions -----------------------------------------------------------------*/
 
@@ -47,9 +47,9 @@ void listInit(list_t* list, size_t itemSize, LIST_STYPE size) {
     list->items = 0;
 }
 
-listStatus_t listPush(list_t* list, void* value) {
+utilsStatus_t listPush(list_t* list, void* value) {
     if (list->items >= list->size) {
-        return LIST_FULL;
+        return UTILS_STATUS_FULL;
     }
 
     listNode_t* ptr;
@@ -65,12 +65,12 @@ listStatus_t listPush(list_t* list, void* value) {
         list->_rear = ptr;
     }
     list->items++;
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listPushFront(list_t* list, void* value) {
+utilsStatus_t listPushFront(list_t* list, void* value) {
     if (list->items >= list->size) {
-        return LIST_FULL;
+        return UTILS_STATUS_FULL;
     }
 
     listNode_t* ptr;
@@ -87,18 +87,18 @@ listStatus_t listPushFront(list_t* list, void* value) {
     }
 
     list->items++;
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listInsert(list_t* list, void* value, LIST_STYPE position) {
+utilsStatus_t listInsert(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
     if (list->items >= list->size) {
-        return LIST_FULL;
+        return UTILS_STATUS_FULL;
     }
 
     if (position > list->items) {
-        return LIST_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     listNode_t* ptr;
@@ -123,14 +123,14 @@ listStatus_t listInsert(list_t* list, void* value, LIST_STYPE position) {
     }
 
     list->items++;
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listUpdate(list_t* list, void* value, LIST_STYPE position) {
+utilsStatus_t listUpdate(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
     if ((position + 1) > list->items) {
-        return LIST_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     listNode_t* ptr = list->_front;
@@ -142,12 +142,12 @@ listStatus_t listUpdate(list_t* list, void* value, LIST_STYPE position) {
 
     memcpy(ptr->data, value, list->itemSize);
 
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listPop(list_t* list, void* value) {
+utilsStatus_t listPop(list_t* list, void* value) {
     if (!list->items) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     listNode_t* ptr = list->_front;
@@ -160,14 +160,14 @@ listStatus_t listPop(list_t* list, void* value) {
     if (!list->items) {
         list->_rear = NULL;
     }
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listPopBack(list_t* list, void* value) {
+utilsStatus_t listPopBack(list_t* list, void* value) {
     LIST_STYPE ii;
 
     if (!list->items) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     memcpy(value, list->_rear->data, list->itemSize);
@@ -187,18 +187,18 @@ listStatus_t listPopBack(list_t* list, void* value) {
     if (!list->items) {
         list->_front = list->_rear = NULL;
     }
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listRemove(list_t* list, void* value, LIST_STYPE position) {
+utilsStatus_t listRemove(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
     if (!list->items) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     if ((position + 1) > list->items) {
-        return LIST_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     listNode_t* prev = NULL;
@@ -227,38 +227,38 @@ listStatus_t listRemove(list_t* list, void* value, LIST_STYPE position) {
     if (!list->items) {
         list->_front = list->_rear = NULL;
     }
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listPeek(list_t* list, void* value) {
+utilsStatus_t listPeek(list_t* list, void* value) {
     if (list->items == 0) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     memcpy(value, list->_front->data, list->itemSize);
 
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listPeekBack(list_t* list, void* value) {
+utilsStatus_t listPeekBack(list_t* list, void* value) {
     if (list->items == 0) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     memcpy(value, list->_rear->data, list->itemSize);
 
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listPeekAtPos(list_t* list, void* value, LIST_STYPE position) {
+utilsStatus_t listPeekAtPos(list_t* list, void* value, LIST_STYPE position) {
     LIST_STYPE ii;
 
     if (list->items == 0) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     if ((position + 1) > list->items) {
-        return LIST_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     listNode_t* ptr = list->_front;
@@ -270,12 +270,12 @@ listStatus_t listPeekAtPos(list_t* list, void* value, LIST_STYPE position) {
 
     memcpy(value, ptr->data, list->itemSize);
 
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-listStatus_t listFlush(list_t* list) {
+utilsStatus_t listFlush(list_t* list) {
     if (!list->items) {
-        return LIST_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     listNode_t* ptr = list->_front;
@@ -288,7 +288,7 @@ listStatus_t listFlush(list_t* list) {
     list->items = 0;
     list->_rear = NULL;
 
-    return LIST_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 void listIt(listIterator_t* it, list_t* list) {
@@ -298,16 +298,16 @@ void listIt(listIterator_t* it, list_t* list) {
     it->ptr = NULL;
 }
 
-listStatus_t listItNext(listIterator_t* it) {
+utilsStatus_t listItNext(listIterator_t* it) {
     if (it->ptr == NULL) {
         it->ptr = it->_list->_front;
         it->idx = 0;
-        return LIST_SUCCESS;
+        return UTILS_STATUS_SUCCESS;
     } else if (it->ptr->next != NULL) {
         it->_prev = it->ptr;
         it->ptr = it->ptr->next;
         it->idx++;
-        return LIST_SUCCESS;
+        return UTILS_STATUS_SUCCESS;
     }
-    return LIST_ERROR;
+    return UTILS_STATUS_ERROR;
 }

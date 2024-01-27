@@ -52,7 +52,7 @@ typedef volatile struct {
     uint16_t event_cnt;
 } userTimer_t;
 
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Setup timer object

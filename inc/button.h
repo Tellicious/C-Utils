@@ -85,7 +85,7 @@ typedef struct __attribute__((packed)) {
     uint8_t pulses;
 } button_t;
 
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Init button structure

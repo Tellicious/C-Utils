@@ -63,7 +63,7 @@ void PID_calc(PID_t* PID, float setPoint, float measure) {
     PID->output = CONSTRAIN(PID->kp * e + PID->DuI + PID->DuD, PID->satMin, PID->satMax);
 }
 
-uint8_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure) {
+utilsStatus_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure) {
     float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->oldE);
     PID->DuI = CONSTRAIN(PID->DuI, PID->satMin, PID->satMax);
@@ -71,12 +71,12 @@ uint8_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure) {
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
     PID->oldE = e;
     if ((PID->DuI == PID->satMin) || (PID->DuI == PID->satMax)) {
-        return 1;
+        return UTILS_STATUS_FULL;
     }
-    return 0;
+    return UTILS_STATUS_SUCCESS;
 }
 
-uint8_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
+utilsStatus_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
     float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->tmp);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
@@ -90,10 +90,10 @@ uint8_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
     }
     PID->oldE = e;
     PID->output = CONSTRAIN(PID->output, PID->satMin, PID->satMax);
-    return ((PID->tmp == 0) ? 1 : 0);
+    return ((PID->tmp == 0) ? UTILS_STATUS_FULL : UTILS_STATUS_SUCCESS);
 }
 
-uint8_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure) {
+utilsStatus_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure) {
     float bcVal;
     float e = setPoint - measure;
     PID->DuI += PID->ki * (e + PID->oldE);
@@ -106,5 +106,5 @@ uint8_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure) {
     PID->tmp = bcVal;
     PID->oldE = e;
     PID->output = CONSTRAIN(PID->output, PID->satMin, PID->satMax);
-    return (bcVal != 0);
+    return ((bcVal == 0) ? UTILS_STATUS_SUCCESS : UTILS_STATUS_FULL);
 }

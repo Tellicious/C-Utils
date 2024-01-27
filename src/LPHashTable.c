@@ -42,15 +42,15 @@
 
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
 
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
-static lpHashTableStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
-static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase);
+static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
+static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase);
 
 /* Functions -----------------------------------------------------------------*/
 
-lpHashTableStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items,
-                                    lpHashTableResizable_t resizable) {
+utilsStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items,
+                              lpHashTableResizable_t resizable) {
     lpht->items = 0;
     lpht->size = init_items;
     lpht->itemSize = itemSize;
@@ -58,41 +58,41 @@ lpHashTableStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32
 
     lpht->entries = calloc(lpht->size, sizeof(lpHashTableEntry_t));
     if (lpht->entries == NULL) {
-        return LPHT_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
-    return LPHT_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-lpHashTableStatus_t lpHashTablePut(lpHashTable_t* lpht, char* key, void* value) {
+utilsStatus_t lpHashTablePut(lpHashTable_t* lpht, char* key, void* value) {
     if ((value == NULL) || (key == NULL)) {
-        return LPHT_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     /* If length will exceed half of current capacity, expand it. */
     if ((lpht->items >= (lpht->size * LPHT_MAX_SATURATION)) && (lpht->resizable == LPHT_RESIZABLE)) {
-        if (lpHashTableXpand(lpht, 1) != LPHT_SUCCESS) {
-            return LPHT_ERROR;
+        if (lpHashTableXpand(lpht, 1) != UTILS_STATUS_SUCCESS) {
+            return UTILS_STATUS_ERROR;
         }
     } else if (lpht->items == lpht->size) {
-        return LPHT_FULL;
+        return UTILS_STATUS_FULL;
     } else if ((lpht->items <= (lpht->size * LPHT_MIN_SATURATION)) && (lpht->size > LPHT_MIN_SIZE)
                && (lpht->resizable == LPHT_RESIZABLE)) {
-        if (lpHashTableXpand(lpht, 0) != LPHT_SUCCESS) {
-            return LPHT_ERROR;
+        if (lpHashTableXpand(lpht, 0) != UTILS_STATUS_SUCCESS) {
+            return UTILS_STATUS_ERROR;
         }
     }
 
     /* Set entry and update length. */
 
-    if (lpHashTableSetEntry(lpht, key, value) == LPHT_SUCCESS) {
-        return LPHT_SUCCESS;
+    if (lpHashTableSetEntry(lpht, key, value) == UTILS_STATUS_SUCCESS) {
+        return UTILS_STATUS_SUCCESS;
     }
 
-    return LPHT_ERROR;
+    return UTILS_STATUS_ERROR;
 }
 
-lpHashTableStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, lpHashTableRemoval_t remove) {
+utilsStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, lpHashTableRemoval_t remove) {
     uint32_t ii = LPHT_HASHFUN(key) & (lpht->size - 1);
 
     while (lpht->entries[ii].key != NULL) {
@@ -107,7 +107,7 @@ lpHashTableStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, 
                 lpht->items--;
             }
 
-            return LPHT_SUCCESS;
+            return UTILS_STATUS_SUCCESS;
         }
 
         ii++;
@@ -116,14 +116,14 @@ lpHashTableStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, 
             ii = 0;
         }
     }
-    return LPHT_ERROR;
+    return UTILS_STATUS_ERROR;
 }
 
-lpHashTableStatus_t lpHashTableFlush(lpHashTable_t* lpht) {
+utilsStatus_t lpHashTableFlush(lpHashTable_t* lpht) {
     uint32_t ii;
 
     if (!lpht->items) {
-        return LPHT_EMPTY;
+        return UTILS_STATUS_EMPTY;
     }
 
     for (ii = 0; ii < lpht->size; ii++) {
@@ -135,10 +135,10 @@ lpHashTableStatus_t lpHashTableFlush(lpHashTable_t* lpht) {
 
     lpht->items = 0;
 
-    return LPHT_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-static lpHashTableStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value) {
+static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value) {
     /* limit hash to current memory size */
     uint32_t ii = LPHT_HASHFUN(key) & (lpht->size - 1);
 
@@ -147,7 +147,7 @@ static lpHashTableStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, v
         if (!strcmp(key, lpht->entries[ii].key)) {
             /* Found key (it already exists), update value. */
             memcpy(lpht->entries[ii].value, value, lpht->itemSize);
-            return LPHT_SUCCESS;
+            return UTILS_STATUS_SUCCESS;
         }
         ii++;
         if (ii >= lpht->size) {
@@ -162,17 +162,17 @@ static lpHashTableStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, v
     if ((lpht->entries[ii].key == NULL) || (lpht->entries[ii].value == NULL)) {
         free(lpht->entries[ii].key);
         free(lpht->entries[ii].value);
-        return LPHT_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     memcpy(lpht->entries[ii].value, value, lpht->itemSize);
 
     lpht->items++;
 
-    return LPHT_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
-static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase) {
+static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase) {
     /* Allocate new entries array. */
     uint32_t ii;
     uint32_t old_size = lpht->size;
@@ -181,7 +181,7 @@ static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increas
     if (increase) {
         /* increase table size */
         if (lpht->size == UINT32_MAX) {
-            return LPHT_ERROR;
+            return UTILS_STATUS_ERROR;
         } else if (lpht->size >= (UINT32_MAX >> 1)) {
             lpht->size = UINT32_MAX;
         } else {
@@ -201,7 +201,7 @@ static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increas
     if (lpht->entries == NULL) {
         lpht->size = old_size;
         lpht->entries = old_entries;
-        return LPHT_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     /* Iterate entries, move all non-empty ones to new table's entries. */
@@ -217,7 +217,7 @@ static lpHashTableStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increas
 
     free(old_entries);
 
-    return LPHT_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 void lpHashTableIt(lpHashTableIterator_t* it, lpHashTable_t* lpht) {
@@ -226,7 +226,7 @@ void lpHashTableIt(lpHashTableIterator_t* it, lpHashTable_t* lpht) {
     return;
 }
 
-lpHashTableStatus_t lpHashTableItNext(lpHashTableIterator_t* it) {
+utilsStatus_t lpHashTableItNext(lpHashTableIterator_t* it) {
     while (it->_index < it->_lpht->size) {
         if (it->_lpht->entries[it->_index].key != NULL) {
             /* Found next non-empty item, update iterator key and value. */
@@ -234,9 +234,9 @@ lpHashTableStatus_t lpHashTableItNext(lpHashTableIterator_t* it) {
             it->key = entry.key;
             it->value = entry.value;
 
-            return LPHT_SUCCESS;
+            return UTILS_STATUS_SUCCESS;
         }
         it->_index++;
     }
-    return LPHT_ERROR;
+    return UTILS_STATUS_ERROR;
 }

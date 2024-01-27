@@ -41,6 +41,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 
 #include <stdint.h>
+#include "commonTypes.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -58,12 +59,7 @@ typedef struct {
     MOVAVG_IND_TYPE size, _write;
 } movingAvg_t;
 
-/**
- * Moving Average return status
- */
-typedef enum { MOVINGAVG_SUCCESS = 0, MOVINGAVG_ERROR = 1 } movingAvgStatus_t;
-
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Init moving average structure
@@ -71,7 +67,7 @@ typedef enum { MOVINGAVG_SUCCESS = 0, MOVINGAVG_ERROR = 1 } movingAvgStatus_t;
  * \param[in]       movingAvg: pointer to moving average object
  * \param[in]       size: required queue size
  */
-movingAvgStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size);
+utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size);
 
 /**
  * \brief           Calculate moving average 
@@ -97,14 +93,14 @@ static inline MOVAVG_TYPE movingAvgGetLatest(movingAvg_t* movingAvg) { return (m
  *
  * \param[in]       movingAvg: pointer to moving average object
  */
-movingAvgStatus_t movingAvgFlush(movingAvg_t* movingAvg);
+utilsStatus_t movingAvgFlush(movingAvg_t* movingAvg);
 
 /**
  * \brief           Delete moving average
  *
  * \param[in]       movingAvg: pointer to moving average object
  */
-movingAvgStatus_t movingAvgDelete(movingAvg_t* movingAvg);
+utilsStatus_t movingAvgDelete(movingAvg_t* movingAvg);
 
 #ifdef __cplusplus
 }

@@ -36,8 +36,6 @@
 
 #include "button.h"
 
-/* Macros ---------------------------------------------------------------------*/
-
 /* Functions ------------------------------------------------------------------*/
 
 void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks,

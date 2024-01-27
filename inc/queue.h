@@ -42,6 +42,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdint.h>
+#include "commonTypes.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -58,19 +59,7 @@ typedef struct {
     QUEUE_STYPE size, _front, _rear, items;
 } queue_t;
 
-/**
- * Queue return status
- */
-typedef enum {
-    QUEUE_SUCCESS = 0,
-    QUEUE_ERROR = 1,
-    QUEUE_EMPTY = 2,
-    QUEUE_FULL = 3,
-    QUEUE_NOT_ENOUGH_ITEMS = 4,
-    QUEUE_NOT_ENOUGH_SPACE = 5
-} queueStatus_t;
-
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Init queue structure
@@ -79,9 +68,9 @@ typedef enum {
  * \param[in]       itemSize: size in bytes of each item in the queue
  * \param[in]       size: required queue size (number of objects)
  *
- * \return          QUEUE_SUCCESS if queue is initialized, QUEUE_ERROR if data was not allocated correctly
+ * \return          UTILS_STATUS_SUCCESS if queue is initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
-queueStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size);
+utilsStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size);
 
 /**
  * \brief           Add data to end of queue
@@ -89,9 +78,9 @@ queueStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size);
  * \param[in]       queue: pointer to queue object
  * \param[in]       value: pointer to value to be pushed
  *
- * \return          QUEUE_SUCCESS if data can be pushed correctly, QUEUE_FULL if queue is full
+ * \return          UTILS_STATUS_SUCCESS if data can be pushed correctly, UTILS_STATUS_FULL if queue is full
  */
-queueStatus_t queuePush(queue_t* queue, void* value);
+utilsStatus_t queuePush(queue_t* queue, void* value);
 
 /**
  * \brief           Add an array of data to end of queue
@@ -100,9 +89,9 @@ queueStatus_t queuePush(queue_t* queue, void* value);
  * \param[in]       data: pointer to array of data to be pushed
  * \param[in]       num: number of values to be pushed
  *
- * \return          QUEUE_SUCCESS if data can be pushed correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
+ * \return          UTILS_STATUS_SUCCESS if data can be pushed correctly, UTILS_STATUS_ERROR if queue cannot hold all elements
  */
-queueStatus_t queuePushArr(queue_t* queue, void* data, QUEUE_STYPE num);
+utilsStatus_t queuePushArr(queue_t* queue, void* data, QUEUE_STYPE num);
 
 /**
  * \brief           Add data to beginning of queue
@@ -110,9 +99,9 @@ queueStatus_t queuePushArr(queue_t* queue, void* data, QUEUE_STYPE num);
  * \param[in]       queue: pointer to queue object
  * \param[in]       value: pointer to value to be pushed to front
  *
- * \return          QUEUE_SUCCESS if data can be pushed to front correctly, QUEUE_FULL if queue is full
+ * \return          UTILS_STATUS_SUCCESS if data can be pushed to front correctly, UTILS_STATUS_FULL if queue is full
  */
-queueStatus_t queuePushFront(queue_t* queue, void* value);
+utilsStatus_t queuePushFront(queue_t* queue, void* value);
 
 /**
  * \brief           Add an array of data to beginning of queue
@@ -121,9 +110,9 @@ queueStatus_t queuePushFront(queue_t* queue, void* value);
  * \param[in]       data: pointer to array of data to be pushed to front
  * \param[in]       num: number of values to be pushed to front
  *
- * \return          QUEUE_SUCCESS if data can be pushed to front correctly, QUEUE_NOT_ENOUGH_SPACE if queue cannot hold all elements
+ * \return          UTILS_STATUS_SUCCESS if data can be pushed to front correctly, UTILS_STATUS_ERROR if queue cannot hold all elements
  */
-queueStatus_t queuePushFrontArr(queue_t* queue, void* data, QUEUE_STYPE num);
+utilsStatus_t queuePushFrontArr(queue_t* queue, void* data, QUEUE_STYPE num);
 
 /**
  * \brief           Read data from beginning of queue, removing it
@@ -131,9 +120,9 @@ queueStatus_t queuePushFrontArr(queue_t* queue, void* data, QUEUE_STYPE num);
  * \param[in]       queue: pointer to queue object
  * \param[out]      value: pointer to value to be read and removed
  *
- * \return          QUEUE_SUCCESS if data can be read and removed correctly, QUEUE_EMPTY if queue is empty
+ * \return          UTILS_STATUS_SUCCESS if data can be read and removed correctly, UTILS_STATUS_EMPTY if queue is empty
  */
-queueStatus_t queuePop(queue_t* queue, void* value);
+utilsStatus_t queuePop(queue_t* queue, void* value);
 
 /**
  * \brief           Read an array of data from beginning of queue, removing it
@@ -142,9 +131,9 @@ queueStatus_t queuePop(queue_t* queue, void* value);
  * \param[out]      data: pointer to array of data to be read and removed
  * \param[in]       num: number of values to be read and removed
  *
- * \return          QUEUE_SUCCESS if data can be pushed to front correctly, QUEUE_NOT_ENOUGH_ITEMS if queue doesn't hold all requested items
+ * \return          UTILS_STATUS_SUCCESS if data can be pushed to front correctly, UTILS_STATUS_ERROR if queue doesn't hold all requested items
  */
-queueStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num);
+utilsStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num);
 
 /**
  * \brief           Read data from end of queue, removing it
@@ -152,9 +141,9 @@ queueStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num);
  * \param[in]       queue: pointer to queue object
  * \param[out]      value: pointer to value to be read and removed
  *
- * \return          QUEUE_SUCCESS if data can be read and removed correctly, QUEUE_EMPTY if queue is empty
+ * \return          UTILS_STATUS_SUCCESS if data can be read and removed correctly, UTILS_STATUS_EMPTY if queue is empty
  */
-queueStatus_t queuePopBack(queue_t* queue, void* value);
+utilsStatus_t queuePopBack(queue_t* queue, void* value);
 
 /**
  * \brief           Read data from beginning of queue, without removing it
@@ -162,9 +151,9 @@ queueStatus_t queuePopBack(queue_t* queue, void* value);
  * \param[in]       queue: pointer to queue object
  * \param[out]      value: pointer to value to be read
  *
- * \return          QUEUE_SUCCESS if data can be read correctly, QUEUE_EMPTY if queue is empty
+ * \return          UTILS_STATUS_SUCCESS if data can be read correctly, UTILS_STATUS_EMPTY if queue is empty
  */
-queueStatus_t queuePeek(queue_t* queue, void* value);
+utilsStatus_t queuePeek(queue_t* queue, void* value);
 
 /**
  * \brief           Read data from end of queue, without removing it
@@ -172,9 +161,9 @@ queueStatus_t queuePeek(queue_t* queue, void* value);
  * \param[in]       queue: pointer to queue object
  * \param[out]      value: pointer to value to be read
  *
- * \return          QUEUE_SUCCESS if data can be read correctly, QUEUE_EMPTY if queue is empty
+ * \return          UTILS_STATUS_SUCCESS if data can be read correctly, UTILS_STATUS_EMPTY if queue is empty
  */
-queueStatus_t queuePeekBack(queue_t* queue, void* value);
+utilsStatus_t queuePeekBack(queue_t* queue, void* value);
 
 /**
  * \brief           Returns queue info
@@ -193,18 +182,18 @@ static inline void queueInfo(queue_t* queue, QUEUE_STYPE* size, QUEUE_STYPE* ite
  *
  * \param[in]       queue: pointer to queue object
  *
- * \return          QUEUE_SUCCESS if queue is flushed correctly, QUEUE_ERROR if data cannot be flushed
+ * \return          UTILS_STATUS_SUCCESS if queue is flushed correctly, UTILS_STATUS_ERROR if data cannot be flushed
  */
-queueStatus_t queueFlush(queue_t* queue);
+utilsStatus_t queueFlush(queue_t* queue);
 
 /**
  * \brief           Delete queue
  *
  * \param[in]       queue: pointer to queue object
  *
- * \return          QUEUE_SUCCESS if queue data is deleted, QUEUE_ERROR if data was not deleted correctly
+ * \return          UTILS_STATUS_SUCCESS if queue data is deleted, UTILS_STATUS_ERROR if data was not deleted correctly
  */
-queueStatus_t queueDelete(queue_t* queue);
+utilsStatus_t queueDelete(queue_t* queue);
 
 #ifdef __cplusplus
 }

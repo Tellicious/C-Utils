@@ -33,24 +33,24 @@
 
 /* Includes ------------------------------------------------------------------*/
 
+#include "matrix.h"
 #include <math.h>
 #include <stdlib.h>
-#include "matrix.h"
 #include "numMethods.h"
 
 /* ==========================================Assignment============================================= */
 
 /* -----------------------Constructor----------------------- */
-matrixStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols) {
+utilsStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols) {
     matrix->rows = rows;
     matrix->cols = cols;
     matrix->data = calloc(rows * cols, sizeof(float));
 
     if (matrix->data == NULL) {
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* ---------------------Identity Matrix---------------------- */
@@ -92,10 +92,10 @@ void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
 }
 
 /* ---------------matrix_t multiplication------------------ */
-matrixStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+utilsStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     /* 	uint8_t i, j, k; */
     if (lhs->cols != rhs->rows) {
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
     /* 	matrixZeros(result); */
     /* 	for (i = 0; i < lhs->rows; i++) */
@@ -200,14 +200,14 @@ matrixStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
 
         } while (row > 0u);
     }
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* ------matrix_t multiplication with lhs transposed------ */
-matrixStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+utilsStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     uint8_t i, j, k;
     if (lhs->rows != rhs->rows) {
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
     matrixZeros(result);
     for (i = 0; i < lhs->cols; i++) {
@@ -217,14 +217,14 @@ matrixStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
             }
         }
     }
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* ------matrix_t multiplication with rhs transposed------ */
-matrixStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+utilsStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     uint8_t i, j, k;
     if (lhs->cols != rhs->cols) {
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
     matrixZeros(result);
     for (i = 0; i < lhs->rows; i++) {
@@ -234,7 +234,7 @@ matrixStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
             }
         }
     }
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* ---------------Scalar multiplication------------------ */
@@ -353,12 +353,12 @@ float matrixNorm(matrix_t* matrix) {
 }
 
 /* -------------Deletes the data-------------- */
-matrixStatus_t matrixDelete(matrix_t* matrix) {
+utilsStatus_t matrixDelete(matrix_t* matrix) {
     if (matrix->data == NULL) {
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     free(matrix->data);
 
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }

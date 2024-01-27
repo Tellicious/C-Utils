@@ -32,6 +32,7 @@
 /* END Header */
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "numMethods.h"
 #include "math.h"
 
@@ -115,7 +116,7 @@ void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
 /* -------------------------LU factorization using Crout's Method-------------------------------- */
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
-matrixStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
+utilsStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
     int16_t ii, jj, kk;
     float sum = 0.0;
     matrixIdentity(U);
@@ -135,18 +136,18 @@ matrixStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
                 sum += ELEMP(L, jj, kk) * ELEMP(U, kk, ii);
             }
             if (ELEMP(L, jj, jj) == 0) {
-                return MATRIX_ERROR;
+                return UTILS_STATUS_ERROR;
             }
             ELEMP(U, jj, ii) = (ELEMP(A, jj, ii) - sum) / ELEMP(L, jj, jj);
         }
     }
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* -------------------------LU factorization using Cormen's Method-------------------------------- */
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
-matrixStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
+utilsStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
     int16_t i, j, k;
     float tmp;
     matrix_t A_cp;
@@ -159,7 +160,7 @@ matrixStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
         ELEMP(U, k, k) = ELEM(A_cp, k, k);
         if (ELEM(A_cp, k, k) == 0) {
             matrixDelete(&A_cp);
-            return MATRIX_ERROR;
+            return UTILS_STATUS_ERROR;
         }
         tmp = 1.0 / ELEMP(U, k, k);
         for (i = k + 1; i < A_cp.rows; i++) {
@@ -173,7 +174,7 @@ matrixStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
         }
     }
     matrixDelete(&A_cp);
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* -----------------------LUP factorization using Cormen's Method------------------------------ */
@@ -368,8 +369,8 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
  s23=out(7,0);
  s33=out(8,0);*/
 
-matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                      matrix_t* result) {
+utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                     matrix_t* result) {
     matrixCopy(X0, result);
     float d1, d2, d3, rx1, rx2, rx3, t1, t2, t3;
     float k2 = k * k;
@@ -386,7 +387,7 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uin
         matrixDelete(&res);
         matrixDelete(&delta);
         matrixDelete(&tmp1);
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     for (n_iter = 0; n_iter < nmax; n_iter++) {
@@ -419,14 +420,14 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uin
             matrixDelete(&res);
             matrixDelete(&delta);
             matrixDelete(&tmp1);
-            return MATRIX_SUCCESS;
+            return UTILS_STATUS_SUCCESS;
         }
     }
     matrixDelete(&Jr);
     matrixDelete(&res);
     matrixDelete(&delta);
     matrixDelete(&tmp1);
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* ------------Gauss-Newton sensors calibration with 6 parameters--------------- */
@@ -440,8 +441,8 @@ matrixStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uin
  s22=out(4,0);
  s33=out(5,0);*/
 
-matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                      matrix_t* result) {
+utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                     matrix_t* result) {
     matrixCopy(X0, result);
     float d1, d2, d3, t1, t2, t3;
     float k2 = k * k;
@@ -459,7 +460,7 @@ matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uin
         matrixDelete(&res);
         matrixDelete(&delta);
         matrixDelete(&tmp1);
-        return MATRIX_ERROR;
+        return UTILS_STATUS_ERROR;
     }
 
     for (n_iter = 0; n_iter < nmax; n_iter++) {
@@ -486,14 +487,14 @@ matrixStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uin
             matrixDelete(&res);
             matrixDelete(&delta);
             matrixDelete(&tmp1);
-            return MATRIX_SUCCESS;
+            return UTILS_STATUS_SUCCESS;
         }
     }
     matrixDelete(&Jr);
     matrixDelete(&res);
     matrixDelete(&delta);
     matrixDelete(&tmp1);
-    return MATRIX_SUCCESS;
+    return UTILS_STATUS_SUCCESS;
 }
 
 /* ------------------Quadratic form (sort of)---------------------- */

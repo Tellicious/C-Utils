@@ -44,6 +44,22 @@ extern "C" {
 
 /* Typedefs ------------------------------------------------------------------*/
 
+/*
+* Generic return status
+*/
+typedef enum {
+    UTILS_STATUS_SUCCESS = 0,
+    UTILS_STATUS_ERROR,
+    UTILS_STATUS_ONGOING,
+    UTILS_STATUS_TIMEOUT,
+    UTILS_STATUS_EMPTY,
+    UTILS_STATUS_FULL,
+    UTILS_STATUS_BUCKET_EMPTY,
+} utilsStatus_t;
+
+/*
+* 3-axis float vector
+*/
 typedef struct {
     float x, y, z;
 } axis3f_t;

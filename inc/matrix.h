@@ -43,6 +43,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <string.h>
+#include "commonTypes.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -59,12 +60,7 @@ typedef struct {
     uint8_t rows, cols;
 } matrix_t;
 
-/**
- * Matrix return status
- */
-typedef enum { MATRIX_SUCCESS = 0, MATRIX_ERROR = 1 } matrixStatus_t;
-
-/* Function prototypes --------------------------------------------------------*/
+/* Function prototypes -------------------------------------------------------*/
 
 /**
  * \brief           Create a new matrix containing a pointer to an external array
@@ -73,9 +69,9 @@ typedef enum { MATRIX_SUCCESS = 0, MATRIX_ERROR = 1 } matrixStatus_t;
  * \param[in]       rows: number of rows
  * \param[in]       cols: number of columns
  *
- * \return          MATRIX_SUCCESS if matrix was initialized, MATRIX_ERROR if data was not allocated correctly
+ * \return          UTILS_STATUS_SUCCESS if matrix was initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
-matrixStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols);
+utilsStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols);
 
 /**
  * \brief           Set the matrix as an identity matrix
@@ -137,9 +133,9 @@ void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  * \param[in]       rhs: pointer to right-hand side matrix object
  * \param[out]      result: pointer to result matrix object
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if matrices cannot be multiplied
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if matrices cannot be multiplied
  */
-matrixStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
+utilsStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
 
 /**
  * \brief           Matrix multiplication with transposed left-hand side matrix
@@ -148,9 +144,9 @@ matrixStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  * \param[in]       rhs: pointer to right-hand side matrix object
  * \param[out]      result: pointer to result matrix object
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if matrices cannot be multiplied
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if matrices cannot be multiplied
  */
-matrixStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
+utilsStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
 
 /**
  * \brief           Matrix multiplication with transposed right-hand side matrix
@@ -159,9 +155,9 @@ matrixStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  * \param[in]       rhs: pointer to right-hand side matrix object
  * \param[out]      result: pointer to result matrix object
  *
- * \return          MATRIX_SUCCESS if success, MATRIX_ERROR if matrices cannot be multiplied
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if matrices cannot be multiplied
  */
-matrixStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
+utilsStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
 
 /**
  * \brief           Matrix multiplication with scalar
@@ -256,9 +252,9 @@ float matrixNorm(matrix_t* matrix);
  *
  * \param[in]       matrix: pointer to matrix object
  *
- * \return          MATRIX_SUCCESS if matrix data is deleted, MATRIX_ERROR if data was not deleted correctly
+ * \return          UTILS_STATUS_SUCCESS if matrix data is deleted, UTILS_STATUS_ERROR if data was not deleted correctly
  */
-matrixStatus_t matrixDelete(matrix_t* matrix);
+utilsStatus_t matrixDelete(matrix_t* matrix);
 
 #ifdef __cplusplus
 }
