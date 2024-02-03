@@ -138,7 +138,7 @@ utilsStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, lpHash
 static inline void lpHashTableInfo(lpHashTable_t* lpht, uint32_t* size, uint32_t* items) {
     *size = lpht->size;
     *items = lpht->items;
-};
+}
 
 /**
  * \brief           Flush hash-table removing all values

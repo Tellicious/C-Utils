@@ -115,7 +115,7 @@ utilsStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHash
 static inline void lkHashTableInfo(lkHashTable_t* lkht, uint32_t* size, uint32_t* items) {
     *size = lkht->size;
     *items = lkht->items;
-};
+}
 
 /**
  * \brief           Flush hash-table removing all values

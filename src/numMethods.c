@@ -357,7 +357,7 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
 
 /* ------------Gauss-Newton sensors calibration with 9 parameters--------------- */
 /* approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric) */
-/* Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis */
+/* Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes */
 /* X0 is the starting guess vector (usually [0 0 0 1 0 0 1 0 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine) */
 /*b1=out(0,0);
  b2=out(1,0);
@@ -432,7 +432,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
 
 /* ------------Gauss-Newton sensors calibration with 6 parameters--------------- */
 /* approximates Data to a sphere of radius k by calculating 3 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S diagonal) */
-/* Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis */
+/* Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes */
 /* X0 is the starting guess vector (usually [0 0 0 1 1 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine) */
 /*b1=out(0,0);
  b2=out(1,0);

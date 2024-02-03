@@ -85,7 +85,7 @@
 		  "",
 		  "#endif /* __NAME_H__ */"
 		],
-		"description": "template of a C source file"
+		"description": "template of a C header file"
 	  },
 	"C source": {
 		"scope": "c",

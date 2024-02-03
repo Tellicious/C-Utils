@@ -175,7 +175,7 @@ utilsStatus_t queuePeekBack(queue_t* queue, void* value);
 static inline void queueInfo(queue_t* queue, QUEUE_STYPE* size, QUEUE_STYPE* items) {
     *size = queue->size / queue->itemSize;
     *items = queue->items / queue->itemSize;
-};
+}
 
 /**
  * \brief           Flush queue setting all values to 0

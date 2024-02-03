@@ -139,7 +139,7 @@ utilsStatus_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure);
  * 
  * \return          output value
  */
-static inline float PID_getOutput(PID_t* PID) { return PID->output; };
+static inline float PID_getOutput(PID_t* PID) { return PID->output; }
 
 /**
  * \brief           Return Kp value
@@ -148,7 +148,7 @@ static inline float PID_getOutput(PID_t* PID) { return PID->output; };
  * 
  * \return          Kp value
  */
-static inline float PID_getKp(PID_t* PID) { return PID->kp; };
+static inline float PID_getKp(PID_t* PID) { return PID->kp; }
 
 /**
  * \brief           Return Ki value
@@ -157,7 +157,7 @@ static inline float PID_getKp(PID_t* PID) { return PID->kp; };
  * 
  * \return          Ki value
  */
-static inline float PID_getKi(PID_t* PID) { return (2 * PID->ki / PID->dT); };
+static inline float PID_getKi(PID_t* PID) { return (2 * PID->ki / PID->dT); }
 
 /**
  * \brief           Return Kd value
@@ -166,7 +166,7 @@ static inline float PID_getKi(PID_t* PID) { return (2 * PID->ki / PID->dT); };
  * 
  * \return          Kd value
  */
-static inline float PID_getKd(PID_t* PID) { return (0.5 * (2 + PID->nd * PID->dT) * PID->kd / PID->nd); };
+static inline float PID_getKd(PID_t* PID) { return (0.5 * (2 + PID->nd * PID->dT) * PID->kd / PID->nd); }
 
 /**
  * \brief           Set proportional gain value
@@ -174,7 +174,7 @@ static inline float PID_getKd(PID_t* PID) { return (0.5 * (2 + PID->nd * PID->dT
  * \param[in]       PID: pointer to PID object
  * \param[in]       kpVal: proportional gain value
  */
-static inline void PID_setKp(PID_t* PID, float kpVal) { PID->kp = kpVal; };
+static inline void PID_setKp(PID_t* PID, float kpVal) { PID->kp = kpVal; }
 
 /**
  * \brief           Set integral gain value
@@ -182,7 +182,7 @@ static inline void PID_setKp(PID_t* PID, float kpVal) { PID->kp = kpVal; };
  * \param[in]       PID: pointer to PID object
  * \param[in]       kiVal: integral gain value
  */
-static inline void PID_setKi(PID_t* PID, float kiVal) { PID->ki = 0.5 * kiVal * PID->dT; };
+static inline void PID_setKi(PID_t* PID, float kiVal) { PID->ki = 0.5 * kiVal * PID->dT; }
 
 /**
  * \brief           Set derivative gain value
@@ -195,7 +195,7 @@ static inline void PID_setKd(PID_t* PID, float kdVal, float ndVal) {
     PID->nd = ndVal;
     PID->kd = (2 * kdVal * ndVal) / (2 + ndVal * PID->dT);
     PID->kf = (2 - ndVal * PID->dT) / (2 + ndVal * PID->dT);
-};
+}
 
 /**
  * \brief           Set back-calculation coefficient
@@ -203,7 +203,7 @@ static inline void PID_setKd(PID_t* PID, float kdVal, float ndVal) {
  * \param[in]       PID: pointer to PID object
  * \param[in]       kbVal: back-calculation coefficient value
  */
-static inline void PID_setKb(PID_t* PID, float kbVal) { PID->kb = 0.5 * kbVal * PID->dT; };
+static inline void PID_setKb(PID_t* PID, float kbVal) { PID->kb = 0.5 * kbVal * PID->dT; }
 
 /**
  * \brief           Set integral component value
@@ -211,7 +211,7 @@ static inline void PID_setKb(PID_t* PID, float kbVal) { PID->kb = 0.5 * kbVal * 
  * \param[in]       PID: pointer to PID object
  * \param[in]       value: value of integral component
  */
-static inline void PID_setIntegralValue(PID_t* PID, float value) { PID->DuI = value; };
+static inline void PID_setIntegralValue(PID_t* PID, float value) { PID->DuI = value; }
 
 /**
  * \brief           Set output saturation values
@@ -223,7 +223,7 @@ static inline void PID_setIntegralValue(PID_t* PID, float value) { PID->DuI = va
 static inline void PID_setIntegralSaturation(PID_t* PID, float satMin, float satMax) {
     PID->satMin = satMin;
     PID->satMax = satMax;
-};
+}
 
 /**
  * \brief           Reset PID
@@ -235,7 +235,7 @@ static inline void PID_reset(PID_t* PID) {
     PID->DuD = 0;
     PID->DuI = 0;
     PID->tmp = 0;
-};
+}
 
 #ifdef __cplusplus
 }

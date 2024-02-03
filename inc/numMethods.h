@@ -163,7 +163,7 @@ void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
 /**
  * \brief           Gauss-Newton sensor calibration with 9 parameters
  * \attention       Approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
- * \attention       Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis
+ * \attention       Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes
  * \attention       b1=out(0,0);
  * b2=out(1,0);
  * b3=out(2,0);
@@ -183,13 +183,12 @@ void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
  *
  * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
  */
-utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                      matrix_t* result);
+utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
 
 /**
  * \brief           Gauss-Newton sensor calibration with 6 parameters
  * \attention       Approximates Data to a sphere of radius k by calculating 3 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
- * \attention       Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axis
+ * \attention       Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes
  * \attention       b1=out(0,0);
  * b2=out(1,0);
  * b3=out(2,0);
@@ -206,8 +205,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
  *
  * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
  */
-utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                      matrix_t* result);
+utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
 
 #ifdef __cplusplus
 }

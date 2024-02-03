@@ -201,7 +201,7 @@ utilsStatus_t listPeekAtPos(list_t* list, void* value, LIST_STYPE position);
 static inline void listInfo(list_t* list, LIST_STYPE* size, LIST_STYPE* items) {
     *size = list->size;
     *items = list->items;
-};
+}
 
 /**
  * \brief           Flush list removing all values

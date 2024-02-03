@@ -87,7 +87,7 @@ void matrixIdentity(matrix_t* matrix);
  */
 static inline void matrixZeros(matrix_t* matrix) {
     memset(matrix->data, 0x00, matrix->cols * matrix->rows * sizeof(float));
-};
+}
 
 /**
  * \brief           Copy data from input matrix to output matrix
@@ -97,7 +97,7 @@ static inline void matrixZeros(matrix_t* matrix) {
  */
 static inline void matrixCopy(matrix_t* input, matrix_t* output) {
     memcpy(output->data, input->data, output->cols * output->rows * sizeof(float));
-};
+}
 
 /**
  * \brief           Matrix addition
@@ -216,7 +216,7 @@ void matrixPseudo_inv(matrix_t* lhs, matrix_t* result);
  * \param[in]       j: column
  * \param[in]       value: value
  */
-static inline void matrixSet(matrix_t* matrix, uint8_t i, uint8_t j, float value) { ELEMP(matrix, i, j) = value; };
+static inline void matrixSet(matrix_t* matrix, uint8_t i, uint8_t j, float value) { ELEMP(matrix, i, j) = value; }
 
 /**
  * \brief           Get a single element inside matrix
@@ -227,7 +227,7 @@ static inline void matrixSet(matrix_t* matrix, uint8_t i, uint8_t j, float value
  *
  * \return          matrix element
  */
-static inline float matrixGet(matrix_t* matrix, uint8_t i, uint8_t j) { return ELEMP(matrix, i, j); };
+static inline float matrixGet(matrix_t* matrix, uint8_t i, uint8_t j) { return ELEMP(matrix, i, j); }
 
 /**
  * \brief           Calculate matrix determinant
