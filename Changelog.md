@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7.0
+
+**New features:**
+- Added `CMakeLists.txt`
+
+**Improvements:**
+- Fixed some typos
+
 ## v1.6.0
 
 **New features:**
