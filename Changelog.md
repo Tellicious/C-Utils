@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.7.1
+
+**Improvements:**
+- Improved robustness of `quaternionNorm`, including check on infinite and nan
+
 ## v1.7.0
 
 **New features:**

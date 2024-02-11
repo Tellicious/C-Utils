@@ -46,13 +46,17 @@
 /* Functions -----------------------------------------------------------------*/
 
 void quaternionNorm(quaternion_t* q) {
-    float norm;
+    float inv_norm;
 
-    norm = fastInvSqrt(q->q0 * q->q0 + q->q1 * q->q1 + q->q2 * q->q2 + q->q3 * q->q3);
-    q->q0 *= norm;
-    q->q1 *= norm;
-    q->q2 *= norm;
-    q->q3 *= norm;
+    inv_norm = fastInvSqrt(q->q0 * q->q0 + q->q1 * q->q1 + q->q2 * q->q2 + q->q3 * q->q3);
+    if (isnan(inv_norm) || isinf(inv_norm)) {
+        inv_norm = 1.f;
+    }
+
+    q->q0 *= inv_norm;
+    q->q1 *= inv_norm;
+    q->q2 *= inv_norm;
+    q->q3 *= inv_norm;
 }
 
 void quaternionMult(quaternion_t* qa, quaternion_t* qb, quaternion_t* qo) {
