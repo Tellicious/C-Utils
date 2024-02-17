@@ -427,7 +427,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
     matrixDelete(&res);
     matrixDelete(&delta);
     matrixDelete(&tmp1);
-    return UTILS_STATUS_SUCCESS;
+    return UTILS_STATUS_TIMEOUT;
 }
 
 /* ------------Gauss-Newton sensors calibration with 6 parameters--------------- */
@@ -494,7 +494,7 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
     matrixDelete(&res);
     matrixDelete(&delta);
     matrixDelete(&tmp1);
-    return UTILS_STATUS_SUCCESS;
+    return UTILS_STATUS_TIMEOUT;
 }
 
 /* ------------------Quadratic form (sort of)---------------------- */

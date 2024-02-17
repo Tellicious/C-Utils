@@ -1,6 +1,6 @@
-## Improved robustness of `quaternionNorm`
+## Changed return status of `GaussNewton_Sens_Cal`
 
 **Improvements:**
-- Improved robustness of `quaternionNorm`, including check on infinite and nan
+- Changed return status of `GaussNewton_Sens_Cal` so that now it returns `UTILS_STATUS_TIMEOUT` when the maximum number of iterations is reached
 
 See [Changelog](Changelog.md)

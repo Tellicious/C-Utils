@@ -181,7 +181,7 @@ void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to result matrix object S
  *
- * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
  */
 utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
 
@@ -203,7 +203,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to result matrix object S
  *
- * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
  */
 utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
 
