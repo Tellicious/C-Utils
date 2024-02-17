@@ -421,6 +421,12 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
             matrixDelete(&delta);
             matrixDelete(&tmp1);
             return UTILS_STATUS_SUCCESS;
+        } else if (isnan(d1) || isnan(d2) || isnan(d3)) {
+            matrixDelete(&Jr);
+            matrixDelete(&res);
+            matrixDelete(&delta);
+            matrixDelete(&tmp1);
+            return UTILS_STATUS_ERROR;
         }
     }
     matrixDelete(&Jr);
@@ -488,6 +494,12 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
             matrixDelete(&delta);
             matrixDelete(&tmp1);
             return UTILS_STATUS_SUCCESS;
+        } else if (isnan(d1) || isnan(d2) || isnan(d3)) {
+            matrixDelete(&Jr);
+            matrixDelete(&res);
+            matrixDelete(&delta);
+            matrixDelete(&tmp1);
+            return UTILS_STATUS_ERROR;
         }
     }
     matrixDelete(&Jr);
