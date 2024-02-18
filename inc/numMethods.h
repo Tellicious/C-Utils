@@ -175,8 +175,8 @@ void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
  * s33=out(8,0);
  *
  * \param[in]       Data: pointer to raw data matrix object Data
- * \param[in]       k: radius of sphere to be approximated
- * \param[in]       X0: pointer to starting vector X0 (usually [0 0 0 1 0 0 1 0 1])
+ * \param[in]       k: radius of sphere to be approximated. If 0, it is calculated automatically
+ * \param[in]       X0: pointer to starting vector X0 (usually [0 0 0 1 0 0 1 0 1]). If NULL it is calculated automatically
  * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations)
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to result matrix object S
@@ -197,8 +197,8 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
  * s33=out(5,0);
  *
  * \param[in]       Data: pointer to raw data matrix object Data
- * \param[in]       k: radius of sphere to be approximated
- * \param[in]       X0: pointer to starting vector X0 (usually [0 0 0 1 1 1])
+ * \param[in]       k: radius of sphere to be approximated. If 0, it is calculated automatically
+ * \param[in]       X0: pointer to starting vector X0 (usually [0 0 0 1 1 1]). If NULL it is calculated automatically
  * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations)
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to result matrix object S

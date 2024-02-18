@@ -1,6 +1,7 @@
-## Changed return status of `GaussNewton_Sens_Cal`
+## Significant improvement of `GaussNewton_Sens_Cal`
 
-**Improvements:**
-- Changed return status of `GaussNewton_Sens_Cal` so that now it returns `UTILS_STATUS_TIMEOUT` when the maximum number of iterations is reached
+**New features:**
+- `GaussNewton_Sens_Cal` can now calculate automatically both sphere radius and starting conditions, that are no longer needed as input parameters
+- `GaussNewton_Sens_Cal` returns now an error if `NaN` is detected
 
 See [Changelog](Changelog.md)

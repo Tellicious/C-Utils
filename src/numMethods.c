@@ -371,11 +371,8 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
 
 utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
                                      matrix_t* result) {
-    matrixCopy(X0, result);
     float d1, d2, d3, rx1, rx2, rx3, t1, t2, t3;
-    float k2 = k * k;
-    uint16_t n_iter;
-    uint8_t jj;
+    float k2;
     matrix_t Jr, res, delta, tmp1;
     matrixInit(&Jr, Data->rows, 9);
     matrixInit(&res, Data->rows, 1);
@@ -390,8 +387,43 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
         return UTILS_STATUS_ERROR;
     }
 
-    for (n_iter = 0; n_iter < nmax; n_iter++) {
-        for (jj = 0; jj < Data->rows; jj++) {
+    /* Set starting point if not given as input */
+    if (X0 != NULL) {
+        matrixCopy(X0, result);
+    } else {
+        matrixZeros(result);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            ELEMP(result, 0, 0) += matrixGet(Data, ii, 0) / Data->rows;
+            ELEMP(result, 1, 0) += matrixGet(Data, ii, 1) / Data->rows;
+            ELEMP(result, 2, 0) += matrixGet(Data, ii, 2) / Data->rows;
+        }
+        matrixSet(result, 3, 0, 1);
+        matrixSet(result, 6, 0, 1);
+        matrixSet(result, 8, 0, 1);
+    }
+
+    /* Set target radius if not given as input */
+    if (k != 0) {
+        k2 = k * k;
+    } else {
+        float max = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        float min = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            for (uint8_t jj = 0; jj < 3; jj++) {
+                float data = matrixGet(Data, ii, jj) - matrixGet(result, jj, 0);
+                if (data > max) {
+                    max = data;
+                } else if (data < min) {
+                    min = data;
+                }
+            }
+        }
+        k2 = 0.25 * (max - min) * (max - min);
+    }
+
+    /* Perform best-fit algorithm */
+    for (uint16_t n_iter = 0; n_iter < nmax; n_iter++) {
+        for (uint8_t jj = 0; jj < Data->rows; jj++) {
             d1 = ELEMP(Data, jj, 0) - ELEMP(result, 0, 0);
             d2 = ELEMP(Data, jj, 1) - ELEMP(result, 1, 0);
             d3 = ELEMP(Data, jj, 2) - ELEMP(result, 2, 0);
@@ -449,11 +481,8 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
 
 utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
                                      matrix_t* result) {
-    matrixCopy(X0, result);
     float d1, d2, d3, t1, t2, t3;
-    float k2 = k * k;
-    uint16_t n_iter;
-    uint8_t jj;
+    float k2;
 
     matrix_t Jr, res, delta, tmp1;
     matrixInit(&Jr, Data->rows, 6);
@@ -469,8 +498,43 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
         return UTILS_STATUS_ERROR;
     }
 
-    for (n_iter = 0; n_iter < nmax; n_iter++) {
-        for (jj = 0; jj < Data->rows; jj++) {
+    /* Set starting point if not given as input */
+    if (X0 != NULL) {
+        matrixCopy(X0, result);
+    } else {
+        matrixZeros(result);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            ELEMP(result, 0, 0) += matrixGet(Data, ii, 0) / Data->rows;
+            ELEMP(result, 1, 0) += matrixGet(Data, ii, 1) / Data->rows;
+            ELEMP(result, 2, 0) += matrixGet(Data, ii, 2) / Data->rows;
+        }
+        matrixSet(result, 3, 0, 1);
+        matrixSet(result, 4, 0, 1);
+        matrixSet(result, 5, 0, 1);
+    }
+
+    /* Set target radius if not given as input */
+    if (k != 0) {
+        k2 = k * k;
+    } else {
+        float max = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        float min = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            for (uint8_t jj = 0; jj < 3; jj++) {
+                float data = matrixGet(Data, ii, jj) - matrixGet(result, jj, 0);
+                if (data > max) {
+                    max = data;
+                } else if (data < min) {
+                    min = data;
+                }
+            }
+        }
+        k2 = 0.25 * (max - min) * (max - min);
+    }
+
+    /* Perform best-fit algorithm */
+    for (uint16_t n_iter = 0; n_iter < nmax; n_iter++) {
+        for (uint8_t jj = 0; jj < Data->rows; jj++) {
             d1 = ELEMP(Data, jj, 0) - ELEMP(result, 0, 0);
             d2 = ELEMP(Data, jj, 1) - ELEMP(result, 1, 0);
             d3 = ELEMP(Data, jj, 2) - ELEMP(result, 2, 0);
