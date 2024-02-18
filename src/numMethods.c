@@ -371,7 +371,7 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
 
 utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
                                      matrix_t* result) {
-    float d1, d2, d3, rx1, rx2, rx3, t1, t2, t3;
+    float d1 = 0, d2 = 0, d3 = 0, rx1, rx2, rx3, t1, t2, t3;
     float k2;
     matrix_t Jr, res, delta, tmp1;
     matrixInit(&Jr, Data->rows, 9);
@@ -481,7 +481,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
 
 utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
                                      matrix_t* result) {
-    float d1, d2, d3, t1, t2, t3;
+    float d1 = 0, d2 = 0, d3 = 0, t1, t2, t3;
     float k2;
 
     matrix_t Jr, res, delta, tmp1;

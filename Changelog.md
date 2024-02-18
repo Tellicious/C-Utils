@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.8.1
+
+**Bugfix:**
+- Initialized some variables in `GaussNewton_Sens_Cal` to avoid a `-Wmaybe-uninitialized` warning
+
 ## v1.8.0
 
 **New features:**
