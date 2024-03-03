@@ -78,6 +78,7 @@ typedef struct {
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Init list structure
  *
@@ -228,6 +229,7 @@ void listIt(listIterator_t* it, list_t* list);
  * \return          UTILS_STATUS_SUCCESS if iterator is moved to next value, UTILS_STATUS_ERROR if there are no more items
  */
 utilsStatus_t listItNext(listIterator_t* it);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

@@ -71,6 +71,7 @@ typedef enum { LKHT_REMOVE_ITEM = 0, LKHT_DO_NOT_REMOVE_ITEM = 1 } lkHashTableRe
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Init linked hash-table structure
  *
@@ -125,6 +126,7 @@ static inline void lkHashTableInfo(lkHashTable_t* lkht, uint32_t* size, uint32_t
  * \return          UTILS_STATUS_SUCCESS if list is flushed correctly, UTILS_STATUS_ERROR if data cannot be flushed
  */
 utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

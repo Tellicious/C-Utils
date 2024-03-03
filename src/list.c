@@ -31,13 +31,36 @@
  */
 /* END Header */
 
+/* Configuration check -------------------------------------------------------*/
+#if !defined(ADVUTILS_USE_DYNAMIC_ALLOCATION) && !defined(ADVUTILS_USE_STATIC_ALLOCATION)
+#error Either ADVUTILS_USE_DYNAMIC_ALLOCATION or ADVUTILS_USE_STATIC_ALLOCATION must be set for ADVUtils to work
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "list.h"
-#include <stdlib.h>
 #include <string.h>
+#ifdef ADVUTILS_MEMORY_MGMT_HEADER
+#if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
+#error ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
+#else
+#include ADVUTILS_MEMORY_MGMT_HEADER
+#endif /* !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE) */
+#else
+#include <stdlib.h>
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+
+/* Macros --------------------------------------------------------------------*/
+
+#ifndef ADVUTILS_MEMORY_MGMT_HEADER
+#define ADVUTILS_MALLOC malloc
+#define ADVUTILS_CALLOC calloc
+#define ADVUTILS_FREE   free
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 /* Functions -----------------------------------------------------------------*/
+
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
 void listInit(list_t* list, size_t itemSize, LIST_STYPE size) {
     list->_front = NULL;
@@ -53,8 +76,8 @@ utilsStatus_t listPush(list_t* list, void* value) {
     }
 
     listNode_t* ptr;
-    ptr = malloc(sizeof(listNode_t));
-    ptr->data = calloc(1, list->itemSize);
+    ptr = ADVUTILS_MALLOC(sizeof(listNode_t));
+    ptr->data = ADVUTILS_CALLOC(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
@@ -74,8 +97,8 @@ utilsStatus_t listPushFront(list_t* list, void* value) {
     }
 
     listNode_t* ptr;
-    ptr = malloc(sizeof(listNode_t));
-    ptr->data = calloc(1, list->itemSize);
+    ptr = ADVUTILS_MALLOC(sizeof(listNode_t));
+    ptr->data = ADVUTILS_CALLOC(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
@@ -102,8 +125,8 @@ utilsStatus_t listInsert(list_t* list, void* value, LIST_STYPE position) {
     }
 
     listNode_t* ptr;
-    ptr = malloc(sizeof(listNode_t));
-    ptr->data = calloc(1, list->itemSize);
+    ptr = ADVUTILS_MALLOC(sizeof(listNode_t));
+    ptr->data = ADVUTILS_CALLOC(1, list->itemSize);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
@@ -153,8 +176,8 @@ utilsStatus_t listPop(list_t* list, void* value) {
     listNode_t* ptr = list->_front;
     memcpy(value, ptr->data, list->itemSize);
     list->_front = ptr->next;
-    free(ptr->data);
-    free(ptr);
+    ADVUTILS_FREE(ptr->data);
+    ADVUTILS_FREE(ptr);
 
     list->items--;
     if (!list->items) {
@@ -179,8 +202,8 @@ utilsStatus_t listPopBack(list_t* list, void* value) {
     }
     prev->next = NULL;
 
-    free(list->_rear->data);
-    free(list->_rear);
+    ADVUTILS_FREE(list->_rear->data);
+    ADVUTILS_FREE(list->_rear);
     list->_rear = prev;
 
     list->items--;
@@ -220,8 +243,8 @@ utilsStatus_t listRemove(list_t* list, void* value, LIST_STYPE position) {
         prev->next = ptr->next;
     }
 
-    free(ptr->data);
-    free(ptr);
+    ADVUTILS_FREE(ptr->data);
+    ADVUTILS_FREE(ptr);
 
     list->items--;
     if (!list->items) {
@@ -281,8 +304,8 @@ utilsStatus_t listFlush(list_t* list) {
     listNode_t* ptr = list->_front;
     while (ptr != NULL) {
         list->_front = ptr->next;
-        free(ptr->data);
-        free(ptr);
+        ADVUTILS_FREE(ptr->data);
+        ADVUTILS_FREE(ptr);
         ptr = list->_front;
     }
     list->items = 0;
@@ -311,3 +334,5 @@ utilsStatus_t listItNext(listIterator_t* it) {
     }
     return UTILS_STATUS_ERROR;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

@@ -31,18 +31,40 @@
  */
 /* END Header */
 
+/* Configuration check -------------------------------------------------------*/
+#if !defined(ADVUTILS_USE_DYNAMIC_ALLOCATION) && !defined(ADVUTILS_USE_STATIC_ALLOCATION)
+#error Either ADVUTILS_USE_DYNAMIC_ALLOCATION or ADVUTILS_USE_STATIC_ALLOCATION must be set for ADVUtils to work
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "movingAvg.h"
-#include <stdlib.h>
 #include <string.h>
+#ifdef ADVUTILS_MEMORY_MGMT_HEADER
+#if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
+#error ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
+#else
+#include ADVUTILS_MEMORY_MGMT_HEADER
+#endif /* !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE) */
+#else
+#include <stdlib.h>
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+
+/* Macros --------------------------------------------------------------------*/
+
+#ifndef ADVUTILS_MEMORY_MGMT_HEADER
+#define ADVUTILS_MALLOC malloc
+#define ADVUTILS_CALLOC calloc
+#define ADVUTILS_FREE   free
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 /* Functions -----------------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
     movingAvg->data = NULL;
-    movingAvg->data = calloc(size, sizeof(MOVAVG_TYPE));
-    /* movingAvg->data = malloc(size * sizeof(MOVAVG_TYPE)); */
+    movingAvg->data = ADVUTILS_CALLOC(size, sizeof(MOVAVG_TYPE));
     if (movingAvg->data == NULL) {
         movingAvg->size = 0;
         return UTILS_STATUS_ERROR;
@@ -54,6 +76,21 @@ utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
     movingAvg->_write = 0;
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+void movingAvgInitStatic(movingAvg_t* movingAvg, MOVAVG_TYPE* data, MOVAVG_IND_TYPE size) {
+    movingAvg->data = data;
+    movingAvg->size = size;
+    movingAvg->sum = 0;
+    movingAvg->inv_size = (MOVAVG_TYPE)1.0 / size;
+    movingAvg->_write = 0;
+    return;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 MOVAVG_TYPE movingAvgCalc(movingAvg_t* movingAvg, MOVAVG_TYPE value) {
     movingAvg->sum -= movingAvg->data[movingAvg->_write];
@@ -77,13 +114,17 @@ utilsStatus_t movingAvgFlush(movingAvg_t* movingAvg) {
     return UTILS_STATUS_SUCCESS;
 }
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 utilsStatus_t movingAvgDelete(movingAvg_t* movingAvg) {
 
     if (movingAvg->data == NULL) {
         return UTILS_STATUS_ERROR;
     }
 
-    free(movingAvg->data);
+    ADVUTILS_FREE(movingAvg->data);
 
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

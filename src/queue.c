@@ -9,7 +9,7 @@
  *
  * Copyright 2023 Andrea Vivani
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, ADVUTILS_FREE of charge, to any person obtaining a copy
  * of this software and associated documentation files (the “Software”), to
  * deal in the Software without restriction, including without limitation the
  * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
@@ -31,18 +31,41 @@
  */
 /* END Header */
 
+/* Configuration check -------------------------------------------------------*/
+#if !defined(ADVUTILS_USE_DYNAMIC_ALLOCATION) && !defined(ADVUTILS_USE_STATIC_ALLOCATION)
+#error Either ADVUTILS_USE_DYNAMIC_ALLOCATION or ADVUTILS_USE_STATIC_ALLOCATION must be set for ADVUtils to work
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "queue.h"
-#include <stdlib.h>
 #include <string.h>
+#ifdef ADVUTILS_MEMORY_MGMT_HEADER
+#if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
+#error ADVUTILS_MEMORY_MGMT_HEADER, ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
+#else
+#include ADVUTILS_MEMORY_MGMT_HEADER
+#endif
+#else
+#include <stdlib.h>
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+
+/* Macros --------------------------------------------------------------------*/
+
+#ifndef ADVUTILS_MEMORY_MGMT_HEADER
+#define ADVUTILS_MALLOC malloc
+#define ADVUTILS_CALLOC calloc
+#define ADVUTILS_FREE   free
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 /* Functions -----------------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 utilsStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size) {
     queue->data = NULL;
-    queue->data = calloc(size, itemSize);
-    /* queue->data = malloc(size * itemSize); */
+    queue->data = ADVUTILS_CALLOC(size, itemSize);
+    /* queue->data = ADVUTILS_MALLOC(size * itemSize); */
     if (queue->data == NULL) {
         queue->size = 0;
         return UTILS_STATUS_ERROR;
@@ -55,6 +78,22 @@ utilsStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size) {
     queue->_rear = 0;
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+void queueInitStatic(queue_t* queue, uint8_t* data, size_t itemSize, QUEUE_STYPE size) {
+    queue->data = data;
+    queue->size = size * itemSize;
+    queue->itemSize = itemSize;
+    queue->items = 0;
+    queue->_front = 0;
+    queue->_rear = 0;
+    return;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 utilsStatus_t queuePush(queue_t* queue, void* value) {
     if (queue->items == queue->size) {
@@ -226,13 +265,17 @@ utilsStatus_t queueFlush(queue_t* queue) {
     return UTILS_STATUS_SUCCESS;
 }
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 utilsStatus_t queueDelete(queue_t* queue) {
 
     if (queue->data == NULL) {
         return UTILS_STATUS_ERROR;
     }
 
-    free(queue->data);
+    ADVUTILS_FREE(queue->data);
 
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

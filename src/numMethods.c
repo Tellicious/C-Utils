@@ -31,6 +31,11 @@
  */
 /* END Header */
 
+/* Configuration check -------------------------------------------------------*/
+#if !defined(ADVUTILS_USE_DYNAMIC_ALLOCATION) && !defined(ADVUTILS_USE_STATIC_ALLOCATION)
+#error Either ADVUTILS_USE_DYNAMIC_ALLOCATION or ADVUTILS_USE_STATIC_ALLOCATION must be set for ADVUtils to work
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "numMethods.h"
@@ -113,6 +118,27 @@ void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
     return;
 }
 
+/* ------------------Quadratic form (sort of)---------------------- */
+/* returns matrix C=A*B*(~A) */
+
+void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result) {
+    int16_t i, j, n, ii;
+    float tmp;
+    matrixZeros(result);
+    for (n = 0; n < A->rows; n++) {
+        for (i = 0; i < A->cols; i++) {
+            tmp = 0.0;
+            for (j = 0; j < A->cols; j++) {
+                tmp += ELEMP(A, n, j) * ELEMP(B, i, j);
+            }
+            for (ii = 0; ii < A->rows; ii++) {
+                ELEMP(result, ii, n) += ELEMP(A, ii, i) * tmp;
+            }
+        }
+    }
+    return;
+}
+
 /* -------------------------LU factorization using Crout's Method-------------------------------- */
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
@@ -143,6 +169,8 @@ utilsStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
     }
     return UTILS_STATUS_SUCCESS;
 }
+
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
 /* -------------------------LU factorization using Cormen's Method-------------------------------- */
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
@@ -444,7 +472,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
             t3 = ELEMP(result, 5, 0) * d1 + ELEMP(result, 7, 0) * d2 + ELEMP(result, 8, 0) * d3;
             ELEM(res, jj, 0) = t1 * t1 + t2 * t2 + t3 * t3 - k2;
         }
-        matrixPseudo_inv(&Jr, &tmp1);
+        matrixPseudoInv(&Jr, &tmp1);
         matrixMult(&tmp1, &res, &delta);
         matrixSub(result, &delta, result);
         if (matrixNorm(&delta) < tol) {
@@ -549,7 +577,7 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
             t3 = ELEMP(result, 5, 0) * d3;
             ELEM(res, jj, 0) = t1 * t1 + t2 * t2 + t3 * t3 - k2;
         }
-        matrixPseudo_inv(&Jr, &tmp1);
+        matrixPseudoInv(&Jr, &tmp1);
         matrixMult(&tmp1, &res, &delta);
         matrixSub(result, &delta, result);
         if (matrixNorm(&delta) < tol) {
@@ -573,23 +601,412 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
     return UTILS_STATUS_TIMEOUT;
 }
 
-/* ------------------Quadratic form (sort of)---------------------- */
-/* returns matrix C=A*B*(~A) */
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
-void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result) {
-    int16_t i, j, n, ii;
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+/* -------------------------LU factorization using Cormen's Method-------------------------------- */
+/* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
+
+utilsStatus_t LU_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U) {
+    int16_t i, j, k;
     float tmp;
-    matrixZeros(result);
-    for (n = 0; n < A->rows; n++) {
-        for (i = 0; i < A->cols; i++) {
-            tmp = 0.0;
-            for (j = 0; j < A->cols; j++) {
-                tmp += ELEMP(A, n, j) * ELEMP(B, i, j);
-            }
-            for (ii = 0; ii < A->rows; ii++) {
-                ELEMP(result, ii, n) += ELEMP(A, ii, i) * tmp;
+    float _A_cp_Data[A->rows * A->cols];
+    matrix_t A_cp;
+    matrixInitStatic(&A_cp, _A_cp_Data, A->rows, A->cols);
+    matrixCopy(A, &A_cp);
+    matrixZeros(U);
+    matrixIdentity(L);
+
+    for (k = 0; k < A_cp.rows; k++) {
+        ELEMP(U, k, k) = ELEM(A_cp, k, k);
+        if (ELEM(A_cp, k, k) == 0) {
+            return UTILS_STATUS_ERROR;
+        }
+        tmp = 1.0 / ELEMP(U, k, k);
+        for (i = k + 1; i < A_cp.rows; i++) {
+            ELEMP(L, i, k) = ELEM(A_cp, i, k) * tmp;
+            ELEMP(U, k, i) = ELEM(A_cp, k, i);
+        }
+        for (i = k + 1; i < A_cp.rows; i++) {
+            for (j = k + 1; j < A_cp.rows; j++) {
+                ELEM(A_cp, i, j) -= ELEMP(L, i, k) * ELEMP(U, k, j);
             }
         }
     }
+    return UTILS_STATUS_SUCCESS;
+}
+
+/* -----------------------LUP factorization using Cormen's Method------------------------------ */
+/* factorizes the A matrix as the product of a upper triangular matrix U and a unit lower triangular matrix L */
+/* returns the factor that has to be multiplied to the determinant of U in order to obtain the correct value */
+
+int8_t LUP_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P) {
+    int16_t i, j, k;
+    float tmp, tmp2;
+    int16_t pivrow;
+    int8_t d_mult = 1; /* determinant multiplying factor */
+    float _A_cp_Data[A->rows * A->cols];
+    matrix_t A_cp;
+    matrixInitStatic(&A_cp, _A_cp_Data, A->rows, A->cols);
+    matrixCopy(A, &A_cp);
+    matrixZeros(U);
+    matrixIdentity(L);
+    /* initialization */
+    for (i = 0; i < A_cp.rows; i++) {
+        ELEMP(P, i, 0) = i;
+    }
+
+    /* outer loop over diagonal pivots */
+    for (k = 0; k < A_cp.rows - 1; k++) {
+
+        /* inner loop to find the largest pivot */
+        pivrow = k;
+        tmp = fabsf(ELEM(A_cp, k, k));
+        for (i = k + 1; i < A_cp.rows; i++) {
+            tmp2 = fabsf(ELEM(A_cp, i, k));
+            if (tmp2 > tmp) {
+                tmp = tmp2;
+                pivrow = i;
+            }
+        }
+        /* check for singularity */
+        if (ELEM(A_cp, pivrow, k) == 0) {
+            return 0;
+        }
+
+        /* swap rows */
+        if (pivrow != k) {
+            tmp = ELEMP(P, k, 0);
+            ELEMP(P, k, 0) = ELEMP(P, pivrow, 0);
+            ELEMP(P, pivrow, 0) = tmp;
+            d_mult *= -1;
+
+            for (j = 0; j < A_cp.rows; j++) {
+                tmp = ELEM(A_cp, k, j);
+                ELEM(A_cp, k, j) = ELEM(A_cp, pivrow, j);
+                ELEM(A_cp, pivrow, j) = tmp;
+            }
+        }
+        tmp = 1.0 / ELEM(A_cp, k, k);
+        /* Gaussian elimination */
+        for (i = k + 1; i < A_cp.rows; i++) { /* iterate down rows */
+            ELEM(A_cp, i, k) *= tmp;
+            for (j = k + 1; j < A_cp.rows; j++) { /* iterate across rows */
+                ELEM(A_cp, i, j) -= ELEM(A_cp, i, k) * ELEM(A_cp, k, j);
+            }
+        }
+    }
+    for (k = 0; k < A_cp.rows; k++) {
+        ELEMP(U, k, k) = ELEM(A_cp, k, k);
+        for (j = k + 1; j < A_cp.rows; j++) {
+            ELEMP(L, j, k) = ELEM(A_cp, j, k);
+            ELEMP(U, k, j) = ELEM(A_cp, k, j);
+        }
+    }
+    return d_mult;
+}
+
+/* -----------------------Linear system solver using LU factorization--------------------------- */
+/* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
+
+void LinSolveLUStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
+    float _LData[A->rows * A->cols];
+    float _UData[A->cols * A->cols];
+    matrix_t L, U;
+    matrixInitStatic(&L, _LData, A->rows, A->cols);
+    matrixInitStatic(&U, _UData, A->cols, A->cols);
+    /* matrix_t *tmp1 = matrixInit(A->rows, B->cols); */
+    LU_CormenStatic(A, &L, &U);
+    /* fwsub(L, B, tmp1); */
+    /* bksub(U, tmp1, result); */
+    fwsub(&L, B, result);
+    bksub(&U, result, result); /* hope it can work in-place */
     return;
 }
+
+/* ----------------------Linear system solver using LUP factorization-------------------------- */
+/* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
+
+void LinSolveLUPStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
+    float _LData[A->rows * A->cols];
+    float _UData[A->cols * A->cols];
+    float _PData[A->rows];
+    float _tmpData[A->rows * B->cols];
+    matrix_t L, U, P, tmp;
+    matrixInitStatic(&L, _LData, A->rows, A->cols);
+    matrixInitStatic(&U, _UData, A->cols, A->cols);
+    matrixInitStatic(&P, _PData, A->rows, 1);
+    matrixInitStatic(&tmp, _tmpData, A->rows, B->cols);
+
+    LUP_CormenStatic(A, &L, &U, &P);
+    fwsubPerm(&L, B, &P, &tmp);
+    bksub(&U, &tmp, result);
+    return;
+}
+
+/* ------------Linear system solver using Gauss elimination with partial pivoting--------------- */
+/* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
+
+void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
+    uint8_t pivrow = 0; /* keeps track of current pivot row */
+    uint8_t k, i, j;    /* k: overall index along diagonals; i: row index; j: col index */
+    float tmp;          /* used for finding max value and making row swaps */
+    float tmp2; /* used to store abs when finding max value and to store coefficient value when eliminating values */
+
+    float _A_cp_Data[A->rows * A->cols];
+    float _B_cp_Data[B->rows * B->cols];
+    matrix_t A_cp, B_cp;
+    matrixInitStatic(&A_cp, _A_cp_Data, A->rows, A->cols);
+    matrixInitStatic(&B_cp, _B_cp_Data, B->rows, B->cols);
+    matrixCopy(A, &A_cp);
+    matrixCopy(B, &B_cp);
+
+    for (k = 0; k < (A_cp.cols - 1); k++) {
+
+        /* find pivot row, the row with biggest entry in current column */
+        tmp = fabsf(ELEM(A_cp, k, k));
+        pivrow = k;
+        for (i = k + 1; i < A_cp.cols; i++) {
+            tmp2 = fabsf(ELEM(A_cp, i, k)); /* 'Avoid using other functions inside abs()?' */
+            if (tmp2 > tmp) {
+                tmp = tmp2;
+                pivrow = i;
+            }
+        }
+
+        /* check for singular Matrix */
+        if (ELEM(A_cp, pivrow, k) == 0.0) {
+            matrixZeros(result);
+            return;
+        }
+
+        /* Execute pivot (row swap) if needed */
+        if (pivrow != k) {
+            /* swap row k of matrix A with pivrow */
+            for (j = k; j < A_cp.cols; j++) {
+                tmp = ELEM(A_cp, k, j);
+                ELEM(A_cp, k, j) = ELEM(A_cp, pivrow, j);
+                ELEM(A_cp, pivrow, j) = tmp;
+            }
+            /* swap row k of matrix B with pivrow */
+            for (j = 0; j < B_cp.cols; j++) {
+                tmp = ELEM(B_cp, k, j);
+                ELEM(B_cp, k, j) = ELEM(B_cp, pivrow, j);
+                ELEM(B_cp, pivrow, j) = tmp;
+            }
+        }
+
+        /* Row reduction */
+        tmp = 1.0 / ELEM(A_cp, k, k);         /* invert pivot element */
+        for (i = k + 1; i < A_cp.cols; i++) { /* along rows */
+            tmp2 = ELEM(A_cp, i, k) * tmp;
+            /* Perform row reduction of A */
+            for (j = k + 1; j < A_cp.cols; j++) { /* along columns of A */
+                ELEM(A_cp, i, j) -= tmp2 * ELEM(A_cp, k, j);
+            }
+            /* Perform row reduction of B */
+            for (j = 0; j < B_cp.cols; j++) { /* along columns of B */
+                ELEM(B_cp, i, j) -= tmp2 * ELEM(B_cp, k, j);
+            }
+        }
+    }
+    bksub(&A_cp, &B_cp, result);
+    return;
+}
+
+/* ------------Gauss-Newton sensors calibration with 9 parameters--------------- */
+/* approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric) */
+/* Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes */
+/* X0 is the starting guess vector (usually [0 0 0 1 0 0 1 0 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine) */
+/*b1=out(0,0);
+ b2=out(1,0);
+ b3=out(2,0);
+ s11=out(3,0);
+ s12=out(4,0);
+ s13=out(5,0);
+ s22=out(6,0);
+ s23=out(7,0);
+ s33=out(8,0);*/
+
+utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                           matrix_t* result) {
+    float d1 = 0, d2 = 0, d3 = 0, rx1, rx2, rx3, t1, t2, t3;
+    float k2;
+    float _JrData[Data->rows * 9];
+    float _resData[Data->rows];
+    float _deltaData[9];
+    float _tmp1Data[9 * Data->rows];
+    matrix_t Jr, res, delta, tmp1;
+    matrixInitStatic(&Jr, _JrData, Data->rows, 9);
+    matrixInitStatic(&res, _resData, Data->rows, 1);
+    matrixInitStatic(&delta, _deltaData, 9, 1);
+    matrixInitStatic(&tmp1, _tmp1Data, 9, Data->rows);
+
+    if ((Data->rows < 9) || (Data->cols != 3)) {
+        return UTILS_STATUS_ERROR;
+    }
+
+    /* Set starting point if not given as input */
+    if (X0 != NULL) {
+        matrixCopy(X0, result);
+    } else {
+        matrixZeros(result);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            ELEMP(result, 0, 0) += matrixGet(Data, ii, 0) / Data->rows;
+            ELEMP(result, 1, 0) += matrixGet(Data, ii, 1) / Data->rows;
+            ELEMP(result, 2, 0) += matrixGet(Data, ii, 2) / Data->rows;
+        }
+        matrixSet(result, 3, 0, 1);
+        matrixSet(result, 6, 0, 1);
+        matrixSet(result, 8, 0, 1);
+    }
+
+    /* Set target radius if not given as input */
+    if (k != 0) {
+        k2 = k * k;
+    } else {
+        float max = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        float min = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            for (uint8_t jj = 0; jj < 3; jj++) {
+                float data = matrixGet(Data, ii, jj) - matrixGet(result, jj, 0);
+                if (data > max) {
+                    max = data;
+                } else if (data < min) {
+                    min = data;
+                }
+            }
+        }
+        k2 = 0.25 * (max - min) * (max - min);
+    }
+
+    /* Perform best-fit algorithm */
+    for (uint16_t n_iter = 0; n_iter < nmax; n_iter++) {
+        for (uint8_t jj = 0; jj < Data->rows; jj++) {
+            d1 = ELEMP(Data, jj, 0) - ELEMP(result, 0, 0);
+            d2 = ELEMP(Data, jj, 1) - ELEMP(result, 1, 0);
+            d3 = ELEMP(Data, jj, 2) - ELEMP(result, 2, 0);
+            rx1 = -2 * (ELEMP(result, 3, 0) * d1 + ELEMP(result, 4, 0) * d2 + ELEMP(result, 5, 0) * d3);
+            rx2 = -2 * (ELEMP(result, 4, 0) * d1 + ELEMP(result, 6, 0) * d2 + ELEMP(result, 7, 0) * d3);
+            rx3 = -2 * (ELEMP(result, 5, 0) * d1 + ELEMP(result, 7, 0) * d2 + ELEMP(result, 8, 0) * d3);
+            ELEM(Jr, jj, 0) = ELEMP(result, 3, 0) * rx1 + ELEMP(result, 4, 0) * rx2 + ELEMP(result, 5, 0) * rx3;
+            ELEM(Jr, jj, 1) = ELEMP(result, 4, 0) * rx1 + ELEMP(result, 6, 0) * rx2 + ELEMP(result, 7, 0) * rx3;
+            ELEM(Jr, jj, 2) = ELEMP(result, 5, 0) * rx1 + ELEMP(result, 7, 0) * rx2 + ELEMP(result, 8, 0) * rx3;
+            ELEM(Jr, jj, 3) = -d1 * rx1;
+            ELEM(Jr, jj, 4) = -d2 * rx1 - d1 * rx2;
+            ELEM(Jr, jj, 5) = -d3 * rx1 - d1 * rx3;
+            ELEM(Jr, jj, 6) = -d2 * rx2;
+            ELEM(Jr, jj, 7) = -d3 * rx2 - d2 * rx3;
+            ELEM(Jr, jj, 8) = -d3 * rx3;
+            t1 = ELEMP(result, 3, 0) * d1 + ELEMP(result, 4, 0) * d2 + ELEMP(result, 5, 0) * d3;
+            t2 = ELEMP(result, 4, 0) * d1 + ELEMP(result, 6, 0) * d2 + ELEMP(result, 7, 0) * d3;
+            t3 = ELEMP(result, 5, 0) * d1 + ELEMP(result, 7, 0) * d2 + ELEMP(result, 8, 0) * d3;
+            ELEM(res, jj, 0) = t1 * t1 + t2 * t2 + t3 * t3 - k2;
+        }
+        matrixPseudoInvStatic(&Jr, &tmp1);
+        matrixMult(&tmp1, &res, &delta);
+        matrixSub(result, &delta, result);
+        if (matrixNorm(&delta) < tol) {
+            return UTILS_STATUS_SUCCESS;
+        } else if (isnan(d1) || isnan(d2) || isnan(d3)) {
+            return UTILS_STATUS_ERROR;
+        }
+    }
+    return UTILS_STATUS_TIMEOUT;
+}
+
+/* ------------Gauss-Newton sensors calibration with 6 parameters--------------- */
+/* approximates Data to a sphere of radius k by calculating 3 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S diagonal) */
+/* Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes */
+/* X0 is the starting guess vector (usually [0 0 0 1 1 1]), nmax the maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations), and tol the stopping tolerance (1e-6 is usually more than fine) */
+/*b1=out(0,0);
+ b2=out(1,0);
+ b3=out(2,0);
+ s11=out(3,0);
+ s22=out(4,0);
+ s33=out(5,0);*/
+
+utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                           matrix_t* result) {
+    float d1 = 0, d2 = 0, d3 = 0, t1, t2, t3;
+    float k2;
+
+    float _JrData[Data->rows * 6];
+    float _resData[Data->rows];
+    float _deltaData[6];
+    float _tmp1Data[6 * Data->rows];
+    matrix_t Jr, res, delta, tmp1;
+    matrixInitStatic(&Jr, _JrData, Data->rows, 6);
+    matrixInitStatic(&res, _resData, Data->rows, 1);
+    matrixInitStatic(&delta, _deltaData, 6, 1);
+    matrixInitStatic(&tmp1, _tmp1Data, 6, Data->rows);
+
+    if ((Data->rows < 6) || (Data->cols != 3)) {
+        return UTILS_STATUS_ERROR;
+    }
+
+    /* Set starting point if not given as input */
+    if (X0 != NULL) {
+        matrixCopy(X0, result);
+    } else {
+        matrixZeros(result);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            ELEMP(result, 0, 0) += matrixGet(Data, ii, 0) / Data->rows;
+            ELEMP(result, 1, 0) += matrixGet(Data, ii, 1) / Data->rows;
+            ELEMP(result, 2, 0) += matrixGet(Data, ii, 2) / Data->rows;
+        }
+        matrixSet(result, 3, 0, 1);
+        matrixSet(result, 4, 0, 1);
+        matrixSet(result, 5, 0, 1);
+    }
+
+    /* Set target radius if not given as input */
+    if (k != 0) {
+        k2 = k * k;
+    } else {
+        float max = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        float min = matrixGet(Data, 0, 0) - matrixGet(result, 0, 0);
+        for (uint8_t ii = 0; ii < Data->rows; ii++) {
+            for (uint8_t jj = 0; jj < 3; jj++) {
+                float data = matrixGet(Data, ii, jj) - matrixGet(result, jj, 0);
+                if (data > max) {
+                    max = data;
+                } else if (data < min) {
+                    min = data;
+                }
+            }
+        }
+        k2 = 0.25 * (max - min) * (max - min);
+    }
+
+    /* Perform best-fit algorithm */
+    for (uint16_t n_iter = 0; n_iter < nmax; n_iter++) {
+        for (uint8_t jj = 0; jj < Data->rows; jj++) {
+            d1 = ELEMP(Data, jj, 0) - ELEMP(result, 0, 0);
+            d2 = ELEMP(Data, jj, 1) - ELEMP(result, 1, 0);
+            d3 = ELEMP(Data, jj, 2) - ELEMP(result, 2, 0);
+            ELEM(Jr, jj, 0) = -2 * d1 * ELEMP(result, 3, 0) * ELEMP(result, 3, 0);
+            ELEM(Jr, jj, 1) = -2 * d2 * ELEMP(result, 4, 0) * ELEMP(result, 4, 0);
+            ELEM(Jr, jj, 2) = -2 * d3 * ELEMP(result, 5, 0) * ELEMP(result, 5, 0);
+            ELEM(Jr, jj, 3) = 2 * ELEMP(result, 3, 0) * d1 * d1;
+            ELEM(Jr, jj, 4) = 2 * ELEMP(result, 4, 0) * d2 * d2;
+            ELEM(Jr, jj, 5) = 2 * ELEMP(result, 5, 0) * d3 * d3;
+            t1 = ELEMP(result, 3, 0) * d1;
+            t2 = ELEMP(result, 4, 0) * d2;
+            t3 = ELEMP(result, 5, 0) * d3;
+            ELEM(res, jj, 0) = t1 * t1 + t2 * t2 + t3 * t3 - k2;
+        }
+        matrixPseudoInvStatic(&Jr, &tmp1);
+        matrixMult(&tmp1, &res, &delta);
+        matrixSub(result, &delta, result);
+        if (matrixNorm(&delta) < tol) {
+            return UTILS_STATUS_SUCCESS;
+        } else if (isnan(d1) || isnan(d2) || isnan(d3)) {
+            return UTILS_STATUS_ERROR;
+        }
+    }
+    return UTILS_STATUS_TIMEOUT;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */

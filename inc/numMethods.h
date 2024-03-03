@@ -91,6 +91,15 @@ void bksub(matrix_t* A, matrix_t* B, matrix_t* result);
 void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result);
 
 /**
+ * \brief           Calculate sort of quadratic form result=A*B*(~A)
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[in]       B: pointer to B matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
+
+/**
  * \brief           Calculate L (lower triangular) and U (upper triangular) matrices such that A = LU with Crout's Method
  *
  * \param[in]       A: pointer to A matrix object
@@ -101,6 +110,7 @@ void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result);
  */
 utilsStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Calculate L (lower triangular) and U (upper triangular) matrices such that A = LU with Cormen's Method
  *
@@ -152,15 +162,6 @@ void LinSolveLUP(matrix_t* A, matrix_t* B, matrix_t* result);
 void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result);
 
 /**
- * \brief           Calculate sort of quadratic form result=A*B*(~A)
- *
- * \param[in]       A: pointer to A matrix object
- * \param[in]       B: pointer to B matrix object
- * \param[out]      result: pointer to result matrix object
- */
-void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result);
-
-/**
  * \brief           Gauss-Newton sensor calibration with 9 parameters
  * \attention       Approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
  * \attention       Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes
@@ -206,6 +207,109 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
  * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
  */
 utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Calculate L (lower triangular) and U (upper triangular) matrices such that A = LU with Cormen's Method and static allocation
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[out]      L: pointer to L matrix object
+ * \param[out]      U: pointer to U matrix object
+ *
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if errors
+ */
+utilsStatus_t LU_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U);
+
+/**
+ * \brief           Calculate L (lower triangular), U (upper triangular) and P (permutation) matrices such that A = LUP with Cormen's Method and static allocation
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[out]      L: pointer to L matrix object
+ * \param[out]      U: pointer to U matrix object
+ * \param[in]       P: pointer to P matrix object
+ *
+ * \return          factor to be multiplied by determinant of U to obtain determinant of A
+ */
+int8_t LUP_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P);
+
+/**
+ * \brief           Solve AX = B system using LU factorization with static allocation
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[in]       B: pointer to B matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void LinSolveLUStatic(matrix_t* A, matrix_t* B, matrix_t* result);
+
+/**
+ * \brief           Solve AX = B system using LUP factorization with static allocation
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[in]       B: pointer to B matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void LinSolveLUPStatic(matrix_t* A, matrix_t* B, matrix_t* result);
+
+/**
+ * \brief           Solve AX = B system using Gauss elimination with partial pivoting and static allocation
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[in]       B: pointer to B matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result);
+
+/**
+ * \brief           Gauss-Newton sensor calibration with 9 parameters and static allocation
+ * \attention       Approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
+ * \attention       Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes
+ * \attention       b1=out(0,0);
+ * b2=out(1,0);
+ * b3=out(2,0);
+ * s11=out(3,0);
+ * s12=out(4,0);
+ * s13=out(5,0);
+ * s22=out(6,0);
+ * s23=out(7,0);
+ * s33=out(8,0);
+ *
+ * \param[in]       Data: pointer to raw data matrix object Data
+ * \param[in]       k: radius of sphere to be approximated. If 0, it is calculated automatically
+ * \param[in]       X0: pointer to starting vector X0 (usually [0 0 0 1 0 0 1 0 1]). If NULL it is calculated automatically
+ * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations)
+ * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
+ * \param[out]      result: pointer to result matrix object S
+ *
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
+ */
+utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                           matrix_t* result);
+
+/**
+ * \brief           Gauss-Newton sensor calibration with 6 parameters and static allocation
+ * \attention       Approximates Data to a sphere of radius k by calculating 3 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
+ * \attention       Data has n>=6 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes
+ * \attention       b1=out(0,0);
+ * b2=out(1,0);
+ * b3=out(2,0);
+ * s11=out(3,0);
+ * s22=out(4,0);
+ * s33=out(5,0);
+ *
+ * \param[in]       Data: pointer to raw data matrix object Data
+ * \param[in]       k: radius of sphere to be approximated. If 0, it is calculated automatically
+ * \param[in]       X0: pointer to starting vector X0 (usually [0 0 0 1 1 1]). If NULL it is calculated automatically
+ * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 10 iterations)
+ * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
+ * \param[out]      result: pointer to result matrix object S
+ *
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
+ */
+utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
+                                           matrix_t* result);
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

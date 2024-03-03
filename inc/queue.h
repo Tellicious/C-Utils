@@ -61,8 +61,9 @@ typedef struct {
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
- * \brief           Init queue structure
+ * \brief           Init queue structure with dynamic memory allocation
  *
  * \param[in]       queue: pointer to queue object
  * \param[in]       itemSize: size in bytes of each item in the queue
@@ -71,6 +72,21 @@ typedef struct {
  * \return          UTILS_STATUS_SUCCESS if queue is initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
 utilsStatus_t queueInit(queue_t* queue, size_t itemSize, QUEUE_STYPE size);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Init queue structure with static data
+ *
+ * \param[in]       queue: pointer to queue object
+ * \param[in]       data: pointer to data array with size = size * itemSize
+ * \param[in]       itemSize: size in bytes of each item in the queue
+ * \param[in]       size: required queue size (number of objects)
+ *
+ * \return          UTILS_STATUS_SUCCESS if queue is initialized, UTILS_STATUS_ERROR if data was not allocated correctly
+ */
+void queueInitStatic(queue_t* queue, uint8_t* data, size_t itemSize, QUEUE_STYPE size);
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**
  * \brief           Add data to end of queue
@@ -186,6 +202,7 @@ static inline void queueInfo(queue_t* queue, QUEUE_STYPE* size, QUEUE_STYPE* ite
  */
 utilsStatus_t queueFlush(queue_t* queue);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Delete queue
  *
@@ -194,6 +211,7 @@ utilsStatus_t queueFlush(queue_t* queue);
  * \return          UTILS_STATUS_SUCCESS if queue data is deleted, UTILS_STATUS_ERROR if data was not deleted correctly
  */
 utilsStatus_t queueDelete(queue_t* queue);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

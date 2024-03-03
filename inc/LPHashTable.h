@@ -92,6 +92,7 @@ typedef enum { LPHT_REMOVE_ITEM = 0, LPHT_DO_NOT_REMOVE_ITEM = 1 } lpHashTableRe
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Init linear-probing hash-table structure
  *
@@ -165,6 +166,7 @@ void lpHashTableIt(lpHashTableIterator_t* it, lpHashTable_t* lpht);
  * \return          UTILS_STATUS_SUCCESS if iterator is moved to next value, UTILS_STATUS_ERROR if there are no more items
  */
 utilsStatus_t lpHashTableItNext(lpHashTableIterator_t* it);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

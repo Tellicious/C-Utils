@@ -62,8 +62,9 @@ typedef struct {
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
- * \brief           Create a new matrix containing a pointer to an external array
+ * \brief           Create a new matrix with dynamic memory allocation
  *
  * \param[in]       matrix: pointer to matrix object
  * \param[in]       rows: number of rows
@@ -72,6 +73,19 @@ typedef struct {
  * \return          UTILS_STATUS_SUCCESS if matrix was initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
 utilsStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Create a new matrix with static data
+ *
+ * \param[in]       matrix: pointer to matrix object
+ * \param[in]       data: pointer to data array of size rows * cols
+ * \param[in]       rows: number of rows
+ * \param[in]       cols: number of columns
+ */
+void matrixInitStatic(matrix_t* matrix, float* data, uint8_t rows, uint8_t cols);
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**
  * \brief           Set the matrix as an identity matrix
@@ -168,6 +182,7 @@ utilsStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  */
 void matrixMultScalar(matrix_t* lhs, float sc, matrix_t* result);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Matrix inversion
  *
@@ -183,6 +198,25 @@ void matrixInversed(matrix_t* lhs, matrix_t* result);
  * \param[out]      result: pointer to result matrix object
  */
 void matrixInversed_rob(matrix_t* lhs, matrix_t* result);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Matrix inversion with static allocation
+ *
+ * \param[in]       lhs: pointer to left-hand side matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void matrixInversedStatic(matrix_t* lhs, matrix_t* result);
+
+/**
+ * \brief           Robust matrix inversion performed with LUP decomposition and static allocation
+ *
+ * \param[in]       lhs: pointer to left-hand side matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void matrixInversedStatic_rob(matrix_t* lhs, matrix_t* result);
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**
  * \brief           Matrix transposition
@@ -200,13 +234,25 @@ void matrixTrans(matrix_t* lhs, matrix_t* result);
  */
 void matrixNormalized(matrix_t* lhs, matrix_t* result);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Matrix Moore-Penrose pseudo-inverse
  *
  * \param[in]       lhs: pointer to left-hand side matrix object
  * \param[out]      result: pointer to result matrix object
  */
-void matrixPseudo_inv(matrix_t* lhs, matrix_t* result);
+void matrixPseudoInv(matrix_t* lhs, matrix_t* result);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Matrix Moore-Penrose pseudo-inverse with static allocation
+ *
+ * \param[in]       lhs: pointer to left-hand side matrix object
+ * \param[out]      result: pointer to result matrix object
+ */
+void matrixPseudoInvStatic(matrix_t* lhs, matrix_t* result);
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**
  * \brief           Set a single element inside matrix
@@ -229,6 +275,7 @@ static inline void matrixSet(matrix_t* matrix, uint8_t i, uint8_t j, float value
  */
 static inline float matrixGet(matrix_t* matrix, uint8_t i, uint8_t j) { return ELEMP(matrix, i, j); }
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Calculate matrix determinant
  *
@@ -237,6 +284,18 @@ static inline float matrixGet(matrix_t* matrix, uint8_t i, uint8_t j) { return E
  * \return          determinant
  */
 float matrixDet(matrix_t* matrix);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Calculate matrix determinant
+ *
+ * \param[in]       matrix: pointer to matrix object
+ *
+ * \return          determinant
+ */
+float matrixDetStatic(matrix_t* matrix);
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**
  * \brief           Calculate matrix norm
@@ -247,6 +306,7 @@ float matrixDet(matrix_t* matrix);
  */
 float matrixNorm(matrix_t* matrix);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Delete matrix
  *
@@ -255,6 +315,7 @@ float matrixNorm(matrix_t* matrix);
  * \return          UTILS_STATUS_SUCCESS if matrix data is deleted, UTILS_STATUS_ERROR if data was not deleted correctly
  */
 utilsStatus_t matrixDelete(matrix_t* matrix);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

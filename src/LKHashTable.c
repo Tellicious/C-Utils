@@ -31,18 +31,50 @@
  */
 /* END Header */
 
+/* Configuration check -------------------------------------------------------*/
+#if !defined(ADVUTILS_USE_DYNAMIC_ALLOCATION) && !defined(ADVUTILS_USE_STATIC_ALLOCATION)
+#error Either ADVUTILS_USE_DYNAMIC_ALLOCATION or ADVUTILS_USE_STATIC_ALLOCATION must be set for ADVUtils to work
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "LKHashTable.h"
-#include <stdlib.h>
 #include <string.h>
 #include "hashFunctions.h"
+#ifdef ADVUTILS_MEMORY_MGMT_HEADER
+#if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
+#error ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
+#else
+#include ADVUTILS_MEMORY_MGMT_HEADER
+#endif /* !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE) */
+#else
+#include <stdlib.h>
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 /* Macros --------------------------------------------------------------------*/
 
+#ifndef ADVUTILS_MEMORY_MGMT_HEADER
+#define ADVUTILS_MALLOC malloc
+#define ADVUTILS_CALLOC calloc
+#define ADVUTILS_FREE   free
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
 
+/* Private Functions ---------------------------------------------------------*/
+
+static inline char* lkHashTableStrdup(const char* s) {
+    size_t bufsize = strlen(s) + 1;
+    char* retval = ADVUTILS_MALLOC(bufsize);
+    if (retval) {
+        memcpy(retval, s, bufsize);
+    }
+    return retval;
+}
+
 /* Functions -----------------------------------------------------------------*/
+
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
 utilsStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t size) {
     uint32_t ii;
@@ -50,7 +82,7 @@ utilsStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t siz
     lkht->size = size;
     lkht->itemSize = itemSize;
 
-    lkht->entries = calloc(lkht->size, sizeof(list_t));
+    lkht->entries = ADVUTILS_CALLOC(lkht->size, sizeof(list_t));
     if (lkht->entries == NULL) {
         return UTILS_STATUS_ERROR;
     }
@@ -89,8 +121,8 @@ utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
     }
 
     /* set entry and update length */
-    entry.key = strdup(key);
-    entry.value = calloc(1, lkht->itemSize);
+    entry.key = lkHashTableStrdup(key);
+    entry.value = ADVUTILS_CALLOC(1, lkht->itemSize);
     memcpy(entry.value, value, lkht->itemSize);
 
     if (listPush(&(lkht->entries[ii]), &entry) == UTILS_STATUS_SUCCESS) {
@@ -126,8 +158,8 @@ utilsStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHash
             if (remove == LKHT_REMOVE_ITEM) {
                 listRemove(&(lkht->entries[ii]), &entry, iterator.idx);
                 lkht->items--;
-                free(entry.key);
-                free(entry.value);
+                ADVUTILS_FREE(entry.key);
+                ADVUTILS_FREE(entry.value);
                 return UTILS_STATUS_SUCCESS;
             }
             return UTILS_STATUS_SUCCESS;
@@ -152,8 +184,8 @@ utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
 
         while (idx--) {
             listPop(&(lkht->entries[ii]), &entry);
-            free(entry.key);
-            free(entry.value);
+            ADVUTILS_FREE(entry.key);
+            ADVUTILS_FREE(entry.value);
         }
     }
 
@@ -161,3 +193,5 @@ utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
 
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

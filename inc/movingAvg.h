@@ -61,13 +61,26 @@ typedef struct {
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
- * \brief           Init moving average structure
+ * \brief           Init moving average structure with dynamic memory allocation
  *
  * \param[in]       movingAvg: pointer to moving average object
  * \param[in]       size: required queue size
  */
 utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+/**
+ * \brief           Init moving average structure with static data
+ *
+ * \param[in]       movingAvg: pointer to moving average object
+ * \param[in]       data: pointer to data array
+ * \param[in]       size: required queue size
+ */
+void movingAvgInitStatic(movingAvg_t* movingAvg, MOVAVG_TYPE* data, MOVAVG_IND_TYPE size);
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**
  * \brief           Calculate moving average 
@@ -95,12 +108,14 @@ static inline MOVAVG_TYPE movingAvgGetLatest(movingAvg_t* movingAvg) { return (m
  */
 utilsStatus_t movingAvgFlush(movingAvg_t* movingAvg);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Delete moving average
  *
  * \param[in]       movingAvg: pointer to moving average object
  */
 utilsStatus_t movingAvgDelete(movingAvg_t* movingAvg);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus
 }

@@ -31,20 +31,42 @@
  */
 /* END Header */
 
+/* Configuration check -------------------------------------------------------*/
+#if !defined(ADVUTILS_USE_DYNAMIC_ALLOCATION) && !defined(ADVUTILS_USE_STATIC_ALLOCATION)
+#error Either ADVUTILS_USE_DYNAMIC_ALLOCATION or ADVUTILS_USE_STATIC_ALLOCATION must be set for ADVUtils to work
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "matrix.h"
 #include <math.h>
-#include <stdlib.h>
 #include "numMethods.h"
+#ifdef ADVUTILS_MEMORY_MGMT_HEADER
+#if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
+#error ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
+#else
+#include ADVUTILS_MEMORY_MGMT_HEADER
+#endif /* !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE) */
+#else
+#include <stdlib.h>
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+
+/* Macros --------------------------------------------------------------------*/
+
+#ifndef ADVUTILS_MEMORY_MGMT_HEADER
+#define ADVUTILS_MALLOC malloc
+#define ADVUTILS_CALLOC calloc
+#define ADVUTILS_FREE   free
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 /* ==========================================Assignment============================================= */
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /* -----------------------Constructor----------------------- */
 utilsStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols) {
     matrix->rows = rows;
     matrix->cols = cols;
-    matrix->data = calloc(rows * cols, sizeof(float));
+    matrix->data = ADVUTILS_CALLOC(rows * cols, sizeof(float));
 
     if (matrix->data == NULL) {
         return UTILS_STATUS_ERROR;
@@ -52,6 +74,20 @@ utilsStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols) {
 
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+/* --------------------Static Constructor------------------- */
+void matrixInitStatic(matrix_t* matrix, float* data, uint8_t rows, uint8_t cols) {
+    matrix->rows = rows;
+    matrix->cols = cols;
+    matrix->data = data;
+    return;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /* ---------------------Identity Matrix---------------------- */
 void matrixIdentity(matrix_t* matrix) {
@@ -246,6 +282,8 @@ void matrixMultScalar(matrix_t* lhs, float sc, matrix_t* result) {
     return;
 }
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 /* --------------------Inverse LU------------------------ */
 void matrixInversed(matrix_t* lhs, matrix_t* result) {
     matrix_t Eye;
@@ -266,6 +304,33 @@ void matrixInversed_rob(matrix_t* lhs, matrix_t* result) {
     return;
 }
 
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+/* -----------------Static Inverse LU-------------------- */
+void matrixInversedStatic(matrix_t* lhs, matrix_t* result) {
+    float _eyeData[lhs->rows * lhs->cols];
+    matrix_t Eye;
+    matrixInitStatic(&Eye, _eyeData, lhs->rows, lhs->cols);
+    matrixIdentity(&Eye);
+    LinSolveLUStatic(lhs, &Eye, result);
+    return;
+}
+
+/* --------------Static Robust Inverse LUP--------------- */
+void matrixInversedStatic_rob(matrix_t* lhs, matrix_t* result) {
+    float _eyeData[lhs->rows * lhs->cols];
+    matrix_t Eye;
+    matrixInitStatic(&Eye, _eyeData, lhs->rows, lhs->cols);
+    matrixIdentity(&Eye);
+    LinSolveLUPStatic(lhs, &Eye, result);
+    matrixDelete(&Eye);
+    return;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
+
 /* -----------------Transposed-------------------- */
 void matrixTrans(matrix_t* lhs, matrix_t* result) {
     uint8_t ii, jj;
@@ -284,8 +349,10 @@ void matrixNormalized(matrix_t* lhs, matrix_t* result) {
     return;
 }
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 /* -------Moore-Penrose pseudo inverse--------- */
-void matrixPseudo_inv(matrix_t* lhs, matrix_t* result) {
+void matrixPseudoInv(matrix_t* lhs, matrix_t* result) {
     matrix_t tran, mult1;
     matrixInit(&tran, lhs->cols, lhs->rows);
     matrixInit(&mult1, lhs->cols, lhs->cols);
@@ -297,7 +364,28 @@ void matrixPseudo_inv(matrix_t* lhs, matrix_t* result) {
     return;
 }
 
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+/* -------Moore-Penrose pseudo inverse--------- */
+void matrixPseudoInvStatic(matrix_t* lhs, matrix_t* result) {
+    float _tranData[lhs->cols * lhs->rows];
+    float _mult1Data[lhs->cols * lhs->cols];
+    matrix_t tran, mult1;
+    matrixInitStatic(&tran, _tranData, lhs->cols, lhs->rows);
+    matrixInitStatic(&mult1, _mult1Data, lhs->cols, lhs->cols);
+    matrixTrans(lhs, &tran);
+    matrixMult(&tran, lhs, &mult1);
+    LinSolveLUStatic(&mult1, &tran, result);
+    return;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
+
 /* =======================================matrix_t Data========================================= */
+
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
 /* -----------Returns the determinant---------- */
 float matrixDet(matrix_t* matrix) {
@@ -341,6 +429,49 @@ float matrixDet(matrix_t* matrix) {
     return determinant;
 }
 
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
+#ifdef ADVUTILS_USE_STATIC_ALLOCATION
+
+/* -----------Returns the determinant---------- */
+float matrixDetStatic(matrix_t* matrix) {
+    float _LData[matrix->rows * matrix->rows];
+    float _UData[matrix->rows * matrix->rows];
+    float _PData[matrix->rows];
+    matrix_t L, U, P;
+    matrixInitStatic(&L, _LData, matrix->rows, matrix->rows);
+    matrixInitStatic(&U, _UData, matrix->rows, matrix->rows);
+    matrixInitStatic(&P, _PData, matrix->rows, 1);
+    int16_t ii;
+    int8_t det_f;
+    float determinant = 1.0f;
+
+    if (matrix->rows != matrix->cols) {
+        return 0.0f;
+    }
+
+    if (LU_CormenStatic(matrix, &L, &U)) {
+        for (ii = 0; ii < matrix->rows; ii++) {
+            determinant *= ELEM(U, ii, ii);
+        }
+    }
+
+    else {
+        det_f = LUP_CormenStatic(matrix, &L, &U, &P);
+        if (det_f) {
+            for (ii = 0; ii < matrix->rows; ii++) {
+                determinant *= ELEM(U, ii, ii);
+            }
+            determinant *= det_f;
+        } else {
+            determinant = 0.0f;
+        }
+    }
+    return determinant;
+}
+
+#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
+
 /* -------------Returns the norm-------------- */
 float matrixNorm(matrix_t* matrix) {
     float result = 0.0f;
@@ -352,13 +483,17 @@ float matrixNorm(matrix_t* matrix) {
     return result;
 }
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
 /* -------------Deletes the data-------------- */
 utilsStatus_t matrixDelete(matrix_t* matrix) {
     if (matrix->data == NULL) {
         return UTILS_STATUS_ERROR;
     }
 
-    free(matrix->data);
+    ADVUTILS_FREE(matrix->data);
 
     return UTILS_STATUS_SUCCESS;
 }
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

@@ -17,5 +17,22 @@
 - ***IIRFilters:*** simple discrete-time IIR filters, with on-the-fly conversion continuous -> discrete of derivative and integrator
 - ***commonTypes:*** collection of common type definitions
 
+## Configuration:
+- User must define `ADVUTILS_USE_STATIC_ALLOCATION` and/or `ADVUTILS_USE_DYNAMIC_ALLOCATION` to select wheter to use static and/or dynamic memory management. `list`, `LPHashTable` and `LKHashTable` are available only with `ADVUTILS_USE_DYNAMIC_ALLOCATION`
+- Functions that use static allocation are defined by `Static` suffix
+- To automatically use thread-safe FreeRTOS-specific implementation of dynamic memory management functions (`malloc`, `calloc` and `free`) user can add `set(ADVUtils_DYN_MEM_MGMT "USE_FREERTOS" CACHE STRING "" FORCE)` before `add_subdirectory()` in project CMakeLists. This will automatically add the following defines to ADVUtils compilation:
+    - `ADVUTILS_MEMORY_MGMT_HEADER="FreeRTOS.h"`
+    - `ADVUTILS_MALLOC=pvPortMalloc`
+    - `ADVUTILS_CALLOC=pvPortCalloc`
+    - `ADVUTILS_FREE=vPortFree`
+    - `target_link_libraries(ADVUtils freertos_kernel)`
+- If `ADVUTILS_MEMORY_MGMT_HEADER` is not defined, the library will use `stdlib` version of `malloc`, `calloc` and `free`
+- User can use another different implementation of `malloc`, `calloc` and `free` by defining the following four macros:
+    - `ADVUTILS_MEMORY_MGMT_HEADER`
+    - `ADVUTILS_MALLOC`
+    - `ADVUTILS_CALLOC`
+    - `ADVUTILS_FREE`
+
+
 
 
