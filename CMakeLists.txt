@@ -2,7 +2,7 @@
 # This file provides set of variables for end user
 # and also generates one (or more) libraries, that can be added to the project using target_link_libraries(...)
 #
-# Before this file is included to the root CMakeLists file (using include() function), user can set some variables:
+# Before this file is included to the root CMakeLists file (using add_subdirectory() function), user can set some variables:
 #
 # libName_COMPILE_OPTS: If defined, it provide compiler options for generated library.
 # libName_COMPILE_DEFS: If defined, it provides "-D" definitions to the library build

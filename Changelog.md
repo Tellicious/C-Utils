@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.9.1
+
+**Bugfix:**
+- Fixed typo in `CMakeLists.txt`
+
 ## v1.9.0
 
 ### Contains breaking change on memory management. `ADVUTILS_USE_STATIC_ALLOCATION` and/or `ADVUTILS_USE_DYNAMIC_ALLOCATION` must be defined by user
