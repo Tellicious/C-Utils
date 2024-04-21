@@ -78,39 +78,78 @@ extern "C" {
     } while (0)
 
 /* Conversion between rad and deg */
-#define RAD2DEG(x)    ((x) * 57.29578f)
+#define RAD2DEG(x)                     ((x) * 57.29578f)
 
 /* Conversion between deg and rad */
-#define DEG2RAD(x)    ((x) * 0.0174533f)
+#define DEG2RAD(x)                     ((x) * 0.0174533f)
 
 /* Conversion between rad/s and milliDegrees-per-second */
-#define RADPS2MDPS(x) ((x) * 57295.779513f)
+#define RADPS2MDPS(x)                  ((x) * 57295.779513f)
 
 /* Conversion between milliDegrees-per-second and rad/s */
-#define MDPS2RADPS(x) ((x) * 1.745329252e-5f)
+#define MDPS2RADPS(x)                  ((x) * 1.745329252e-5f)
 
 /* Conversion between C and K */
-#define C2K(x)        ((x) + 273.15f)
+#define C2K(x)                         ((x) + 273.15f)
 
 /* Conversion between K and C */
-#define K2C(x)        ((x)-273.15f)
+#define K2C(x)                         ((x)-273.15f)
 
 /* Conversion between milliG and m/s^2 */
-#define MG2MS2(x)     ((x) * 0.00980665f)
+#define MG2MS2(x)                      ((x) * 0.00980665f)
 
 /* Conversion between m/s^2 and milliG  */
-#define MS22MG(x)     ((x) * 101.9716212978f)
+#define MS22MG(x)                      ((x) * 101.9716212978f)
+
+/* Bit shift left */
+#define SHIFT(val, shift)              ((val) << (shift))
+
+/* Bit shift left in place */
+#define SHIFT_IN_PLACE(val, shift)     val <<= (shift)
+
+/* Bit shift right */
+#define UNSHIFT(val, shift)            ((val) >> (shift))
+
+/* Bit shift right in place */
+#define UNSHIFT_IN_PLACE(val, shift)   val >>= (shift)
+
+/* Check if all bit are set */
+#define IS_BIT_SET_ALL(val, mask)      (((val) & (mask)) == (mask))
+
+/* Check if any bit is set */
+#define IS_BIT_SET_ANY(val, mask)      (((val) & (mask)) != 0)
+
+/* Mask bits */
+#define BIT_MASK(val, mask)            ((val) & (mask))
+
+/* Set bits */
+#define BIT_SET(val, mask)             ((val) | (mask))
+
+/* Set bits in place */
+#define BIT_SET_IN_PLACE(val, mask)    val |= (mask)
+
+/* Clear bits */
+#define BIT_CLEAR(val, mask)           ((val) & ~(mask))
+
+/* Clear bits in place */
+#define BIT_CLEAR_IN_PLACE(val, mask)  val &= ~(mask)
+
+/* Toggle bits */
+#define BIT_TOGGLE(val, mask)          ((val) ^ (bit_mask))
+
+/* Toggle bits in place */
+#define BIT_TOGGLE_IN_PLACE(val, mask) val ^= (bit_mask)
 
 /* Constants -----------------------------------------------------------------*/
 
 /* Pi value */
-#define constPI       3.141592654f
+#define constPI                        3.141592654f
 
 /* G value in m/s^2 */
-#define constG        9.80665f
+#define constG                         9.80665f
 
 /* e value */
-#define constE        2.71828182845904523536028747135266249f
+#define constE                         2.71828182845904523536028747135266249f
 
 /* Functions -----------------------------------------------------------------*/
 
