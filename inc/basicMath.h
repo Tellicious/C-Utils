@@ -171,6 +171,24 @@ float fastSqrt(float value);
  */
 float fastInvSqrt(float value);
 
+/**
+ * \brief           Perform fast sine calculation
+ *
+ * \param[in]       angle: value of angle in radians
+ *
+ * \return          sine value
+ */
+float fastSin(float angle);
+
+/**
+ * \brief           Perform fast cosine calculation
+ *
+ * \param[in]       angle: value of angle in radians
+ *
+ * \return          cosine value
+ */
+float fastCos(float angle);
+
 #ifdef __cplusplus
 }
 #endif
