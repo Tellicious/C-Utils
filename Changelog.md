@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.10.0
+
+**New features:**
+- Added bitwise operations macros to `basicMath`
+- Added `fastSin` and `fastCos` to `basicMath`
+
 ## v1.9.1
 
 **Bugfix:**
