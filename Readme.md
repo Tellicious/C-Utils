@@ -32,6 +32,7 @@
     - `ADVUTILS_MALLOC`
     - `ADVUTILS_CALLOC`
     - `ADVUTILS_FREE`
+- User can select to use fast math functions from `basicMath` by adding `USE_FAST_MATH` to compile definitions 
 
 
 

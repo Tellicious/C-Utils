@@ -39,16 +39,20 @@
 
 /* Macros --------------------------------------------------------------------*/
 
-#define PI_2 1.57
+#define PI_2 constPI * 0.5f
 
-/* Private variables ---------------------------------------------------------*/
+#ifdef USE_FAST_MATH
+#define INVSQRT(x) fastInvSqrt(x);
+#else
+#define INVSQRT(x) 1.0f / sqrtf(x);
+#endif /* USE_FAST_MATH */
 
 /* Functions -----------------------------------------------------------------*/
 
 void quaternionNorm(quaternion_t* q) {
     float inv_norm;
 
-    inv_norm = fastInvSqrt(q->q0 * q->q0 + q->q1 * q->q1 + q->q2 * q->q2 + q->q3 * q->q3);
+    inv_norm = INVSQRT(q->q0 * q->q0 + q->q1 * q->q1 + q->q2 * q->q2 + q->q3 * q->q3);
     if (isnan(inv_norm) || isinf(inv_norm)) {
         inv_norm = 1.f;
     }
@@ -134,7 +138,7 @@ void quaternionToEuler(quaternion_t* qr, axis3f_t* ea) {
     ea->x = atan2f(dq0q1 + dq2q3, q0q0 + q3q3 - q1q1 - q2q2);
     ea->y = asinf(dq0q2 - dq1q3);
 
-    /* This part is needed  to manage angle >90 deg */
+    /* This part is needed to manage angle >90 deg */
 #ifdef AVOID_GIMBAL_LOCK
     if (ea->x > PI_2 || ea->x < -PI_2) {
         ea->x = ea_pre.x;
