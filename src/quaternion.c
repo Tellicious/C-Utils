@@ -34,18 +34,11 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "quaternion.h"
-#include <math.h>
 #include "basicMath.h"
 
 /* Macros --------------------------------------------------------------------*/
 
 #define PI_2 constPI * 0.5f
-
-#ifdef USE_FAST_MATH
-#define INVSQRT(x) fastInvSqrt(x);
-#else
-#define INVSQRT(x) 1.0f / sqrtf(x);
-#endif /* USE_FAST_MATH */
 
 /* Functions -----------------------------------------------------------------*/
 

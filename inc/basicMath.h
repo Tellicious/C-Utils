@@ -41,6 +41,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 
 #include <stdint.h>
+#include "math.h"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -93,7 +94,7 @@ extern "C" {
 #define C2K(x)                         ((x) + 273.15f)
 
 /* Conversion between K and C */
-#define K2C(x)                         ((x)-273.15f)
+#define K2C(x)                         ((x) - 273.15f)
 
 /* Conversion between milliG and m/s^2 */
 #define MG2MS2(x)                      ((x) * 0.00980665f)
@@ -140,16 +141,31 @@ extern "C" {
 /* Toggle bits in place */
 #define BIT_TOGGLE_IN_PLACE(val, mask) val ^= (bit_mask)
 
+/* Faster math operations */
+#ifdef USE_FAST_MATH
+#define SIN(x)     fastSin(x)
+#define COS(x)     fastCos(x)
+#define SQRT(x)    fastSqrt(x)
+#define INVSQRT(x) fastInvSqrt(x)
+#define TAN(x)     (SIN(x) / COS(x))
+#else
+#define SIN(x)     sinf(x)
+#define COS(x)     cosf(x)
+#define SQRT(x)    sqrtf(x)
+#define INVSQRT(x) 1.0f / sqrtf(x)
+#define TAN(x)     tanf(x)
+#endif /* USE_FAST_MATH */
+
 /* Constants -----------------------------------------------------------------*/
 
 /* Pi value */
-#define constPI                        3.141592654f
+#define constPI 3.141592654f
 
 /* G value in m/s^2 */
-#define constG                         9.80665f
+#define constG  9.80665f
 
 /* e value */
-#define constE                         2.71828182845904523536028747135266249f
+#define constE  2.71828182845904523536028747135266249f
 
 /* Functions -----------------------------------------------------------------*/
 

@@ -1,6 +1,9 @@
-## Minor improvement to quaternion.c
+## Added low-pass and high-pass filter coefficients calculation to IIRFilters.c
+
+**New features:**
+- Added low-pass and high-pass filter coefficients calculation to `IIRFilters.c` to simplify initialization
 
 **Improvements:**
-- Changed `quaternion.c` to give the user the possiblity to choose whether to use fast or standard math functions through the addition of `USE_FAST_MATH` to compile definitions
+- Moved faster math functions macros to `basicMath.h`
 
 See [Changelog](Changelog.md)

@@ -34,6 +34,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "IIRFilters.h"
+#include "basicMath.h"
 
 /* Functions -----------------------------------------------------------------*/
 
@@ -50,6 +51,27 @@ void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, flo
 
     /* Initialize state variables */
     filter->i1 = filter->i2 = filter->i3 = filter->o1 = filter->o2 = filter->o3 = 0.0;
+}
+
+void IIRFilterInitLP(IIRFilterGeneric_t* filter, float lpFreq, float dT_ms) {
+    const float lambda = 1.f / TAN(constPI * (lpFreq * dT_ms * 1e-3f));
+    const float q = SQRT(2.f);
+    float n0 = 1.f / (1.f + q * lambda + lambda * lambda);
+    float n1 = 2.f * n0;
+    float d1 = 2.f * (1.f - lambda * lambda) * n0;
+    float d2 = (1.f - q * lambda + lambda * lambda) * n0;
+    IIRFilterInit(filter, n0, n1, n0, 0, d1, d2, 0);
+}
+
+void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms) {
+    const float lambda = 1.f / TAN(3.141592653f * (hpFreq * dT_ms * 1e-3f));
+    const float q = SQRT(2.f);
+    float n0 = 1.f / (1.f + q * lambda + lambda * lambda);
+    float n1 = -2.f * n0 * lambda * lambda;
+    float d1 = 2.f * (1.f - lambda * lambda) * n0;
+    float d2 = (1.f - q * lambda + lambda * lambda) * n0;
+    n0 *= lambda * lambda;
+    IIRFilterInit(filter, n0, n1, n0, 0, d1, d2, 0);
 }
 
 float IIRFilterProcess(IIRFilterGeneric_t* filter, float input) {

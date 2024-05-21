@@ -14,7 +14,7 @@
 - ***button:*** interrupt-based button object with debounce and multiple press types detection
 - ***LPHashTable:*** linear-probing hash-table object with auto-resize capability
 - ***LKHashTable:*** dynamic linked hash-table object (based on _list_)
-- ***IIRFilters:*** simple discrete-time IIR filters, with on-the-fly conversion continuous -> discrete of derivative and integrator
+- ***IIRFilters:*** simple discrete-time IIR filters, with on-the-fly conversion continuous -> discrete of derivative, integrator, 2nd order low-pass and 2nd order high-pass filters
 - ***commonTypes:*** collection of common type definitions
 
 ## Configuration:
@@ -32,7 +32,7 @@
     - `ADVUTILS_MALLOC`
     - `ADVUTILS_CALLOC`
     - `ADVUTILS_FREE`
-- User can select to use fast math functions from `basicMath` by adding `USE_FAST_MATH` to compile definitions 
+- User can select to use faster math functions from `basicMath` by adding `USE_FAST_MATH` to compile definitions 
 
 
 

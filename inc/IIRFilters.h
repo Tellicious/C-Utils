@@ -42,8 +42,6 @@ extern "C" {
 
 #include <stdint.h>
 
-/* Macros --------------------------------------------------------------------*/
-
 /* Typedefs ------------------------------------------------------------------*/
 
 /**
@@ -84,9 +82,26 @@ typedef struct {
  * \param[in]       filter: pointer to IIR filter structure
  * \param[in]       n0...n3: IIR numerator coefficients
  * \param[in]       d1...d3: IIR denominator coefficients
- *
  */
 void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, float n3, float d1, float d2, float d3);
+
+/**
+ * \brief           Initialize second-order Butterworth low-pass IIR filter
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ * \param[in]       lpFreq: low-pass cutoff frequency in Hz
+ * \param[in]       dT_ms: sampling time in ms
+ */
+void IIRFilterInitLP(IIRFilterGeneric_t* filter, float lpFreq, float dT_ms);
+
+/**
+ * \brief           Initialize second-order Butterworth high-pass IIR filter
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ * \param[in]       hpFreq: low-pass cutoff frequency in Hz
+ * \param[in]       dT_ms: sampling time in ms
+ */
+void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms);
 
 /**
  * \brief           Apply generic IIR filter to provided sample
@@ -96,7 +111,6 @@ void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, flo
  * \param[in]       input: input sample to be filtered
  *
  * \return		    filtered value
- *
  */
 float IIRFilterProcess(IIRFilterGeneric_t* filter, float input);
 
@@ -105,11 +119,10 @@ float IIRFilterProcess(IIRFilterGeneric_t* filter, float input);
  *
  *
  * \param[in]       filter: pointer to IIR filter structure
- *
  */
 static inline void IIRFilterReset(IIRFilterGeneric_t* filter) {
     /* Initialize state variables */
-    filter->i1 = filter->i2 = filter->i3 = filter->o1 = filter->o2 = filter->o3 = 0.0;
+    filter->i1 = filter->i2 = filter->i3 = filter->o1 = filter->o2 = filter->o3 = 0.f;
 }
 
 /**
@@ -119,7 +132,6 @@ static inline void IIRFilterReset(IIRFilterGeneric_t* filter) {
  * \param[in]       filter: pointer to IIR derivative filter structure
  * \param[in]       ndVal: derivative filter constant N - derivative in Laplace=s/(1+s/N)
  * \param[in]       dT_ms: loop time in ms
- *
  */
 static inline void IIRFilterDerivativeInit(IIRFilterDerivative_t* filter, float ndVal, float dT_ms) {
     /* Store filter coefficients */
@@ -138,7 +150,6 @@ static inline void IIRFilterDerivativeInit(IIRFilterDerivative_t* filter, float 
  * \param[in]       input: input sample to be filtered
  *
  * \return		    filtered value
- *
  */
 static inline float IIRFilterDerivativeProcess(IIRFilterDerivative_t* filter, float input) {
     filter->output = filter->n0 * (input - filter->i1) + filter->d1 * filter->output;
@@ -151,7 +162,6 @@ static inline float IIRFilterDerivativeProcess(IIRFilterDerivative_t* filter, fl
  *
  *
  * \param[in]       filter: pointer to IIR filter structure
- *
  */
 static inline void IIRFilterDerivativeReset(IIRFilterDerivative_t* filter) {
     /* Initialize state variables */
@@ -164,7 +174,6 @@ static inline void IIRFilterDerivativeReset(IIRFilterDerivative_t* filter) {
  *
  * \param[in]       filter: pointer to IIR integrator filter structure
  * \param[in]       dT_ms: loop time in ms
- *
  */
 static inline void IIRFilterIntegratorInit(IIRFilterIntegrator_t* filter, float dT_ms) {
     /* Store filter coefficients */
@@ -182,7 +191,6 @@ static inline void IIRFilterIntegratorInit(IIRFilterIntegrator_t* filter, float 
  * \param[in]       input: input sample to be filtered
  *
  * \return		    filtered value
- *
  */
 static inline float IIRFilterIntegratorProcess(IIRFilterIntegrator_t* filter, float input) {
     filter->output += filter->n0 * (input + filter->i1);
@@ -195,7 +203,6 @@ static inline float IIRFilterIntegratorProcess(IIRFilterIntegrator_t* filter, fl
  *
  *
  * \param[in]       filter: pointer to IIR filter structure
- *
  */
 static inline void IIRFilterIntegratorReset(IIRFilterIntegrator_t* filter) {
     /* Initialize state variables */
