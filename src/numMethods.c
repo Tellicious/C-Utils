@@ -41,10 +41,27 @@
 #include "numMethods.h"
 #include "math.h"
 
+/* Macros --------------------------------------------------------------------*/
+
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
+
 /* -------------------Forward substitution---------------------- */
 /* assumes that the matrix A is already a lower triangular one. No check! */
 
 void fwsub(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
@@ -64,6 +81,11 @@ void fwsub(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* assumes that the matrix A is already a lower triangular one. No check! */
 
 void fwsubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
+    ADVUTILS_ASSERT(P->rows == A->rows);
+    ADVUTILS_ASSERT(P->cols == 1);
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
@@ -83,6 +105,9 @@ void fwsubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
 /* assumes that the matrix A is already an upper triangular one. No check! */
 
 void bksub(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
@@ -102,6 +127,11 @@ void bksub(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* assumes that the matrix A is already an upper triangular one. No check! */
 
 void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
+    ADVUTILS_ASSERT(P->rows == A->rows);
+    ADVUTILS_ASSERT(P->cols == 1);
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
@@ -122,6 +152,10 @@ void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
 /* returns matrix C=A*B*(~A) */
 
 void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->cols == B->rows);
+    ADVUTILS_ASSERT(B->cols == A->cols);
+    ADVUTILS_ASSERT(result->rows == A->rows);
+    ADVUTILS_ASSERT(result->cols == A->rows);
     int16_t i, j, n, ii;
     float tmp;
     matrixZeros(result);
@@ -143,6 +177,11 @@ void QuadProd(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
 utilsStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
+    ADVUTILS_ASSERT(A->cols == A->rows);
+    ADVUTILS_ASSERT(L->rows == A->rows);
+    ADVUTILS_ASSERT(L->cols == A->cols);
+    ADVUTILS_ASSERT(U->rows == A->cols);
+    ADVUTILS_ASSERT(U->cols == A->cols);
     int16_t ii, jj, kk;
     float sum = 0.0;
     matrixIdentity(U);
@@ -176,6 +215,11 @@ utilsStatus_t LU_Crout(matrix_t* A, matrix_t* L, matrix_t* U) {
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
 utilsStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
+    ADVUTILS_ASSERT(A->cols == A->rows);
+    ADVUTILS_ASSERT(L->rows == A->rows);
+    ADVUTILS_ASSERT(L->cols == A->cols);
+    ADVUTILS_ASSERT(U->rows == A->cols);
+    ADVUTILS_ASSERT(U->cols == A->cols);
     int16_t i, j, k;
     float tmp;
     matrix_t A_cp;
@@ -210,6 +254,13 @@ utilsStatus_t LU_Cormen(matrix_t* A, matrix_t* L, matrix_t* U) {
 /* returns the factor that has to be multiplied to the determinant of U in order to obtain the correct value */
 
 int8_t LUP_Cormen(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P) {
+    ADVUTILS_ASSERT(A->cols == A->rows);
+    ADVUTILS_ASSERT(L->rows == A->rows);
+    ADVUTILS_ASSERT(L->cols == A->cols);
+    ADVUTILS_ASSERT(U->rows == A->cols);
+    ADVUTILS_ASSERT(U->cols == A->cols);
+    ADVUTILS_ASSERT(P->rows == A->rows);
+    ADVUTILS_ASSERT(P->cols == 1);
     int16_t i, j, k;
     float tmp, tmp2;
     int16_t pivrow;
@@ -280,6 +331,10 @@ int8_t LUP_Cormen(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P) {
 /* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
 void LinSolveLU(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     matrix_t L, U;
     matrixInit(&L, A->rows, A->cols);
     matrixInit(&U, A->cols, A->cols);
@@ -298,6 +353,10 @@ void LinSolveLU(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
 void LinSolveLUP(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     matrix_t L, U, P, tmp;
     matrixInit(&L, A->rows, A->cols);
     matrixInit(&U, A->cols, A->cols);
@@ -318,6 +377,10 @@ void LinSolveLUP(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
 void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     uint8_t pivrow = 0; /* keeps track of current pivot row */
     uint8_t k, i, j;    /* k: overall index along diagonals; i: row index; j: col index */
     float tmp;          /* used for finding max value and making row swaps */
@@ -609,6 +672,11 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
 /* factorizes the A matrix as the product of a unit upper triangular matrix U and a lower triangular matrix L */
 
 utilsStatus_t LU_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U) {
+    ADVUTILS_ASSERT(A->cols == A->rows);
+    ADVUTILS_ASSERT(L->rows == A->rows);
+    ADVUTILS_ASSERT(L->cols == A->cols);
+    ADVUTILS_ASSERT(U->rows == A->cols);
+    ADVUTILS_ASSERT(U->cols == A->cols);
     int16_t i, j, k;
     float tmp;
     float _A_cp_Data[A->rows * A->cols];
@@ -642,6 +710,13 @@ utilsStatus_t LU_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U) {
 /* returns the factor that has to be multiplied to the determinant of U in order to obtain the correct value */
 
 int8_t LUP_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P) {
+    ADVUTILS_ASSERT(A->cols == A->rows);
+    ADVUTILS_ASSERT(L->rows == A->rows);
+    ADVUTILS_ASSERT(L->cols == A->cols);
+    ADVUTILS_ASSERT(U->rows == A->cols);
+    ADVUTILS_ASSERT(U->cols == A->cols);
+    ADVUTILS_ASSERT(P->rows == A->rows);
+    ADVUTILS_ASSERT(P->cols == 1);
     int16_t i, j, k;
     float tmp, tmp2;
     int16_t pivrow;
@@ -711,6 +786,10 @@ int8_t LUP_CormenStatic(matrix_t* A, matrix_t* L, matrix_t* U, matrix_t* P) {
 /* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
 void LinSolveLUStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     float _LData[A->rows * A->cols];
     float _UData[A->cols * A->cols];
     matrix_t L, U;
@@ -729,6 +808,10 @@ void LinSolveLUStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
 void LinSolveLUPStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     float _LData[A->rows * A->cols];
     float _UData[A->cols * A->cols];
     float _PData[A->rows];
@@ -749,6 +832,10 @@ void LinSolveLUPStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
 /* solves the linear system A*X=B, where A is a n-by-n matrix and B an n-by-m matrix, giving the n-by-m matrix X */
 
 void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(A->cols == result->rows);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(result->cols == B->cols);
     uint8_t pivrow = 0; /* keeps track of current pivot row */
     uint8_t k, i, j;    /* k: overall index along diagonals; i: row index; j: col index */
     float tmp;          /* used for finding max value and making row swaps */

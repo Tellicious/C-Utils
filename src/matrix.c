@@ -40,6 +40,7 @@
 
 #include "matrix.h"
 #include <math.h>
+#include "basicMath.h"
 #include "numMethods.h"
 #ifdef ADVUTILS_MEMORY_MGMT_HEADER
 #if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
@@ -58,6 +59,18 @@
 #define ADVUTILS_CALLOC calloc
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
 
 /* ==========================================Assignment============================================= */
 
@@ -102,6 +115,8 @@ void matrixIdentity(matrix_t* matrix) {
 /* ==========================================Operations============================================= */
 /* --------------------matrix_t addition---------------------- */
 void matrixAdd(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->cols == rhs->cols);
+    ADVUTILS_ASSERT(lhs->rows == rhs->rows);
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] + rhs->data[ii];
@@ -120,6 +135,8 @@ void matrixAddScalar(matrix_t* lhs, float sc, matrix_t* result) {
 
 /* ------------------matrix_t subtraction-------------------- */
 void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->cols == rhs->cols);
+    ADVUTILS_ASSERT(lhs->rows == rhs->rows);
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] - rhs->data[ii];
@@ -128,11 +145,11 @@ void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
 }
 
 /* ---------------matrix_t multiplication------------------ */
-utilsStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+void matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->cols == rhs->rows);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == rhs->cols);
     /* 	uint8_t i, j, k; */
-    if (lhs->cols != rhs->rows) {
-        return UTILS_STATUS_ERROR;
-    }
     /* 	matrixZeros(result); */
     /* 	for (i = 0; i < lhs->rows; i++) */
     /* 		for (j = 0; j < rhs->cols; j++) */
@@ -236,15 +253,15 @@ utilsStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
 
         } while (row > 0u);
     }
-    return UTILS_STATUS_SUCCESS;
+    return;
 }
 
 /* ------matrix_t multiplication with lhs transposed------ */
-utilsStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+void matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->rows == rhs->rows);
+    ADVUTILS_ASSERT(result->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->cols == rhs->cols);
     uint8_t i, j, k;
-    if (lhs->rows != rhs->rows) {
-        return UTILS_STATUS_ERROR;
-    }
     matrixZeros(result);
     for (i = 0; i < lhs->cols; i++) {
         for (j = 0; j < rhs->cols; j++) {
@@ -253,15 +270,15 @@ utilsStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
             }
         }
     }
-    return UTILS_STATUS_SUCCESS;
+    return;
 }
 
 /* ------matrix_t multiplication with rhs transposed------ */
-utilsStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+void matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->cols == rhs->cols);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == rhs->rows);
     uint8_t i, j, k;
-    if (lhs->cols != rhs->cols) {
-        return UTILS_STATUS_ERROR;
-    }
     matrixZeros(result);
     for (i = 0; i < lhs->rows; i++) {
         for (j = 0; j < rhs->rows; j++) {
@@ -270,7 +287,7 @@ utilsStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
             }
         }
     }
-    return UTILS_STATUS_SUCCESS;
+    return;
 }
 
 /* ---------------Scalar multiplication------------------ */
@@ -286,6 +303,9 @@ void matrixMultScalar(matrix_t* lhs, float sc, matrix_t* result) {
 
 /* --------------------Inverse LU------------------------ */
 void matrixInversed(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     matrix_t Eye;
     matrixInit(&Eye, lhs->rows, lhs->cols);
     matrixIdentity(&Eye);
@@ -296,6 +316,9 @@ void matrixInversed(matrix_t* lhs, matrix_t* result) {
 
 /* -----------------Robust Inverse LUP------------------- */
 void matrixInversed_rob(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     matrix_t Eye;
     matrixInit(&Eye, lhs->rows, lhs->cols);
     matrixIdentity(&Eye);
@@ -310,6 +333,9 @@ void matrixInversed_rob(matrix_t* lhs, matrix_t* result) {
 
 /* -----------------Static Inverse LU-------------------- */
 void matrixInversedStatic(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     float _eyeData[lhs->rows * lhs->cols];
     matrix_t Eye;
     matrixInitStatic(&Eye, _eyeData, lhs->rows, lhs->cols);
@@ -320,6 +346,9 @@ void matrixInversedStatic(matrix_t* lhs, matrix_t* result) {
 
 /* --------------Static Robust Inverse LUP--------------- */
 void matrixInversedStatic_rob(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(lhs->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     float _eyeData[lhs->rows * lhs->cols];
     matrix_t Eye;
     matrixInitStatic(&Eye, _eyeData, lhs->rows, lhs->cols);
@@ -333,6 +362,8 @@ void matrixInversedStatic_rob(matrix_t* lhs, matrix_t* result) {
 
 /* -----------------Transposed-------------------- */
 void matrixTrans(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(result->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->cols == lhs->rows);
     uint8_t ii, jj;
     for (ii = 0; ii < lhs->rows; ii++) {
         for (jj = 0; jj < lhs->cols; jj++) {
@@ -353,6 +384,8 @@ void matrixNormalized(matrix_t* lhs, matrix_t* result) {
 
 /* -------Moore-Penrose pseudo inverse--------- */
 void matrixPseudoInv(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(result->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->cols == lhs->rows);
     matrix_t tran, mult1;
     matrixInit(&tran, lhs->cols, lhs->rows);
     matrixInit(&mult1, lhs->cols, lhs->cols);
@@ -370,6 +403,8 @@ void matrixPseudoInv(matrix_t* lhs, matrix_t* result) {
 
 /* -------Moore-Penrose pseudo inverse--------- */
 void matrixPseudoInvStatic(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(result->rows == lhs->cols);
+    ADVUTILS_ASSERT(result->cols == lhs->rows);
     float _tranData[lhs->cols * lhs->rows];
     float _mult1Data[lhs->cols * lhs->cols];
     matrix_t tran, mult1;
@@ -389,6 +424,9 @@ void matrixPseudoInvStatic(matrix_t* lhs, matrix_t* result) {
 
 /* -----------Returns the determinant---------- */
 float matrixDet(matrix_t* matrix) {
+    if (matrix->rows != matrix->cols) {
+        return 0.0f;
+    }
     matrix_t L, U, P;
     matrixInit(&L, matrix->rows, matrix->rows);
     matrixInit(&U, matrix->rows, matrix->rows);
@@ -396,13 +434,6 @@ float matrixDet(matrix_t* matrix) {
     int16_t ii;
     int8_t det_f;
     float determinant = 1.0f;
-
-    if (matrix->rows != matrix->cols) {
-        matrixDelete(&L);
-        matrixDelete(&U);
-        matrixDelete(&P);
-        return 0.0f;
-    }
 
     if (LU_Cormen(matrix, &L, &U)) {
         for (ii = 0; ii < matrix->rows; ii++) {
@@ -435,6 +466,9 @@ float matrixDet(matrix_t* matrix) {
 
 /* -----------Returns the determinant---------- */
 float matrixDetStatic(matrix_t* matrix) {
+    if (matrix->rows != matrix->cols) {
+        return 0.0f;
+    }
     float _LData[matrix->rows * matrix->rows];
     float _UData[matrix->rows * matrix->rows];
     float _PData[matrix->rows];
@@ -445,10 +479,6 @@ float matrixDetStatic(matrix_t* matrix) {
     int16_t ii;
     int8_t det_f;
     float determinant = 1.0f;
-
-    if (matrix->rows != matrix->cols) {
-        return 0.0f;
-    }
 
     if (LU_CormenStatic(matrix, &L, &U)) {
         for (ii = 0; ii < matrix->rows; ii++) {
@@ -479,7 +509,7 @@ float matrixNorm(matrix_t* matrix) {
     for (i = 0; i < (matrix->rows * matrix->cols); i++) {
         result += matrix->data[i] * matrix->data[i];
     }
-    result = sqrtf(result);
+    result = SQRT(result);
     return result;
 }
 

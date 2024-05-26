@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.11.1
+
+**Improvements:**
+- Added assertions to `matrix.c` and `numMethods.c`
+
 ## v1.11.0
 
 **New features:**

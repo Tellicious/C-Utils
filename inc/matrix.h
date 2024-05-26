@@ -146,10 +146,8 @@ void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  * \param[in]       lhs: pointer to left-hand side matrix object
  * \param[in]       rhs: pointer to right-hand side matrix object
  * \param[out]      result: pointer to result matrix object
- *
- * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if matrices cannot be multiplied
  */
-utilsStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
+void matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
 
 /**
  * \brief           Matrix multiplication with transposed left-hand side matrix
@@ -157,10 +155,8 @@ utilsStatus_t matrixMult(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  * \param[in]       lhs: pointer to left-hand side matrix object
  * \param[in]       rhs: pointer to right-hand side matrix object
  * \param[out]      result: pointer to result matrix object
- *
- * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if matrices cannot be multiplied
  */
-utilsStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
+void matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
 
 /**
  * \brief           Matrix multiplication with transposed right-hand side matrix
@@ -168,10 +164,8 @@ utilsStatus_t matrixMult_lhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
  * \param[in]       lhs: pointer to left-hand side matrix object
  * \param[in]       rhs: pointer to right-hand side matrix object
  * \param[out]      result: pointer to result matrix object
- *
- * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_ERROR if matrices cannot be multiplied
  */
-utilsStatus_t matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
+void matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result);
 
 /**
  * \brief           Matrix multiplication with scalar

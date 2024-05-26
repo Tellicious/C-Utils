@@ -1,9 +1,6 @@
-## Added low-pass and high-pass filter coefficients calculation to IIRFilters.c
-
-**New features:**
-- Added low-pass and high-pass filter coefficients calculation to `IIRFilters.c` to simplify initialization
+## Added assertions to verify correctness of parameters
 
 **Improvements:**
-- Moved faster math functions macros to `basicMath.h`
+- Added assertions to `matrix.c` and `numMethods.c`
 
 See [Changelog](Changelog.md)
