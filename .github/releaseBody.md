@@ -1,6 +1,9 @@
-## Added assertions to verify correctness of parameters
+## Added band-pass and band-stop filter coefficients calculation to IIRFilters.c
 
 **Improvements:**
-- Added assertions to `matrix.c` and `numMethods.c`
+- Added band-pass and band-stop filter coefficients calculation to `IIRFilters.c` to simplify initialization
+
+**Bugfix:**
+- Fixed minor bug in `IIRFilters.c`
 
 See [Changelog](Changelog.md)

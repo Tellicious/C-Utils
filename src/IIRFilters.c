@@ -64,7 +64,7 @@ void IIRFilterInitLP(IIRFilterGeneric_t* filter, float lpFreq, float dT_ms) {
 }
 
 void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms) {
-    const float lambda = 1.f / TAN(3.141592653f * (hpFreq * dT_ms * 1e-3f));
+    const float lambda = 1.f / TAN(constPI * (hpFreq * dT_ms * 1e-3f));
     const float q = SQRT(2.f);
     float n0 = 1.f / (1.f + q * lambda + lambda * lambda);
     float n1 = -2.f * n0 * lambda * lambda;
@@ -72,6 +72,29 @@ void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms) {
     float d2 = (1.f - q * lambda + lambda * lambda) * n0;
     n0 *= lambda * lambda;
     IIRFilterInit(filter, n0, n1, n0, 0, d1, d2, 0);
+}
+
+void IIRFilterInitBP(IIRFilterGeneric_t* filter, float centerFreq, float bandwidth, float dT_ms) {
+    const float Q = centerFreq / bandwidth; // Q factor
+    const float C = TAN(constPI * (centerFreq * dT_ms * 1e-3f));
+    const float D = 1.f / (1.f + C / Q + C * C);
+    float n0 = C / Q * D;
+    float n2 = -n0;
+    float d1 = 2.f * (C * C - 1.f) * D;
+    float d2 = (1.f - C / Q + C * C) * D;
+    IIRFilterInit(filter, n0, 0, n2, 0, d1, d2, 0);
+}
+
+void IIRFilterInitBS(IIRFilterGeneric_t* filter, float centerFreq, float bandwidth, float dT_ms) {
+    const float Q = centerFreq / bandwidth; // Q factor
+    const float C = TAN(constPI * (centerFreq * dT_ms * 1e-3f));
+    const float D = 1.f / (1.f + C / Q + C * C);
+    float n0 = (1.f + C * C) * D;
+    float n1 = 2.f * (C * C - 1.f) * D;
+    float n2 = n0;
+    float d1 = 2.f * (C * C - 1.f) * D;
+    float d2 = (1.f - C / Q + C * C) * D;
+    IIRFilterInit(filter, n0, n1, n2, 0, d1, d2, 0);
 }
 
 float IIRFilterProcess(IIRFilterGeneric_t* filter, float input) {

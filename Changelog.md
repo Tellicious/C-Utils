@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.12.0
+
+**Improvements:**
+- Added band-pass and band-stop filter coefficients calculation to `IIRFilters.c` to simplify initialization
+
+**Bugfix:**
+- Fixed minor bug in `IIRFilters.c`
+
 ## v1.11.1
 
 **Improvements:**
@@ -99,7 +107,6 @@
 **Improvements:**
 - Fixed snippets
 - Renamed a few variables inside PID object
-
 
 ## v1.2.0
 

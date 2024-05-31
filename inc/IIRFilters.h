@@ -98,10 +98,30 @@ void IIRFilterInitLP(IIRFilterGeneric_t* filter, float lpFreq, float dT_ms);
  * \brief           Initialize second-order Butterworth high-pass IIR filter
  *
  * \param[in]       filter: pointer to IIR filter structure
- * \param[in]       hpFreq: low-pass cutoff frequency in Hz
+ * \param[in]       hpFreq: high-pass cutoff frequency in Hz
  * \param[in]       dT_ms: sampling time in ms
  */
 void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms);
+
+/**
+ * \brief           Initialize second-order Butterworth band-pass IIR filter
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ * \param[in]       centerFreq: center frequency of pass-band in Hz
+ * \param[in]       bandwidth: bandwidth of pass-band in Hz. Response will be symmetrical around centerFreq on a logarithmic scale
+ * \param[in]       dT_ms: sampling time in ms
+ */
+void IIRFilterInitBP(IIRFilterGeneric_t* filter, float centerFreq, float bandwidth, float dT_ms);
+
+/**
+ * \brief           Initialize second-order Butterworth band-stop IIR filter
+ *
+ * \param[in]       filter: pointer to IIR filter structure
+ * \param[in]       centerFreq: center frequency of stop-band in Hz
+ * \param[in]       bandwidth: bandwidth of stop-band in Hz. Response will be symmetrical around centerFreq on a logarithmic scale
+ * \param[in]       dT_ms: sampling time in ms
+ */
+void IIRFilterInitBS(IIRFilterGeneric_t* filter, float centerFreq, float bandwidth, float dT_ms);
 
 /**
  * \brief           Apply generic IIR filter to provided sample
