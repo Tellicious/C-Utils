@@ -1,9 +1,9 @@
-## Added band-pass and band-stop filter coefficients calculation to IIRFilters.c
+## Added discrete-time algebraic Riccati equation solver
 
-**Improvements:**
-- Added band-pass and band-stop filter coefficients calculation to `IIRFilters.c` to simplify initialization
+**New features:**
+- Added `DARE` and `DAREStatic` functions to `numMethods` to solve discrete-time algebraic Riccati equation
 
 **Bugfix:**
-- Fixed minor bug in `IIRFilters.c`
+- Minor formatting fix
 
 See [Changelog](Changelog.md)

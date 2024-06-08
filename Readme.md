@@ -5,7 +5,7 @@
 ## Libraries included:
 - ***basicMath:*** math constants, conversion factors, bitwise operators, `fastSqrt`, `fastInvSqrt`, `fastSin` and `fastCos`
 - ***matrix:*** handling of matrix objects and matrix operations
-- ***numMethods:*** common numerical methods (to solve linear systems and perform Gauss-Newton sphere approximation)
+- ***numMethods:*** common numerical methods to solve linear systems, perform Gauss-Newton sphere approximation and solve discrete-time algebraic Riccati equation
 - ***timer:*** user-configurable timers
 - ***queue:*** queue structure
 - ***list:*** linked list

@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.13.0
+
+**New features:**
+- Added `DARE` and `DAREStatic` functions to `numMethods` to solve discrete-time algebraic Riccati equation
+
+**Bugfix:**
+- Minor formatting fix
+
 ## v1.12.0
 
 **Improvements:**
