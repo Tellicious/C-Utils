@@ -162,6 +162,19 @@ void LinSolveLUP(matrix_t* A, matrix_t* B, matrix_t* result);
 void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result);
 
 /**
+ * \brief           Solve discrete-time algebraic Riccati equation P = A'*P*A-(B'*P*A)'*inv(R+B'*P*B)*B'*P*A+Q
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[in]       B: pointer to B matrix object
+ * \param[in]       Q: pointer to Q matrix object
+ * \param[in]       R: pointer to R matrix object
+ * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 15 iterations)
+ * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
+ * \param[out]      result: pointer to P matrix object
+ */
+utilsStatus_t DARE(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol, matrix_t* result);
+
+/**
  * \brief           Gauss-Newton sensor calibration with 9 parameters
  * \attention       Approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric)
  * \attention       Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes
@@ -259,6 +272,20 @@ void LinSolveLUPStatic(matrix_t* A, matrix_t* B, matrix_t* result);
  * \param[out]      result: pointer to result matrix object
  */
 void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result);
+
+/**
+ * \brief           Solve discrete-time algebraic Riccati equation P = A'*P*A-(B'*P*A)'*inv(R+B'*P*B)*B'*P*A+Q with static allocation
+ *
+ * \param[in]       A: pointer to A matrix object
+ * \param[in]       B: pointer to B matrix object
+ * \param[in]       Q: pointer to Q matrix object
+ * \param[in]       R: pointer to R matrix object
+ * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 15 iterations)
+ * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
+ * \param[out]      result: pointer to P matrix object
+ */
+utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol,
+                         matrix_t* result);
 
 /**
  * \brief           Gauss-Newton sensor calibration with 9 parameters and static allocation

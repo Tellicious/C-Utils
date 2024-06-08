@@ -446,6 +446,78 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
     return;
 }
 
+/* -------Iterative solver for discrete-time algebraic Riccati equation--------- */
+/* Solves discrete-time algebraic Riccati equation P = A'*P*A-(B'*P*A)'*inv(R+B'*P*B)*B'*P*A+Q */
+utilsStatus_t DARE(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol, matrix_t* result) {
+    matrix_t _Ak, _G, _IGP, _Ak1, tmp1, tmp2, tmp3;
+
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(R->rows == R->cols);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(R->rows == B->cols);
+    ADVUTILS_ASSERT(Q->rows == A->rows);
+    ADVUTILS_ASSERT(Q->rows == Q->cols);
+    ADVUTILS_ASSERT(result->rows == result->cols);
+    ADVUTILS_ASSERT(result->rows == A->cols);
+
+    matrixInit(&_Ak, A->rows, A->cols);
+    matrixInit(&_Ak1, A->rows, A->cols);
+    matrixInit(&_G, B->rows, B->rows);
+    matrixInit(&_IGP, A->rows, A->cols);
+    matrixInit(&tmp1, R->rows, R->cols);
+    matrixInit(&tmp2, A->rows, A->cols);
+    matrixInit(&tmp3, A->rows, A->cols);
+
+    matrixCopy(A, &_Ak);
+    matrixInversed(R, &tmp1);
+    QuadProd(B, &tmp1, &_G);
+    matrixCopy(Q, result);
+
+    while (nmax-- > 0) {
+        /* Calculation of inverse(I+G*H); */
+        matrixMult(&_G, result, &tmp2);
+        for (uint8_t ii = 0; ii < tmp2.rows; ii++) {
+            ELEM(tmp2, ii, ii) += 1.f;
+        }
+        matrixInversed(&tmp2, &_IGP);
+        /* Calculation of Ak1 = Ak*inverse(I+G*H)*Ak */
+        matrixMult(&_Ak, &_IGP, &tmp2);
+        matrixMult(&tmp2, &_Ak, &_Ak1);
+        /* Calculation of Gk1 = Gk + Ak*inverse(eye(4)+Gk*H)*Gk*Ak.' */
+        matrixMult(&tmp2, &_G, &tmp3);
+        matrixMult_rhsT(&tmp3, &_Ak, &tmp2);
+        matrixAdd(&_G, &tmp2, &_G);
+        /* Calculation of H = H + Ak.'*H*inverse(eye(4)+Gk*H)*Ak */
+        matrixMult_lhsT(&_Ak, result, &tmp2);
+        matrixMult(&tmp2, &_IGP, &tmp3);
+        matrixMult(&tmp3, &_Ak, &tmp2);
+        matrixAdd(result, &tmp2, result);
+        if ((matrixNorm(&tmp2) / matrixNorm(result)) < tol) {
+            /* Delete temporary matrices */
+            matrixDelete(&_Ak);
+            matrixDelete(&_Ak1);
+            matrixDelete(&_G);
+            matrixDelete(&_IGP);
+            matrixDelete(&tmp2);
+            matrixDelete(&tmp1);
+            matrixDelete(&tmp3);
+            return UTILS_STATUS_SUCCESS;
+        }
+        matrixCopy(&_Ak1, &_Ak);
+    }
+
+    /* Delete temporary matrices */
+    matrixDelete(&_Ak);
+    matrixDelete(&_Ak1);
+    matrixDelete(&_G);
+    matrixDelete(&_IGP);
+    matrixDelete(&tmp2);
+    matrixDelete(&tmp1);
+    matrixDelete(&tmp3);
+
+    return UTILS_STATUS_TIMEOUT;
+}
+
 /* ------------Gauss-Newton sensors calibration with 9 parameters--------------- */
 /* approximates Data to a sphere of radius k by calculating 6 gains (s) and 3 biases (b), useful to calibrate some sensors (meas_sphere=S*(meas-B) with S symmetric) */
 /* Data has n>=9 rows corresponding to the number of measures and 3 columns corresponding to the 3 axes */
@@ -900,6 +972,69 @@ void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
     }
     bksub(&A_cp, &B_cp, result);
     return;
+}
+
+/* -------Iterative solver for discrete-time algebraic Riccati equation--------- */
+/* Solves discrete-time algebraic Riccati equation P = A'*P*A-(B'*P*A)'*inv(R+B'*P*B)*B'*P*A+Q */
+utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol,
+                         matrix_t* result) {
+    matrix_t _Ak, _G, _IGP, _Ak1, tmp1, tmp2, tmp3;
+
+    ADVUTILS_ASSERT(A->rows == A->cols);
+    ADVUTILS_ASSERT(R->rows == R->cols);
+    ADVUTILS_ASSERT(A->rows == B->rows);
+    ADVUTILS_ASSERT(R->rows == B->cols);
+    ADVUTILS_ASSERT(Q->rows == A->rows);
+    ADVUTILS_ASSERT(Q->rows == Q->cols);
+    ADVUTILS_ASSERT(result->rows == result->cols);
+    ADVUTILS_ASSERT(result->rows == A->cols);
+
+    float _AkData[A->rows * A->cols];
+    float _Ak1Data[A->rows * A->cols];
+    float _GData[B->rows * B->rows];
+    float _IGPData[A->rows * A->cols];
+    float _tmp1Data[R->rows * R->cols];
+    float _tmp2Data[A->rows * A->cols];
+    float _tmp3Data[A->rows * A->cols];
+
+    matrixInitStatic(&_Ak, _AkData, A->rows, A->cols);
+    matrixInitStatic(&_Ak1, _Ak1Data, A->rows, A->cols);
+    matrixInitStatic(&_G, _GData, B->rows, B->rows);
+    matrixInitStatic(&_IGP, _IGPData, A->rows, A->cols);
+    matrixInitStatic(&tmp1, _tmp1Data, R->rows, R->cols);
+    matrixInitStatic(&tmp2, _tmp2Data, A->rows, A->cols);
+    matrixInitStatic(&tmp3, _tmp3Data, A->rows, A->cols);
+
+    matrixCopy(A, &_Ak);
+    matrixInversedStatic(R, &tmp1);
+    QuadProd(B, &tmp1, &_G);
+    matrixCopy(Q, result);
+
+    while (nmax-- > 0) {
+        /* Calculation of inverse(I+G*H); */
+        matrixMult(&_G, result, &tmp2);
+        for (uint8_t ii = 0; ii < tmp2.rows; ii++) {
+            ELEM(tmp2, ii, ii) += 1.f;
+        }
+        matrixInversedStatic(&tmp2, &_IGP);
+        /* Calculation of Ak1 = Ak*inverse(I+G*H)*Ak */
+        matrixMult(&_Ak, &_IGP, &tmp2);
+        matrixMult(&tmp2, &_Ak, &_Ak1);
+        /* Calculation of Gk1 = Gk + Ak*inverse(eye(4)+Gk*H)*Gk*Ak.' */
+        matrixMult(&tmp2, &_G, &tmp3);
+        matrixMult_rhsT(&tmp3, &_Ak, &tmp2);
+        matrixAdd(&_G, &tmp2, &_G);
+        /* Calculation of H = H + Ak.'*H*inverse(eye(4)+Gk*H)*Ak */
+        matrixMult_lhsT(&_Ak, result, &tmp2);
+        matrixMult(&tmp2, &_IGP, &tmp3);
+        matrixMult(&tmp3, &_Ak, &tmp2);
+        matrixAdd(result, &tmp2, result);
+        if ((matrixNorm(&tmp2) / matrixNorm(result)) < tol) {
+            return UTILS_STATUS_SUCCESS;
+        }
+        matrixCopy(&_Ak1, &_Ak);
+    }
+    return UTILS_STATUS_TIMEOUT;
 }
 
 /* ------------Gauss-Newton sensors calibration with 9 parameters--------------- */
