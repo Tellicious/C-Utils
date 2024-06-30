@@ -61,6 +61,18 @@
 
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
 
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
+
 /* Function prototypes -------------------------------------------------------*/
 
 static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
@@ -71,6 +83,7 @@ static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase);
 static inline char* lpHashTableStrdup(const char* s) {
     size_t bufsize = strlen(s) + 1;
     char* retval = ADVUTILS_MALLOC(bufsize);
+    ADVUTILS_ASSERT(retval != NULL);
     if (retval) {
         memcpy(retval, s, bufsize);
     }
@@ -89,6 +102,7 @@ utilsStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t ini
     lpht->resizable = resizable;
 
     lpht->entries = ADVUTILS_CALLOC(lpht->size, sizeof(lpHashTableEntry_t));
+    ADVUTILS_ASSERT(lpht->entries != NULL);
     if (lpht->entries == NULL) {
         return UTILS_STATUS_ERROR;
     }
@@ -190,6 +204,7 @@ static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* v
     /* Didn't find key, allocate+copy if needed, then insert it. */
     lpht->entries[ii].key = lpHashTableStrdup(key);
     lpht->entries[ii].value = ADVUTILS_CALLOC(1, lpht->itemSize);
+    ADVUTILS_ASSERT(lpht->entries[ii].value != NULL);
 
     if ((lpht->entries[ii].key == NULL) || (lpht->entries[ii].value == NULL)) {
         ADVUTILS_FREE(lpht->entries[ii].key);
@@ -230,6 +245,7 @@ static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase) {
 
     lpHashTableEntry_t* old_entries = lpht->entries;
     lpht->entries = ADVUTILS_CALLOC(lpht->size, sizeof(lpHashTableEntry_t));
+    ADVUTILS_ASSERT(lpht->entries != NULL);
     if (lpht->entries == NULL) {
         lpht->size = old_size;
         lpht->entries = old_entries;

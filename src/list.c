@@ -58,6 +58,18 @@
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
+
 /* Functions -----------------------------------------------------------------*/
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
@@ -77,7 +89,9 @@ utilsStatus_t listPush(list_t* list, void* value) {
 
     listNode_t* ptr;
     ptr = ADVUTILS_MALLOC(sizeof(listNode_t));
+    ADVUTILS_ASSERT(ptr != NULL);
     ptr->data = ADVUTILS_CALLOC(1, list->itemSize);
+    ADVUTILS_ASSERT(ptr->data != NULL);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
@@ -98,7 +112,9 @@ utilsStatus_t listPushFront(list_t* list, void* value) {
 
     listNode_t* ptr;
     ptr = ADVUTILS_MALLOC(sizeof(listNode_t));
+    ADVUTILS_ASSERT(ptr != NULL);
     ptr->data = ADVUTILS_CALLOC(1, list->itemSize);
+    ADVUTILS_ASSERT(ptr->data != NULL);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 
@@ -126,7 +142,9 @@ utilsStatus_t listInsert(list_t* list, void* value, LIST_STYPE position) {
 
     listNode_t* ptr;
     ptr = ADVUTILS_MALLOC(sizeof(listNode_t));
+    ADVUTILS_ASSERT(ptr != NULL);
     ptr->data = ADVUTILS_CALLOC(1, list->itemSize);
+    ADVUTILS_ASSERT(ptr->data != NULL);
     memcpy(ptr->data, value, list->itemSize);
     ptr->next = NULL;
 

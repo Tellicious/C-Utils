@@ -58,6 +58,18 @@
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
+
 /* Functions -----------------------------------------------------------------*/
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
@@ -65,6 +77,7 @@
 utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
     movingAvg->data = NULL;
     movingAvg->data = ADVUTILS_CALLOC(size, sizeof(MOVAVG_TYPE));
+    ADVUTILS_ASSERT(movingAvg->data != NULL);
     if (movingAvg->data == NULL) {
         movingAvg->size = 0;
         return UTILS_STATUS_ERROR;

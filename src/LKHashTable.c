@@ -61,11 +61,24 @@
 
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
 
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
+
 /* Private Functions ---------------------------------------------------------*/
 
 static inline char* lkHashTableStrdup(const char* s) {
     size_t bufsize = strlen(s) + 1;
     char* retval = ADVUTILS_MALLOC(bufsize);
+    ADVUTILS_ASSERT(retval != NULL);
     if (retval) {
         memcpy(retval, s, bufsize);
     }
@@ -83,6 +96,7 @@ utilsStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t siz
     lkht->itemSize = itemSize;
 
     lkht->entries = ADVUTILS_CALLOC(lkht->size, sizeof(list_t));
+    ADVUTILS_ASSERT(lkht->entries != NULL);
     if (lkht->entries == NULL) {
         return UTILS_STATUS_ERROR;
     }
@@ -123,6 +137,7 @@ utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
     /* set entry and update length */
     entry.key = lkHashTableStrdup(key);
     entry.value = ADVUTILS_CALLOC(1, lkht->itemSize);
+    ADVUTILS_ASSERT(entry.value != NULL);
     memcpy(entry.value, value, lkht->itemSize);
 
     if (listPush(&(lkht->entries[ii]), &entry) == UTILS_STATUS_SUCCESS) {

@@ -80,7 +80,7 @@ utilsStatus_t matrixInit(matrix_t* matrix, uint8_t rows, uint8_t cols) {
     matrix->rows = rows;
     matrix->cols = cols;
     matrix->data = ADVUTILS_CALLOC(rows * cols, sizeof(float));
-
+    ADVUTILS_ASSERT(matrix->data != NULL);
     if (matrix->data == NULL) {
         return UTILS_STATUS_ERROR;
     }
