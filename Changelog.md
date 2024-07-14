@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.14.0
+
+**New features:**
+- Added callback-based event manager in `event.h/.c`
+
+**Improvements:**
+- Added check on correct memory allocation using `ADVUTILS_ASSERT`
+
 ## v1.13.0
 
 **New features:**

@@ -9,6 +9,7 @@
 - ***timer:*** user-configurable timers
 - ***queue:*** queue structure
 - ***list:*** linked list
+- ***event:*** callback-based event manager with support for functions with type `void(*)(void)` and `void(*)(void* val)`
 - ***quaternion:*** quaternion operations and conversion to Euler angles
 - ***PID:*** PID controller with several anti-windup options (aero-specific, integral-clamping, back-calculation)
 - ***button:*** interrupt-based button object with debounce and multiple press types detection
