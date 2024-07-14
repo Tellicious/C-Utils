@@ -15,6 +15,7 @@ set (libName ADVUtils)
 set(${libName}_src
     ${CMAKE_CURRENT_LIST_DIR}/src/basicMath.c
     ${CMAKE_CURRENT_LIST_DIR}/src/button.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/event.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hashFunctions.c
     ${CMAKE_CURRENT_LIST_DIR}/src/IIRFilters.c
     ${CMAKE_CURRENT_LIST_DIR}/src/list.c
