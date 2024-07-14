@@ -200,8 +200,12 @@ utilsStatus_t listPeekAtPos(list_t* list, void* value, LIST_STYPE position);
  * \param[out]      items: pointer to number of items currently in the list
  */
 static inline void listInfo(list_t* list, LIST_STYPE* size, LIST_STYPE* items) {
-    *size = list->size;
-    *items = list->items;
+    if (size != NULL) {
+        *size = list->size;
+    }
+    if (items != NULL) {
+        *items = list->items;
+    }
 }
 
 /**
