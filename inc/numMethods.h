@@ -51,7 +51,7 @@ extern "C" {
  * \param[in]       B: pointer to B matrix object
  * \param[out]      result: pointer to result matrix object
  *
- * \attention       assumes that the matrix A is already a lower triangular one. No check is performed within function!
+ * \attention       Assumes that the matrix A is already a lower triangular one. No check is performed within function!
  */
 void fwsub(matrix_t* A, matrix_t* B, matrix_t* result);
 
@@ -60,10 +60,10 @@ void fwsub(matrix_t* A, matrix_t* B, matrix_t* result);
  *
  * \param[in]       A: pointer to A matrix object
  * \param[in]       B: pointer to B matrix object
- * \param[in]       P: pointer to P matrix object
+ * \param[in]       P: pointer to P matrix object, containing the indexes of the permuted rows of B in a column vector
  * \param[out]      result: pointer to result matrix object
  *
- * \attention       assumes that the matrix A is already a lower triangular one. No check is performed within function!
+ * \attention       Assumes that the matrix A is already a lower triangular one. No check is performed within function!
  */
 void fwsubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result);
 
@@ -74,19 +74,19 @@ void fwsubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result);
  * \param[in]       B: pointer to B matrix object
  * \param[out]      result: pointer to result matrix object
  *
- * \attention       assumes that the matrix A is already an upper triangular one. No check is performed within function!
+ * \attention       Assumes that the matrix A is already an upper triangular one. No check is performed within function!
  */
 void bksub(matrix_t* A, matrix_t* B, matrix_t* result);
 
 /**
- * \brief           Solve AX = PB system with backward substitution (with permutation)
+ * \brief           Solve AX = B system with backward substitution (with permutation)
  *
  * \param[in]       A: pointer to A matrix object
  * \param[in]       B: pointer to B matrix object
- * \param[in]       P: pointer to P matrix object
+ * \param[in]       P: pointer to P matrix object, containing the indexes of the permuted rows of B in a column vector
  * \param[out]      result: pointer to result matrix object
  *
- * \attention       assumes that the matrix A is already an upper triangular one. No check is performed within function!
+ * \attention       Assumes that the matrix A is already an upper triangular one. No check is performed within function!
  */
 void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result);
 
@@ -171,6 +171,8 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result);
  * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 15 iterations)
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to P matrix object
+ *
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached
  */
 utilsStatus_t DARE(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol, matrix_t* result);
 
@@ -283,6 +285,8 @@ void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result);
  * \param[in]       nmax: maximum number of iterations (200 is generally fine, even if it usually converges within 15 iterations)
  * \param[in]       tol: stopping tolerance (1e-6 is generally fine)
  * \param[out]      result: pointer to P matrix object
+ *
+ * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached
  */
 utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol,
                          matrix_t* result);
