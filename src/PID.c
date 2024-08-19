@@ -81,7 +81,7 @@ utilsStatus_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
     PID->DuI += PID->ki * (e + PID->tmp);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
-    if (((e * PID->output) > 0) && ((PID->output > PID->satMin) || (PID->output < PID->satMax))) {
+    if (((e * PID->output) > 0) && ((PID->output < PID->satMin) || (PID->output > PID->satMax))) {
         PID->DuI -= PID->ki * e;
         PID->output -= PID->ki * e;
         PID->tmp = 0;
