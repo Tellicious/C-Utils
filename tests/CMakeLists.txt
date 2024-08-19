@@ -1,0 +1,58 @@
+# Define tests list
+set(TESTS_LIST
+    basicMath
+    button
+    event
+    IIRFilters
+    list
+    LKHashTable
+    LPHashTable
+    matrix
+    movingAvg
+    numMethods
+    PID
+    quaternion
+    queue
+    timer
+)
+
+# Fetch CMocka library
+include(FetchContent)
+SET(CMAKE_TLS_VERIFY FALSE)
+
+FetchContent_Declare(
+  cmocka
+  GIT_REPOSITORY https://git.cryptomilk.org/projects/cmocka.git
+  GIT_TAG        master
+  GIT_SHALLOW    1
+)
+
+set(WITH_STATIC_LIB ON CACHE BOOL "CMocka: Build with a static library" FORCE)
+set(WITH_CMOCKERY_SUPPORT OFF CACHE BOOL "CMocka: Install a cmockery header" FORCE)
+set(WITH_EXAMPLES OFF CACHE BOOL "CMocka: Build examples" FORCE)
+set(UNIT_TESTING OFF CACHE BOOL "CMocka: Build with unit testing" FORCE)
+set(PICKY_DEVELOPER OFF CACHE BOOL "CMocka: Build with picky developer flags" FORCE)
+
+FetchContent_MakeAvailable(cmocka)
+find_library(MATH_LIBRARY m)
+
+foreach(FILE ${TESTS_LIST})
+    # Set sources
+    set(SOURCES_${FILE}
+        test_${FILE}.c
+    )
+    # Create an executable for testing
+    add_executable(run_${FILE}Tests ${SOURCES_${FILE}})
+    # Add the include directories
+    target_include_directories(run_${FILE}Tests PRIVATE 
+        ${CMAKE_CURRENT_LIST_DIR}/../inc)
+    # Link CMocka and the math library
+    target_link_libraries(run_${FILE}Tests PRIVATE cmocka ADVUtils ${MATH_LIBRARY})
+    target_compile_options(run_${FILE}Tests PRIVATE ${compiler_OPTS})
+    target_compile_definitions(run_${FILE}Tests PRIVATE ${user_DEFS})
+endforeach()
+
+# Add tests
+foreach(FILE ${TESTS_LIST})
+    add_test(NAME ${FILE}Test COMMAND run_${FILE}Tests)
+endforeach()

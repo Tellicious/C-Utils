@@ -1,0 +1,63 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "default",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}/build",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install"
+            }
+        },
+        {
+            "name": "debugWin",
+            "inherits": "default",
+            "displayName": "Debug configuration for Windows",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
+            "name": "debugMac",
+            "inherits": "default",
+            "displayName": "Debug configuration for Mac",
+            "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debugWin",
+            "description": "Debug configuration for Windows",
+            "configurePreset": "debugWin"
+        },
+        {
+            "name": "debugMac",
+            "description": "Debug configuration for Mac",
+            "configurePreset": "debugMac"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "testWin",
+            "description": "Test configuration for Windows",
+            "configurePreset": "debugWin"
+        },
+        {
+            "name": "testMac",
+            "description": "Test configuration for Mac",
+            "configurePreset": "debugMac"
+        }
+    ]
+}
