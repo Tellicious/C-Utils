@@ -65,15 +65,18 @@ void PID_calc(PID_t* PID, float setPoint, float measure) {
 
 utilsStatus_t PID_calcAeroClamp(PID_t* PID, float setPoint, float measure) {
     float e = setPoint - measure;
-    PID->DuI += PID->ki * (e + PID->oldE);
+    PID->DuI += PID->ki * (e + PID->tmp);
     PID->DuI = CONSTRAIN(PID->DuI, PID->satMin, PID->satMax);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
     PID->oldE = e;
     if ((PID->DuI == PID->satMin) || (PID->DuI == PID->satMax)) {
+        PID->tmp = 0;
         return UTILS_STATUS_FULL;
+    } else {
+        PID->tmp = e;
+        return UTILS_STATUS_SUCCESS;
     }
-    return UTILS_STATUS_SUCCESS;
 }
 
 utilsStatus_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
