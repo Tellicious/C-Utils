@@ -102,12 +102,19 @@ utilsStatus_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure) {
     PID->DuI += PID->ki * (e + PID->oldE);
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
-    bcVal = (PID->output > PID->satMax) ? (PID->satMax - PID->output)
-                                        : ((PID->output < PID->satMin) ? (PID->satMin - PID->output) : 0);
+    if (PID->output > PID->satMax) {
+        bcVal = PID->satMax - PID->output;
+        PID->output = PID->satMax;
+    } else if (PID->output < PID->satMin) {
+        bcVal = PID->satMin - PID->output;
+        PID->output = PID->satMin;
+    } else {
+        bcVal = 0;
+        /* Comment this to align the algorithm to the one with delayed BC from MATLAB */
+        PID->output += PID->kb * PID->tmp;
+    }
     PID->DuI += PID->kb * (bcVal + PID->tmp);
-    PID->output += PID->kb * (bcVal + PID->tmp);
     PID->tmp = bcVal;
     PID->oldE = e;
-    PID->output = CONSTRAIN(PID->output, PID->satMin, PID->satMax);
     return ((bcVal == 0) ? UTILS_STATUS_SUCCESS : UTILS_STATUS_FULL);
 }
