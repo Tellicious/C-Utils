@@ -1,0 +1,34 @@
+on:
+    pull_request:
+        types: [opened, reopened]
+    push:
+        # Sequence of patterns matched against refs/tags
+        tags:
+        - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    workflow_dispatch:
+
+name: Unit tests
+jobs:
+  unitTests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Dependencies
+      run: |
+        sudo apt install -y \
+            build-essential \
+            cmake ninja-build
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -S ${{github.workspace}} -B ${{github.workspace}}/build -G Ninja
+    
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build -j 10
+    
+    - name: Test
+      run: ctest --test-dir ${{github.workspace}}/build --output-on-failure --verbose
+  
+
