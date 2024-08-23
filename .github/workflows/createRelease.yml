@@ -3,15 +3,25 @@ on:
       # Sequence of patterns matched against refs/tags
       tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-name: Create Release
+name: Create release
 jobs:
-  build:
-    name: Create Release
+  release:
+    name: Create release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Create Release
+
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'unitTests'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          allowed-conclusions: success
+
+      - name: Create release
         id: create_release
         uses: ncipollo/release-action@v1
         env:
