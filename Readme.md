@@ -2,6 +2,8 @@
 
 # Collection of useful C utilities
 
+[![Unit tests](https://github.com/Tellicious/ADV-utils/actions/workflows/runTests.yml/badge.svg?branch=main&event=push&event=workflow_dispatch)](https://github.com/Tellicious/ADV-utils/actions/workflows/runTests.yml)
+
 ## Libraries included:
 - ***basicMath:*** math constants, conversion factors, bitwise operators, `fastSqrt`, `fastInvSqrt`, `fastSin` and `fastCos`
 - ***matrix:*** handling of matrix objects and matrix operations
