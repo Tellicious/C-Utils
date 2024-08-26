@@ -41,15 +41,38 @@
 #include "numMethods.h"
 #include "math.h"
 
+#ifdef ADVUTILS_UNIT_TESTS
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#include <cmocka.h>
+#else
+#ifdef ADVUTILS_MEMORY_MGMT_HEADER
+#if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
+#error ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
+#else
+#include ADVUTILS_MEMORY_MGMT_HEADER
+#endif /* !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE) */
+#else
+#include <stdlib.h>
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
+#endif /* ADVUTILS_UNIT_TESTS */
+
 /* Macros --------------------------------------------------------------------*/
 
 #ifndef ADVUTILS_ASSERT
 #ifdef DEBUG
+#ifdef ADVUTILS_UNIT_TESTS
+#define ADVUTILS_ASSERT(x) assert_true(x)
+#else
 #define ADVUTILS_ASSERT(x)                                                                                             \
     if ((x) == 0) {                                                                                                    \
         for (;;)                                                                                                       \
             ;                                                                                                          \
     }
+#endif /* ADVUTILS_UNIT_TESTS */
 #else
 #define ADVUTILS_ASSERT(x)
 #endif /* DEBUG */
