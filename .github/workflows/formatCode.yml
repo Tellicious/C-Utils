@@ -1,0 +1,40 @@
+on:
+    pull_request:
+        types: [opened, reopened]
+    push:
+        # Sequence of patterns matched against refs/tags
+        tags:
+        - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    workflow_dispatch:
+
+name: Format code
+jobs:
+  formatCode:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install clang-format 18
+      run: |
+        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        sudo apt-get update &&
+        sudo apt-get install -y clang-format-18
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Format code and commit changes
+      run : |
+        find ${{github.workspace}}/ -iname '*.h' -o -iname '*.c' | xargs clang-format-18 -i
+    
+    - name: Commit changes
+      run : |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git diff-index --quiet HEAD || git commit -m "Fixed formatting" -a
+   
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+  
+
