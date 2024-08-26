@@ -117,6 +117,8 @@ void matrixIdentity(matrix_t* matrix) {
 void matrixAdd(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     ADVUTILS_ASSERT(lhs->cols == rhs->cols);
     ADVUTILS_ASSERT(lhs->rows == rhs->rows);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] + rhs->data[ii];
@@ -126,6 +128,8 @@ void matrixAdd(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
 
 /* --------------------Scalar addition---------------------- */
 void matrixAddScalar(matrix_t* lhs, float sc, matrix_t* result) {
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] + sc;
@@ -137,6 +141,8 @@ void matrixAddScalar(matrix_t* lhs, float sc, matrix_t* result) {
 void matrixSub(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
     ADVUTILS_ASSERT(lhs->cols == rhs->cols);
     ADVUTILS_ASSERT(lhs->rows == rhs->rows);
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] - rhs->data[ii];
@@ -292,6 +298,8 @@ void matrixMult_rhsT(matrix_t* lhs, matrix_t* rhs, matrix_t* result) {
 
 /* ---------------Scalar multiplication------------------ */
 void matrixMultScalar(matrix_t* lhs, float sc, matrix_t* result) {
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     uint16_t ii;
     for (ii = 0; ii < (lhs->cols * lhs->rows); ii++) {
         result->data[ii] = lhs->data[ii] * sc;
@@ -374,6 +382,8 @@ void matrixTrans(matrix_t* lhs, matrix_t* result) {
 
 /* -----------------Nomalized-------------------- */
 void matrixNormalized(matrix_t* lhs, matrix_t* result) {
+    ADVUTILS_ASSERT(result->rows == lhs->rows);
+    ADVUTILS_ASSERT(result->cols == lhs->cols);
     float k = 1.0f / matrixNorm(lhs);
     matrixMultScalar(lhs, k, result);
     return;
