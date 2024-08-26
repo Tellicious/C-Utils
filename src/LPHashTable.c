@@ -184,6 +184,19 @@ utilsStatus_t lpHashTableFlush(lpHashTable_t* lpht) {
     return UTILS_STATUS_SUCCESS;
 }
 
+utilsStatus_t lpHashTableDelete(lpHashTable_t* lpht) {
+
+    if (lpht->entries == NULL) {
+        return UTILS_STATUS_ERROR;
+    }
+
+    lpHashTableFlush(lpht);
+
+    ADVUTILS_FREE(lpht->entries);
+
+    return UTILS_STATUS_SUCCESS;
+}
+
 static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value) {
     /* limit hash to current memory size */
     uint32_t ii = LPHT_HASHFUN(key) & (lpht->size - 1);

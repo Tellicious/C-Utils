@@ -126,6 +126,15 @@ static inline void lkHashTableInfo(lkHashTable_t* lkht, uint32_t* size, uint32_t
  * \return          UTILS_STATUS_SUCCESS if list is flushed correctly, UTILS_STATUS_ERROR if data cannot be flushed
  */
 utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht);
+
+/**
+ * \brief           Delete hash-table
+ *
+ * \param[in]       lkht: pointer to hash-table object
+ *
+ * \return          UTILS_STATUS_SUCCESS if hash-table is deleted, UTILS_STATUS_ERROR if hash-table was already deleted
+ */
+utilsStatus_t lkHashTableDelete(lkHashTable_t* lkht);
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef __cplusplus

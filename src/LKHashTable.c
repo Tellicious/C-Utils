@@ -209,4 +209,17 @@ utilsStatus_t lkHashTableFlush(lkHashTable_t* lkht) {
     return UTILS_STATUS_SUCCESS;
 }
 
+utilsStatus_t lkHashTableDelete(lkHashTable_t* lkht) {
+
+    if (lkht->entries == NULL) {
+        return UTILS_STATUS_ERROR;
+    }
+
+    lkHashTableFlush(lkht);
+
+    ADVUTILS_FREE(lkht->entries);
+
+    return UTILS_STATUS_SUCCESS;
+}
+
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
