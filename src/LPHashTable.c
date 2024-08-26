@@ -115,8 +115,8 @@ utilsStatus_t lpHashTablePut(lpHashTable_t* lpht, char* key, void* value) {
         return UTILS_STATUS_ERROR;
     }
 
-    /* If length will exceed half of current capacity, expand it. */
-    if ((lpht->items >= (lpht->size * LPHT_MAX_SATURATION)) && (lpht->resizable == LPHT_RESIZABLE)) {
+    /* If length will exceed defined quota of current capacity, expand it. */
+    if (((lpht->items + 1) >= (lpht->size * LPHT_MAX_SATURATION)) && (lpht->resizable == LPHT_RESIZABLE)) {
         if (lpHashTableXpand(lpht, 1) != UTILS_STATUS_SUCCESS) {
             return UTILS_STATUS_ERROR;
         }
