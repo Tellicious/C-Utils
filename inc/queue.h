@@ -208,7 +208,7 @@ utilsStatus_t queueFlush(queue_t* queue);
  *
  * \param[in]       queue: pointer to queue object
  *
- * \return          UTILS_STATUS_SUCCESS if queue data is deleted, UTILS_STATUS_ERROR if data was not deleted correctly
+ * \return          UTILS_STATUS_SUCCESS if queue data is deleted, UTILS_STATUS_ERROR if data was already deleted
  */
 utilsStatus_t queueDelete(queue_t* queue);
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

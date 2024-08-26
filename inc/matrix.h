@@ -306,7 +306,7 @@ float matrixNorm(matrix_t* matrix);
  *
  * \param[in]       matrix: pointer to matrix object
  *
- * \return          UTILS_STATUS_SUCCESS if matrix data is deleted, UTILS_STATUS_ERROR if data was not deleted correctly
+ * \return          UTILS_STATUS_SUCCESS if matrix data is deleted, UTILS_STATUS_ERROR if data was already deleted
  */
 utilsStatus_t matrixDelete(matrix_t* matrix);
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */

@@ -213,7 +213,7 @@ static inline void listInfo(list_t* list, LIST_STYPE* size, LIST_STYPE* items) {
  *
  * \param[in]       list: pointer to list object
  *
- * \return          UTILS_STATUS_SUCCESS if list is flushed correctly, UTILS_STATUS_ERROR if data cannot be flushed
+ * \return          UTILS_STATUS_SUCCESS if list is flushed correctly, UTILS_STATUS_EMPTY if list is already empty
  */
 utilsStatus_t listFlush(list_t* list);
 
