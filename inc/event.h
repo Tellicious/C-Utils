@@ -81,8 +81,10 @@ typedef struct {
  * \param[in]       event: pointer to event object
  * \param[in]       type: type of event callback, either EVENT_TYPE_BASIC or EVENT_TYPE_EXTENDED
  * \param[in]       size: maximum number of event callbacks
+ * 
+ * \return          UTILS_STATUS_SUCCESS if event is initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
-void eventInit(event_t* event, eventType_t type, uint16_t size);
+utilsStatus_t eventInit(event_t* event, eventType_t type, uint16_t size);
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 /**

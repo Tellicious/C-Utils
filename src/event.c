@@ -73,12 +73,17 @@
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
-void eventInit(event_t* event, eventType_t type, uint16_t size) {
+utilsStatus_t eventInit(event_t* event, eventType_t type, uint16_t size) {
     event->type = type;
     event->count = 0;
     event->size = size;
     event->eventsList = ADVUTILS_CALLOC(size, sizeof(eventExtCBType_t));
     ADVUTILS_ASSERT(event->eventsList != NULL);
+    if (event->eventsList == NULL) {
+        event->size = 0;
+        return UTILS_STATUS_ERROR;
+    }
+    return UTILS_STATUS_SUCCESS;
 }
 
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
