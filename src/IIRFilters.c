@@ -36,6 +36,20 @@
 #include "IIRFilters.h"
 #include "basicMath.h"
 
+/* Macros --------------------------------------------------------------------*/
+
+#ifndef ADVUTILS_ASSERT
+#ifdef DEBUG
+#define ADVUTILS_ASSERT(x)                                                                                             \
+    if ((x) == 0) {                                                                                                    \
+        for (;;)                                                                                                       \
+            ;                                                                                                          \
+    }
+#else
+#define ADVUTILS_ASSERT(x)
+#endif /* DEBUG */
+#endif /* ADVUTILS_ASSERT */
+
 /* Functions -----------------------------------------------------------------*/
 
 void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, float n3, float d1, float d2, float d3) {
@@ -54,6 +68,7 @@ void IIRFilterInit(IIRFilterGeneric_t* filter, float n0, float n1, float n2, flo
 }
 
 void IIRFilterInitLP(IIRFilterGeneric_t* filter, float lpFreq, float dT_ms) {
+    ADVUTILS_ASSERT(lpFreq < (0.5f / (dT_ms * 1e-3f)));
     const float lambda = 1.f / TAN(constPI * (lpFreq * dT_ms * 1e-3f));
     const float q = SQRT(2.f);
     float n0 = 1.f / (1.f + q * lambda + lambda * lambda);
@@ -64,6 +79,7 @@ void IIRFilterInitLP(IIRFilterGeneric_t* filter, float lpFreq, float dT_ms) {
 }
 
 void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms) {
+    ADVUTILS_ASSERT(hpFreq < (0.5f / (dT_ms * 1e-3f)));
     const float lambda = 1.f / TAN(constPI * (hpFreq * dT_ms * 1e-3f));
     const float q = SQRT(2.f);
     float n0 = 1.f / (1.f + q * lambda + lambda * lambda);
@@ -75,6 +91,7 @@ void IIRFilterInitHP(IIRFilterGeneric_t* filter, float hpFreq, float dT_ms) {
 }
 
 void IIRFilterInitBP(IIRFilterGeneric_t* filter, float centerFreq, float bandwidth, float dT_ms) {
+    ADVUTILS_ASSERT((centerFreq + 0.5f * bandwidth) < (0.5f / (dT_ms * 1e-3f)));
     const float Q = centerFreq / bandwidth; // Q factor
     const float C = TAN(constPI * (centerFreq * dT_ms * 1e-3f));
     const float D = 1.f / (1.f + C / Q + C * C);
@@ -86,6 +103,7 @@ void IIRFilterInitBP(IIRFilterGeneric_t* filter, float centerFreq, float bandwid
 }
 
 void IIRFilterInitBS(IIRFilterGeneric_t* filter, float centerFreq, float bandwidth, float dT_ms) {
+    ADVUTILS_ASSERT((centerFreq + 0.5f * bandwidth) < (0.5f / (dT_ms * 1e-3f)));
     const float Q = centerFreq / bandwidth; // Q factor
     const float C = TAN(constPI * (centerFreq * dT_ms * 1e-3f));
     const float D = 1.f / (1.f + C / Q + C * C);
