@@ -17,6 +17,16 @@ jobs:
         sudo apt install -y \
             build-essential \
             cmake ninja-build
+    
+    - name: Wait for code formatting to succeed
+      if: ${{ github.event_name != 'workflow_dispatch' }}
+      uses: lewagon/wait-on-check-action@v1.3.4
+      with:
+        ref: ${{ github.ref }}
+        check-name: 'formatCode'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 10
+        allowed-conclusions: success
 
     - name: Checkout Repository
       uses: actions/checkout@v4
