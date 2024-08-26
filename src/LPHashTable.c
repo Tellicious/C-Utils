@@ -139,7 +139,13 @@ utilsStatus_t lpHashTablePut(lpHashTable_t* lpht, char* key, void* value) {
 }
 
 utilsStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, lpHashTableRemoval_t remove) {
+
+    if (!lpht->items) {
+        return UTILS_STATUS_EMPTY;
+    }
+
     uint32_t ii = LPHT_HASHFUN(key) & (lpht->size - 1);
+    uint32_t cnt = 0;
 
     while (lpht->entries[ii].key != NULL) {
         if (!strcmp(key, lpht->entries[ii].key)) {
@@ -156,10 +162,16 @@ utilsStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, lpHash
             return UTILS_STATUS_SUCCESS;
         }
 
+        cnt++;
         ii++;
 
         if (ii >= lpht->size) {
             ii = 0;
+        }
+
+        /* Check to avoid infinite loop in case of full not-resizable list */
+        if (cnt >= lpht->items) {
+            return UTILS_STATUS_ERROR;
         }
     }
     return UTILS_STATUS_ERROR;
