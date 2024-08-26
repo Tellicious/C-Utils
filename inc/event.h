@@ -74,6 +74,7 @@ typedef struct {
 
 /* Function prototypes -------------------------------------------------------*/
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 /**
  * \brief           Init event structure
  *
@@ -82,6 +83,7 @@ typedef struct {
  * \param[in]       size: maximum number of event callbacks
  */
 void eventInit(event_t* event, eventType_t type, uint16_t size);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 /**
  * \brief           Init event structure with static memory allocation
