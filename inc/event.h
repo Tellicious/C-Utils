@@ -132,6 +132,17 @@ utilsStatus_t eventDispatch(event_t* event);
  */
 utilsStatus_t eventDispatchEx(event_t* event, void* val);
 
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+/**
+ * \brief           Delete event handler
+ *
+ * \param[in]       event: pointer to event object
+ *
+ * \return          UTILS_STATUS_SUCCESS if event data is deleted, UTILS_STATUS_ERROR if data was already deleted
+ */
+utilsStatus_t eventDelete(event_t* event);
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
+
 #ifdef __cplusplus
 }
 #endif

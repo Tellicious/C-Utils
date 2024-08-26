@@ -135,3 +135,18 @@ utilsStatus_t eventDispatchEx(event_t* event, void* val) {
     }
     return UTILS_STATUS_SUCCESS;
 }
+
+#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
+
+utilsStatus_t eventDelete(event_t* event) {
+
+    if (event->eventsList == NULL) {
+        return UTILS_STATUS_ERROR;
+    }
+
+    ADVUTILS_FREE(event->eventsList);
+
+    return UTILS_STATUS_SUCCESS;
+}
+
+#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
