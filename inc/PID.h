@@ -58,8 +58,6 @@ typedef struct {
     float kf;     /* derivative filter constant */
     float satMin; /* lower integral saturation limit */
     float satMax; /* upper integral saturation limit */
-    float oldE;   /* previous step error */
-    float tmp;    /* previous step error (used for integral clamping) or back-calculation coefficient */
     float DuD;    /* derivative action contribution */
     float DuI;    /* integral action contribution */
 } PID_t;
@@ -230,12 +228,7 @@ static inline void PID_setIntegralSaturation(PID_t* PID, float satMin, float sat
  *
  * \param[in]       PID: pointer to PID object
  */
-static inline void PID_reset(PID_t* PID) {
-    PID->oldE = 0;
-    PID->DuD = 0;
-    PID->DuI = 0;
-    PID->tmp = 0;
-}
+static inline void PID_reset(PID_t* PID) { PID->DuD = PID->DuI = 0; }
 
 #ifdef __cplusplus
 }
