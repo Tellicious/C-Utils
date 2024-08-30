@@ -180,11 +180,45 @@ static void test_PID_calcBackCalc(void** state) {
     }
 }
 
+static void test_PID_setGet(void** state) {
+    (void)state; /* unused */
+    PID_t pid;
+    PID_init(&pid, 11.1f, 12.2f, 13.3f, 100, 14.4f, 100, -7, 7);
+    /* Proportional */
+    assert_float_equal(PID_getKp(&pid), 11.1f, 1e-5);
+    PID_setKp(&pid, 2.3);
+    assert_float_equal(pid.kp, 2.3f, 1e-5);
+    /* Integral*/
+    assert_float_equal(PID_getKi(&pid), 12.2f, 1e-5);
+    PID_setKi(&pid, 15.5f);
+    assert_float_equal(pid.ki, 0.5f * 15.5f * 100 * 1e-3, 1e-5);
+    PID_setIntegralValue(&pid, 135.4f);
+    assert_float_equal(pid.DuI, 135.4f, 1e-5);
+    /* Derivative */
+    assert_float_equal(PID_getKd(&pid), 13.3f, 1e-5);
+    PID_setKd(&pid, 4.4f, 3.2f);
+    assert_float_equal(pid.kd, (2 * 4.4f * 3.2f) / (2 + 3.2f * 100.0f * 1e-3), 1e-5);
+    assert_float_equal(pid.kf, (2 - 3.2f * 100.0f * 1e-3) / (2 + 3.2f * 100.0f * 1e-3), 1e-5);
+    /* Saturation */
+    PID_setIntegralSaturation(&pid, -12, 12);
+    assert_float_equal(pid.satMax, 12, 1e-5);
+    assert_float_equal(pid.satMin, -12, 1e-5);
+    /* Back-calculation */
+    PID_setKb(&pid, 2.6);
+    assert_float_equal(pid.kb, 0.5 * 2.6 * 100 * 1e-3, 1e-5);
+    /* Reset */
+    pid.DuD = 123;
+    pid.DuI = 344;
+    PID_reset(&pid);
+    assert_float_equal(pid.DuD, 0, 1e-5);
+    assert_float_equal(pid.DuI, 0, 1e-5);
+}
+
 int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_PID_init),          cmocka_unit_test(test_PID_calc),
         cmocka_unit_test(test_PID_calcAeroClamp), cmocka_unit_test(test_PID_calcIntegralClamp),
-        cmocka_unit_test(test_PID_calcBackCalc),
+        cmocka_unit_test(test_PID_calcBackCalc),  cmocka_unit_test(test_PID_setGet),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
