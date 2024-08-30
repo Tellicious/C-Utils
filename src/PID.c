@@ -99,22 +99,20 @@ utilsStatus_t PID_calcIntegralClamp(PID_t* PID, float setPoint, float measure) {
 utilsStatus_t PID_calcBackCalc(PID_t* PID, float setPoint, float measure) {
     float bcVal;
     float e = setPoint - measure;
-    PID->DuI += PID->ki * (e + PID->oldE);
+    PID->DuI += PID->ki * PID->oldE + PID->kb * PID->tmp;
     PID->DuD = PID->kf * PID->DuD + PID->kd * (e - PID->oldE);
     PID->output = PID->kp * e + PID->DuI + PID->DuD;
     if (PID->output > PID->satMax) {
         bcVal = PID->satMax - PID->output;
-        PID->output = PID->satMax;
     } else if (PID->output < PID->satMin) {
         bcVal = PID->satMin - PID->output;
-        PID->output = PID->satMin;
     } else {
         bcVal = 0;
-        /* Comment this to align the algorithm to the one with delayed BC from MATLAB */
-        PID->output += PID->kb * PID->tmp;
     }
-    PID->DuI += PID->kb * (bcVal + PID->tmp);
-    PID->tmp = bcVal;
+    PID->DuI += PID->ki * e + PID->kb * bcVal;
     PID->oldE = e;
-    return ((bcVal == 0) ? UTILS_STATUS_SUCCESS : UTILS_STATUS_FULL);
+    PID->tmp = bcVal;
+    PID->output = PID->kp * e + PID->DuI + PID->DuD;
+    PID->output = CONSTRAIN(PID->output, PID->satMin, PID->satMax);
+    return (((PID->output == PID->satMax) || (PID->output == PID->satMin)) ? UTILS_STATUS_FULL : UTILS_STATUS_SUCCESS);
 }
