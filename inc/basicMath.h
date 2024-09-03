@@ -70,7 +70,7 @@ extern "C" {
         __typeof__(b) _b = (b);                                                                                        \
         _a > _b ? _a : _b;                                                                                             \
     })
-#elif
+#else
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
@@ -82,7 +82,7 @@ extern "C" {
         __typeof__(b) _b = (b);                                                                                        \
         _a < _b ? _a : _b;                                                                                             \
     })
-#elif
+#else
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
