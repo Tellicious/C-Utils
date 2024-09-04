@@ -36,28 +36,15 @@
 #include "IIRFilters.h"
 #include "basicMath.h"
 
-#ifdef ADVUTILS_UNIT_TESTS
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-
-#include <cmocka.h>
-#endif
-
 /* Macros --------------------------------------------------------------------*/
 
 #ifndef ADVUTILS_ASSERT
 #ifdef DEBUG
-#ifdef ADVUTILS_UNIT_TESTS
-#define ADVUTILS_ASSERT(x) assert_true(x)
-#else
 #define ADVUTILS_ASSERT(x)                                                                                             \
     if ((x) == 0) {                                                                                                    \
         for (;;)                                                                                                       \
             ;                                                                                                          \
     }
-#endif /* ADVUTILS_UNIT_TESTS */
 #else
 #define ADVUTILS_ASSERT(x)
 #endif /* DEBUG */

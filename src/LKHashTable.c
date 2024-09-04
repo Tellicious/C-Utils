@@ -41,15 +41,6 @@
 #include "LKHashTable.h"
 #include <string.h>
 #include "hashFunctions.h"
-
-#ifdef ADVUTILS_UNIT_TESTS
-#include <setjmp.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stddef.h>
-
-#include <cmocka.h>
-#else
 #ifdef ADVUTILS_MEMORY_MGMT_HEADER
 #if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
 #error ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
@@ -59,33 +50,24 @@
 #else
 #include <stdlib.h>
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
-#endif /* ADVUTILS_UNIT_TESTS */
 
 /* Macros --------------------------------------------------------------------*/
 
-#ifdef ADVUTILS_UNIT_TESTS
-#define ADVUTILS_MALLOC test_malloc
-#define ADVUTILS_CALLOC test_calloc
-#define ADVUTILS_FREE   test_free
-#elif !defined(ADVUTILS_MEMORY_MGMT_HEADER)
+#ifndef ADVUTILS_MEMORY_MGMT_HEADER
 #define ADVUTILS_MALLOC malloc
 #define ADVUTILS_CALLOC calloc
 #define ADVUTILS_FREE   free
-#endif /* ADVUTILS_UNIT_TESTS */
+#endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
 
 #ifndef ADVUTILS_ASSERT
 #ifdef DEBUG
-#ifdef ADVUTILS_UNIT_TESTS
-#define ADVUTILS_ASSERT(x) assert_true(x)
-#else
 #define ADVUTILS_ASSERT(x)                                                                                             \
     if ((x) == 0) {                                                                                                    \
         for (;;)                                                                                                       \
             ;                                                                                                          \
     }
-#endif /* ADVUTILS_UNIT_TESTS */
 #else
 #define ADVUTILS_ASSERT(x)
 #endif /* DEBUG */
