@@ -45,6 +45,11 @@ if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
     )
     set (ADVUtils_COMPILE_DEFS
         ${user_DEFS}
+        ADVUTILS_MEMORY_MGMT_HEADER="cmocka_includes.h"
+        ADVUTILS_MALLOC=ADVUtils_testMalloc
+        ADVUTILS_CALLOC=ADVUtils_testCalloc
+        ADVUTILS_FREE=test_free
+        ADVUTILS_ASSERT_HEADER="cmocka_includes.h"
         ADVUTILS_UNIT_TESTS
     )
 endif()

@@ -34,6 +34,29 @@ set(UNIT_TESTING OFF CACHE BOOL "CMocka: Build with unit testing" FORCE)
 set(PICKY_DEVELOPER OFF CACHE BOOL "CMocka: Build with picky developer flags" FORCE)
 
 FetchContent_MakeAvailable(cmocka)
+
+# Create helper file to simplify CMocka includes
+file(WRITE ${CMAKE_CURRENT_LIST_DIR}/../inc/cmocka_includes.h
+"#ifndef __CMOCKA_INCLUDES_H__
+#define __CMOCKA_INCLUDES_H__
+
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#include <cmocka.h>
+
+#define ADVUTILS_ASSERT(x) ADVUtils_testAssert((int)(x), #x, __FILE__, __LINE__);
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size);
+void* ADVUtils_testMalloc(const size_t size);
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line);
+
+#endif /* __CMOCKA_INCLUDES_H__ */
+")
+
+# Find math library (needed for compilation under Ubuntu)
 find_library(MATH_LIBRARY m)
 
 foreach(FILE ${TESTS_LIST})

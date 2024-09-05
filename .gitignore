@@ -53,6 +53,7 @@ dkms.conf
 
 # Test files
 main*
+cmocka_includes.h
 
 # Build directories
 build/
