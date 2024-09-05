@@ -40,6 +40,7 @@
 
 #include "LKHashTable.h"
 #include <string.h>
+#include "ADVUtilsAssert.h"
 #include "hashFunctions.h"
 #ifdef ADVUTILS_MEMORY_MGMT_HEADER
 #if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
@@ -60,18 +61,6 @@
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
 #define LPHT_HASHFUN(x) hash_FNV1A(x)
-
-#ifndef ADVUTILS_ASSERT
-#ifdef DEBUG
-#define ADVUTILS_ASSERT(x)                                                                                             \
-    if ((x) == 0) {                                                                                                    \
-        for (;;)                                                                                                       \
-            ;                                                                                                          \
-    }
-#else
-#define ADVUTILS_ASSERT(x)
-#endif /* DEBUG */
-#endif /* ADVUTILS_ASSERT */
 
 /* Private Functions ---------------------------------------------------------*/
 

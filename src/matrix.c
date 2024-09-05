@@ -40,6 +40,7 @@
 
 #include "matrix.h"
 #include <math.h>
+#include "ADVUtilsAssert.h"
 #include "basicMath.h"
 #include "numMethods.h"
 #ifdef ADVUTILS_MEMORY_MGMT_HEADER
@@ -59,18 +60,6 @@
 #define ADVUTILS_CALLOC calloc
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
-
-#ifndef ADVUTILS_ASSERT
-#ifdef DEBUG
-#define ADVUTILS_ASSERT(x)                                                                                             \
-    if ((x) == 0) {                                                                                                    \
-        for (;;)                                                                                                       \
-            ;                                                                                                          \
-    }
-#else
-#define ADVUTILS_ASSERT(x)
-#endif /* DEBUG */
-#endif /* ADVUTILS_ASSERT */
 
 /* ==========================================Assignment============================================= */
 

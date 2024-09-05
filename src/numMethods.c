@@ -39,21 +39,8 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "numMethods.h"
+#include "ADVUtilsAssert.h"
 #include "math.h"
-
-/* Macros --------------------------------------------------------------------*/
-
-#ifndef ADVUTILS_ASSERT
-#ifdef DEBUG
-#define ADVUTILS_ASSERT(x)                                                                                             \
-    if ((x) == 0) {                                                                                                    \
-        for (;;)                                                                                                       \
-            ;                                                                                                          \
-    }
-#else
-#define ADVUTILS_ASSERT(x)
-#endif /* DEBUG */
-#endif /* ADVUTILS_ASSERT */
 
 /* -------------------Forward substitution---------------------- */
 /* assumes that the matrix A is already a lower triangular one. No check! */

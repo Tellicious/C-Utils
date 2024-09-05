@@ -34,21 +34,8 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "IIRFilters.h"
+#include "ADVUtilsAssert.h"
 #include "basicMath.h"
-
-/* Macros --------------------------------------------------------------------*/
-
-#ifndef ADVUTILS_ASSERT
-#ifdef DEBUG
-#define ADVUTILS_ASSERT(x)                                                                                             \
-    if ((x) == 0) {                                                                                                    \
-        for (;;)                                                                                                       \
-            ;                                                                                                          \
-    }
-#else
-#define ADVUTILS_ASSERT(x)
-#endif /* DEBUG */
-#endif /* ADVUTILS_ASSERT */
 
 /* Functions -----------------------------------------------------------------*/
 

@@ -40,6 +40,7 @@
 
 #include "queue.h"
 #include <string.h>
+#include "ADVUtilsAssert.h"
 #ifdef ADVUTILS_MEMORY_MGMT_HEADER
 #if !defined(ADVUTILS_MALLOC) || !defined(ADVUTILS_CALLOC) || !defined(ADVUTILS_FREE)
 #error ADVUTILS_MEMORY_MGMT_HEADER, ADVUTILS_MALLOC, ADVUTILS_CALLOC and ADVUTILS_FREE must be defined by the user!
@@ -57,18 +58,6 @@
 #define ADVUTILS_CALLOC calloc
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
-
-#ifndef ADVUTILS_ASSERT
-#ifdef DEBUG
-#define ADVUTILS_ASSERT(x)                                                                                             \
-    if ((x) == 0) {                                                                                                    \
-        for (;;)                                                                                                       \
-            ;                                                                                                          \
-    }
-#else
-#define ADVUTILS_ASSERT(x)
-#endif /* DEBUG */
-#endif /* ADVUTILS_ASSERT */
 
 /* Functions -----------------------------------------------------------------*/
 
