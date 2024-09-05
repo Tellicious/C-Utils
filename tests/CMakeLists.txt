@@ -73,6 +73,7 @@ foreach(FILE ${TESTS_LIST})
     target_link_libraries(run_${FILE}Tests PRIVATE cmocka ADVUtils ${MATH_LIBRARY})
     target_compile_options(run_${FILE}Tests PRIVATE ${compiler_OPTS})
     target_compile_definitions(run_${FILE}Tests PRIVATE ${user_DEFS})
+    target_link_options(run_${FILE}Tests PRIVATE --coverage)
 endforeach()
 
 # Add tests

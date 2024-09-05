@@ -35,7 +35,8 @@ if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
         -Wpedantic
         -Wno-unused-parameter
         -Wno-gnu-statement-expression
-        -Og
+        --coverage
+        -O0
         -g3
     )
 
