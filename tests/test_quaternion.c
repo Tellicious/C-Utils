@@ -164,6 +164,17 @@ static void test_quaternionToEuler(void** state) {
     assert_float_equal(ea.x, 0.0f, 1e-5);
     assert_float_equal(ea.y, 0.0f, 1e-5);
     assert_float_equal(ea.z, constPI / 2.f, 1e-5);
+
+    // Edge case: 92 degree rotation around the x-axis. Angles should remain unchanged
+    quaternion_t qr_92_x = {0.6946f, 0.7193f, 0.0f, 0.0f}; // 92 degrees around x-axis
+    axis3f_t ea_pre;
+    ea_pre.x = ea.x;
+    ea_pre.y = ea.y;
+    ea_pre.z = ea.z;
+    quaternionToEuler(&qr_92_x, &ea);
+    assert_float_equal(ea.x, ea_pre.x, 1e-5);
+    assert_float_equal(ea.y, 0.0f, 1e-5);
+    assert_float_equal(ea.z, 0.0f, 1e-5);
 }
 
 int main(void) {
