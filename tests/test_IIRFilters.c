@@ -53,6 +53,18 @@ static float input[NUM_DATA] = {
     13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  13,  -13, -13, -13, -13, -13, -13, -13,
     -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, -13, 13};
 
+/* Support functions ---------------------------------------------------------*/
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
 /* Functions -----------------------------------------------------------------*/
 
 static void test_IIRFilterInit(void** state) {
