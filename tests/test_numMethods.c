@@ -43,6 +43,34 @@
 
 #include <cmocka.h>
 
+/* Support functions ---------------------------------------------------------*/
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size) {
+    if (number_of_elements > 0) {
+        return test_calloc(number_of_elements, size);
+    } else {
+        return NULL;
+    }
+}
+
+void* ADVUtils_testMalloc(const size_t size) {
+    if (size > 0) {
+        return test_malloc(size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
 /* Functions -----------------------------------------------------------------*/
 
 static void test_fwsub(void** state) {
@@ -139,6 +167,10 @@ static void test_LU_Crout(void** state) {
     assert_float_equal(U.data[1], 0.75f, 1e-5);
     assert_float_equal(U.data[2], 0.0f, 1e-5);
     assert_float_equal(U.data[3], 1.0f, 1e-5);
+    /* Check ill-conditioned matrix */
+    float A2_data[] = {0, 7, 6, 2};
+    memcpy(A_data, A2_data, 4 * sizeof(float));
+    assert_int_equal(LU_Crout(&A, &L, &U), UTILS_STATUS_ERROR);
 }
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
@@ -160,6 +192,16 @@ static void test_LU_Cormen(void** state) {
     assert_float_equal(U.data[1], 3.0f, 1e-5);
     assert_float_equal(U.data[2], 0.0f, 1e-5);
     assert_float_equal(U.data[3], -1.5f, 1e-5);
+    matrixDelete(&A);
+    matrixDelete(&L);
+    matrixDelete(&U);
+    /* Check ill-conditioned matrix */
+    float A2_data[] = {0, 7, 6, 2};
+    matrixInit(&A, 2, 2);
+    matrixInit(&L, 2, 2);
+    matrixInit(&U, 2, 2);
+    memcpy(A_data, A2_data, 4 * sizeof(float));
+    assert_int_equal(LU_Cormen(&A, &L, &U), UTILS_STATUS_ERROR);
     matrixDelete(&A);
     matrixDelete(&L);
     matrixDelete(&U);
@@ -193,6 +235,18 @@ static void test_LUP_Cormen(void** state) {
     assert_float_equal(U.data[6], 0.0f, 1e-5);
     assert_float_equal(U.data[7], 0.0f, 1e-5);
     assert_float_equal(U.data[8], 1.0f, 1e-5);
+    matrixDelete(&A);
+    matrixDelete(&L);
+    matrixDelete(&U);
+    matrixDelete(&P);
+    /* Check ill-conditioned matrix */
+    float A2_data[] = {0, 0, 6, 2, 1, 1, 2, 1, 3};
+    matrixInit(&A, 3, 3);
+    matrixInit(&L, 3, 3);
+    matrixInit(&U, 3, 3);
+    matrixInit(&P, 3, 1);
+    memcpy(A_data, A2_data, 9 * sizeof(float));
+    assert_int_equal(LUP_Cormen(&A, &L, &U, &P), 0);
     matrixDelete(&A);
     matrixDelete(&L);
     matrixDelete(&U);
@@ -299,6 +353,23 @@ static void test_LinSolveGauss(void** state) {
     matrixDelete(&A);
     matrixDelete(&B);
     matrixDelete(&result);
+
+    /* Check return 0 if matrix is singular */
+    float A2_data[] = {0, 0, 6, 2, 1, 1, 2, 1, 3};
+    float B2_data[] = {12, 7, 9};
+    matrixInit(&A, 3, 3);
+    matrixInit(&B, 3, 1);
+    matrixInit(&result, 3, 1);
+    memcpy(A.data, A2_data, 9 * sizeof(float));
+    memcpy(B.data, B2_data, 3 * sizeof(float));
+    memcpy(result.data, B2_data, 3 * sizeof(float));
+    LinSolveGauss(&A, &B, &result);
+    assert_float_equal(result.data[0], 0.f, 1e-5);
+    assert_float_equal(result.data[1], 0.f, 1e-5);
+    assert_float_equal(result.data[2], 0.f, 1e-5);
+    matrixDelete(&A);
+    matrixDelete(&B);
+    matrixDelete(&result);
 }
 
 static void test_DARE(void** state) {
@@ -359,6 +430,18 @@ static void test_GaussNewton_Sens_Cal_9(void** state) {
     assert_float_equal(result.data[7], 0.002118f, 1e-5);
     assert_float_equal(result.data[8], 0.991289f, 1e-5);
 
+    /* Check without X0 and without radius*/
+    assert_int_equal(GaussNewton_Sens_Cal_9(&Data, 0, NULL, 600, 1e-6, &result), UTILS_STATUS_SUCCESS);
+    assert_float_equal(result.data[0], -0.045825f, 1e-5);
+    assert_float_equal(result.data[1], 0.078952f, 1e-5);
+    assert_float_equal(result.data[2], -0.586952f, 1e-5);
+    assert_float_equal(result.data[3], 1.092682, 1e-5);
+    assert_float_equal(result.data[4], 0.000065f, 1e-5);
+    assert_float_equal(result.data[5], 0.001003f, 1e-5);
+    assert_float_equal(result.data[6], 1.096306f, 1e-5);
+    assert_float_equal(result.data[7], 0.002313f, 1e-5);
+    assert_float_equal(result.data[8], 1.082453f, 1e-5);
+
     /* Check all errors*/
     assert_int_equal(GaussNewton_Sens_Cal_9(&Data, 9.81, &X0, 2, 1e-6, &result), UTILS_STATUS_TIMEOUT);
     Data.rows = 8;
@@ -403,6 +486,15 @@ static void test_GaussNewton_Sens_Cal_6(void** state) {
     assert_float_equal(result.data[4], 1.004023f, 1e-5);
     assert_float_equal(result.data[5], 0.991293f, 1e-5);
 
+    /* Check without X0 and without radius*/
+    assert_int_equal(GaussNewton_Sens_Cal_6(&Data, 0, NULL, 600, 1e-6, &result), UTILS_STATUS_SUCCESS);
+    assert_float_equal(result.data[0], -0.043898f, 1e-5);
+    assert_float_equal(result.data[1], 0.081555f, 1e-5);
+    assert_float_equal(result.data[2], -0.586624f, 1e-5);
+    assert_float_equal(result.data[3], 1.092707f, 1e-5);
+    assert_float_equal(result.data[4], 1.096358f, 1e-5);
+    assert_float_equal(result.data[5], 1.082458f, 1e-5);
+
     /* Check all errors*/
     assert_int_equal(GaussNewton_Sens_Cal_6(&Data, 9.81, &X0, 2, 1e-6, &result), UTILS_STATUS_TIMEOUT);
     Data.rows = 5;
@@ -443,6 +535,10 @@ static void test_LU_CormenStatic(void** state) {
     assert_float_equal(U.data[1], 3.0f, 1e-5);
     assert_float_equal(U.data[2], 0.0f, 1e-5);
     assert_float_equal(U.data[3], -1.5f, 1e-5);
+    /* Check ill-conditioned matrix */
+    float A2_data[] = {0, 7, 6, 2};
+    memcpy(A_data, A2_data, 4 * sizeof(float));
+    assert_int_equal(LU_CormenStatic(&A, &L, &U), UTILS_STATUS_ERROR);
 }
 
 static void test_LUP_CormenStatic(void** state) {
@@ -475,6 +571,10 @@ static void test_LUP_CormenStatic(void** state) {
     assert_float_equal(U.data[6], 0.0f, 1e-5);
     assert_float_equal(U.data[7], 0.0f, 1e-5);
     assert_float_equal(U.data[8], 1.0f, 1e-5);
+    /* Check ill-conditioned matrix */
+    float A2_data[] = {0, 0, 6, 2, 1, 1, 2, 1, 3};
+    memcpy(A_data, A2_data, 9 * sizeof(float));
+    assert_int_equal(LUP_CormenStatic(&A, &L, &U, &P), 0);
 }
 
 static void test_LinSolveLUStatic(void** state) {
@@ -565,6 +665,17 @@ static void test_LinSolveGaussStatic(void** state) {
     assert_float_equal(result.data[13], -3.205921f, 1e-5);
     assert_float_equal(result.data[14], 0.489882f, 1e-5);
     assert_float_equal(result.data[15], -2.882036f, 1e-5);
+
+    /* Check return 0 if matrix is singular */
+    float A2_data[] = {0, 0, 6, 2, 1, 1, 2, 1, 3};
+    float B2_data[] = {12, 7, 9};
+    matrixInitStatic(&A, A2_data, 3, 3);
+    matrixInitStatic(&B, B2_data, 3, 1);
+    matrixInitStatic(&result, result_data, 3, 1);
+    LinSolveGaussStatic(&A, &B, &result);
+    assert_float_equal(result.data[0], 0.f, 1e-5);
+    assert_float_equal(result.data[1], 0.f, 1e-5);
+    assert_float_equal(result.data[2], 0.f, 1e-5);
 }
 
 static void test_DAREStatic(void** state) {
@@ -616,6 +727,18 @@ static void test_GaussNewton_Sens_Cal_9Static(void** state) {
     assert_float_equal(result.data[7], 0.002118f, 1e-5);
     assert_float_equal(result.data[8], 0.991289f, 1e-5);
 
+    /* Check without X0 and without radius*/
+    assert_int_equal(GaussNewton_Sens_Cal_9Static(&Data, 0, NULL, 600, 1e-6, &result), UTILS_STATUS_SUCCESS);
+    assert_float_equal(result.data[0], -0.045825f, 1e-5);
+    assert_float_equal(result.data[1], 0.078952f, 1e-5);
+    assert_float_equal(result.data[2], -0.586952f, 1e-5);
+    assert_float_equal(result.data[3], 1.092682, 1e-5);
+    assert_float_equal(result.data[4], 0.000065f, 1e-5);
+    assert_float_equal(result.data[5], 0.001003f, 1e-5);
+    assert_float_equal(result.data[6], 1.096306f, 1e-5);
+    assert_float_equal(result.data[7], 0.002313f, 1e-5);
+    assert_float_equal(result.data[8], 1.082453f, 1e-5);
+
     /* Check all errors*/
     assert_int_equal(GaussNewton_Sens_Cal_9Static(&Data, 9.81, &X0, 2, 1e-6, &result), UTILS_STATUS_TIMEOUT);
     Data.rows = 8;
@@ -651,6 +774,15 @@ static void test_GaussNewton_Sens_Cal_6Static(void** state) {
     assert_float_equal(result.data[3], 1.000679f, 1e-5);
     assert_float_equal(result.data[4], 1.004023f, 1e-5);
     assert_float_equal(result.data[5], 0.991293f, 1e-5);
+
+    /* Check without X0 and without radius*/
+    assert_int_equal(GaussNewton_Sens_Cal_6Static(&Data, 0, NULL, 600, 1e-6, &result), UTILS_STATUS_SUCCESS);
+    assert_float_equal(result.data[0], -0.043898f, 1e-5);
+    assert_float_equal(result.data[1], 0.081555f, 1e-5);
+    assert_float_equal(result.data[2], -0.586624f, 1e-5);
+    assert_float_equal(result.data[3], 1.092707f, 1e-5);
+    assert_float_equal(result.data[4], 1.096358f, 1e-5);
+    assert_float_equal(result.data[5], 1.082458f, 1e-5);
 
     /* Check all errors*/
     assert_int_equal(GaussNewton_Sens_Cal_6Static(&Data, 9.81, &X0, 2, 1e-6, &result), UTILS_STATUS_TIMEOUT);
