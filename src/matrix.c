@@ -433,7 +433,7 @@ float matrixDet(matrix_t* matrix) {
     int8_t det_f;
     float determinant = 1.0f;
 
-    if (LU_Cormen(matrix, &L, &U)) {
+    if (LU_Cormen(matrix, &L, &U) == UTILS_STATUS_SUCCESS) {
         for (ii = 0; ii < matrix->rows; ii++) {
             determinant *= ELEM(U, ii, ii);
         }
@@ -441,14 +441,10 @@ float matrixDet(matrix_t* matrix) {
 
     else {
         det_f = LUP_Cormen(matrix, &L, &U, &P);
-        if (det_f) {
-            for (ii = 0; ii < matrix->rows; ii++) {
-                determinant *= ELEM(U, ii, ii);
-            }
-            determinant *= det_f;
-        } else {
-            determinant = 0.0f;
+        for (ii = 0; ii < matrix->rows; ii++) {
+            determinant *= ELEM(U, ii, ii);
         }
+        determinant *= det_f;
     }
 
     matrixDelete(&L);
@@ -478,7 +474,7 @@ float matrixDetStatic(matrix_t* matrix) {
     int8_t det_f;
     float determinant = 1.0f;
 
-    if (LU_CormenStatic(matrix, &L, &U)) {
+    if (LU_CormenStatic(matrix, &L, &U) == UTILS_STATUS_SUCCESS) {
         for (ii = 0; ii < matrix->rows; ii++) {
             determinant *= ELEM(U, ii, ii);
         }
@@ -486,14 +482,10 @@ float matrixDetStatic(matrix_t* matrix) {
 
     else {
         det_f = LUP_CormenStatic(matrix, &L, &U, &P);
-        if (det_f) {
-            for (ii = 0; ii < matrix->rows; ii++) {
-                determinant *= ELEM(U, ii, ii);
-            }
-            determinant *= det_f;
-        } else {
-            determinant = 0.0f;
+        for (ii = 0; ii < matrix->rows; ii++) {
+            determinant *= ELEM(U, ii, ii);
         }
+        determinant *= det_f;
     }
     return determinant;
 }
