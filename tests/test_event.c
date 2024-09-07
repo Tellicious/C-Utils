@@ -42,6 +42,34 @@
 
 #include <cmocka.h>
 
+/* Support functions ---------------------------------------------------------*/
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size) {
+    if (number_of_elements > 0) {
+        return test_calloc(number_of_elements, size);
+    } else {
+        return NULL;
+    }
+}
+
+void* ADVUtils_testMalloc(const size_t size) {
+    if (size > 0) {
+        return test_malloc(size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
 /* Functions -----------------------------------------------------------------*/
 
 static int basic_event_triggered = 0;
@@ -64,6 +92,19 @@ static void test_eventInit(void** state) {
     assert_int_equal(event.size, 10);
     assert_non_null(event.eventsList);
     eventDelete(&event);
+    /* Check extended event initialization */
+    assert_int_equal(eventInit(&event, EVENT_TYPE_EXTENDED, 7), UTILS_STATUS_SUCCESS);
+    assert_int_equal(event.type, EVENT_TYPE_EXTENDED);
+    assert_int_equal(event.count, 0);
+    assert_int_equal(event.size, 7);
+    assert_non_null(event.eventsList);
+    eventDelete(&event);
+    /* Check null initialization */
+    skipAssert = 0;
+    expect_assert_failure(eventInit(&event, EVENT_TYPE_EXTENDED, 0));
+    skipAssert = 1;
+    assert_int_equal(eventInit(&event, EVENT_TYPE_EXTENDED, 0), UTILS_STATUS_ERROR);
+    skipAssert = 0;
 }
 
 static void test_eventInitStatic(void** state) {
@@ -79,45 +120,73 @@ static void test_eventInitStatic(void** state) {
 
 static void test_eventRegister(void** state) {
     (void)state; /* unused */
-    event_t event;
-    assert_int_equal(eventInit(&event, EVENT_TYPE_BASIC, 10), UTILS_STATUS_SUCCESS);
+    event_t event, eventEx;
+    assert_int_equal(eventInit(&event, EVENT_TYPE_BASIC, 2), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventInit(&eventEx, EVENT_TYPE_EXTENDED, 2), UTILS_STATUS_SUCCESS);
     assert_int_equal(eventRegister(&event, basic_event_handler), UTILS_STATUS_SUCCESS);
     assert_int_equal(event.count, 1);
+    /* Check registration of wrong event type */
+    assert_int_equal(eventRegister(&eventEx, basic_event_handler), UTILS_STATUS_ERROR);
+    /* Check registration when full */
+    assert_int_equal(eventRegister(&event, basic_event_handler), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventRegister(&event, basic_event_handler), UTILS_STATUS_FULL);
     eventDelete(&event);
+    eventDelete(&eventEx);
 }
 
 static void test_eventRegisterEx(void** state) {
     (void)state; /* unused */
-    event_t event;
-    assert_int_equal(eventInit(&event, EVENT_TYPE_EXTENDED, 10), UTILS_STATUS_SUCCESS);
-    assert_int_equal(eventRegisterEx(&event, extended_event_handler), UTILS_STATUS_SUCCESS);
-    assert_int_equal(event.count, 1);
+    event_t event, eventEx;
+    assert_int_equal(eventInit(&event, EVENT_TYPE_BASIC, 2), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventInit(&eventEx, EVENT_TYPE_EXTENDED, 2), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventRegisterEx(&eventEx, extended_event_handler), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventEx.count, 1);
+    /* Check registration of wrong event type */
+    assert_int_equal(eventRegisterEx(&event, extended_event_handler), UTILS_STATUS_ERROR);
+    /* Check registration when full */
+    assert_int_equal(eventRegisterEx(&eventEx, extended_event_handler), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventRegisterEx(&eventEx, extended_event_handler), UTILS_STATUS_FULL);
     eventDelete(&event);
+    eventDelete(&eventEx);
 }
 
 static void test_eventDispatch(void** state) {
     (void)state; /* unused */
-    event_t event;
+    event_t event, eventEx;
     assert_int_equal(eventInit(&event, EVENT_TYPE_BASIC, 10), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventInit(&eventEx, EVENT_TYPE_EXTENDED, 10), UTILS_STATUS_SUCCESS);
+    eventRegister(&event, basic_event_handler);
     eventRegister(&event, basic_event_handler);
     basic_event_triggered = 0;
     assert_int_equal(eventDispatch(&event), UTILS_STATUS_SUCCESS);
-    assert_int_equal(basic_event_triggered, 1);
+    assert_int_equal(basic_event_triggered, 2);
+    assert_int_equal(eventDispatch(&event), UTILS_STATUS_SUCCESS);
+    assert_int_equal(basic_event_triggered, 4);
+    /* Check dispatch of wrong type of event */
+    assert_int_equal(eventDispatch(&eventEx), UTILS_STATUS_ERROR);
     eventDelete(&event);
+    eventDelete(&eventEx);
 }
 
 static void test_eventDispatchEx(void** state) {
     (void)state; /* unused */
-    event_t event;
-    assert_int_equal(eventInit(&event, EVENT_TYPE_EXTENDED, 10), UTILS_STATUS_SUCCESS);
-    eventRegisterEx(&event, extended_event_handler);
+    event_t event, eventEx;
+    assert_int_equal(eventInit(&event, EVENT_TYPE_BASIC, 10), UTILS_STATUS_SUCCESS);
+    assert_int_equal(eventInit(&eventEx, EVENT_TYPE_EXTENDED, 10), UTILS_STATUS_SUCCESS);
+    eventRegisterEx(&eventEx, extended_event_handler);
+    eventRegisterEx(&eventEx, extended_event_handler);
     extended_event_triggered = 0;
     int test_value = 42;
     extended_event_value = NULL;
-    assert_int_equal(eventDispatchEx(&event, &test_value), UTILS_STATUS_SUCCESS);
-    assert_int_equal(extended_event_triggered, 1);
+    assert_int_equal(eventDispatchEx(&eventEx, &test_value), UTILS_STATUS_SUCCESS);
+    assert_int_equal(extended_event_triggered, 2);
+    assert_int_equal(eventDispatchEx(&eventEx, &test_value), UTILS_STATUS_SUCCESS);
+    assert_int_equal(extended_event_triggered, 4);
     assert_ptr_equal(extended_event_value, &test_value);
+    /* Check dispatch of wrong type of event */
+    assert_int_equal(eventDispatchEx(&event, &test_value), UTILS_STATUS_ERROR);
     eventDelete(&event);
+    eventDelete(&eventEx);
 }
 
 static void test_eventDelete(void** state) {
@@ -125,6 +194,9 @@ static void test_eventDelete(void** state) {
     event_t event;
     assert_int_equal(eventInit(&event, EVENT_TYPE_BASIC, 10), UTILS_STATUS_SUCCESS);
     assert_int_equal(eventDelete(&event), UTILS_STATUS_SUCCESS);
+    /* Check null deletion */
+    event.eventsList = NULL;
+    assert_int_equal(eventDelete(&event), UTILS_STATUS_ERROR);
 }
 
 int main(void) {
