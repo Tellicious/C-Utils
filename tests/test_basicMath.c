@@ -119,6 +119,7 @@ static void test_functions(void** state) {
 
     // Test fastSin function
     assert_float_equal(fastSin(3.141592654f / 2.0f), 1.0f, 1e-4);
+    assert_float_equal(fastSin(-3.141592654f / 2.0f), -1.0f, 1e-4);
     assert_float_equal(fastSin(0.0f), 0.0f, 1e-4);
     assert_float_equal(fastSin(3.141592654f), 0.0f, 1e-4);
 
