@@ -47,6 +47,7 @@
 static void test_buttonInit(void** state) {
     (void)state; /* unused */
     button_t button;
+    /* Check button type normal */
     buttonInit(&button, BUTTON_TYPE_NORMAL, 20, 400, 1000, 2000);
     assert_int_equal(button.type, BUTTON_TYPE_NORMAL);
     assert_int_equal(button.status, BUTTON_RELEASED);
@@ -140,28 +141,60 @@ static void test_buttonGetPress(void** state) {
     press = buttonGetPress(&button, 3050);
     assert_int_equal(press, BUTTON_TRIPLE_PRESS);
 
-    /* Long press check */
+    /* Multiple press check */
     buttonEvent(&button, BUTTON_PRESSED, 3200);
-    buttonEvent(&button, BUTTON_RELEASED, 4201);
-    press = buttonGetPress(&button, 4205);
+    buttonEvent(&button, BUTTON_RELEASED, 3250);
+    buttonEvent(&button, BUTTON_PRESSED, 3300);
+    buttonEvent(&button, BUTTON_RELEASED, 3350);
+    buttonEvent(&button, BUTTON_PRESSED, 3400);
+    buttonEvent(&button, BUTTON_RELEASED, 3450);
+    buttonEvent(&button, BUTTON_PRESSED, 3500);
+    buttonEvent(&button, BUTTON_RELEASED, 3550);
+    press = buttonGetPress(&button, 3951);
+    assert_int_equal(press, BUTTON_MULTIPLE_PRESS);
+
+    /* Long press check */
+    buttonEvent(&button, BUTTON_PRESSED, 3960);
+    buttonEvent(&button, BUTTON_RELEASED, 4961);
+    press = buttonGetPress(&button, 5405);
     assert_int_equal(press, BUTTON_LONG_PRESS);
 
     /* Very long press check */
-    buttonEvent(&button, BUTTON_PRESSED, 4300);
-    press = buttonGetPress(&button, 6301);
+    buttonEvent(&button, BUTTON_PRESSED, 5500);
+    press = buttonGetPress(&button, 7501);
     assert_int_equal(press, BUTTON_VERYLONG_PRESS);
 
+    /* Release press check */
+    buttonEvent(&button, BUTTON_RELEASED, 7600);
+    press = buttonGetPress(&button, 7501);
+    assert_int_equal(press, BUTTON_RELEASE_PRESS);
+
     /* Very long press with de-bouncing check */
-    buttonEvent(&button, BUTTON_RELEASED, 6319);
-    buttonEvent(&button, BUTTON_PRESSED, 6400);
-    buttonEvent(&button, BUTTON_RELEASED, 6419);
-    buttonEvent(&button, BUTTON_PRESSED, 6425);
-    buttonEvent(&button, BUTTON_RELEASED, 6430);
-    buttonEvent(&button, BUTTON_PRESSED, 6435);
-    buttonEvent(&button, BUTTON_RELEASED, 6437);
-    buttonEvent(&button, BUTTON_PRESSED, 6440);
-    press = buttonGetPress(&button, 8441);
+    buttonEvent(&button, BUTTON_PRESSED, 8400);
+    buttonEvent(&button, BUTTON_RELEASED, 8419);
+    buttonEvent(&button, BUTTON_PRESSED, 8425);
+    buttonEvent(&button, BUTTON_RELEASED, 8430);
+    buttonEvent(&button, BUTTON_PRESSED, 8435);
+    buttonEvent(&button, BUTTON_RELEASED, 8437);
+    buttonEvent(&button, BUTTON_PRESSED, 8440);
+    press = buttonGetPress(&button, 10441);
     assert_int_equal(press, BUTTON_VERYLONG_PRESS);
+
+    /* Check pulsating button type */
+    button_t buttonP;
+    buttonInit(&buttonP, BUTTON_TYPE_PULSATING, 20, 400, 1000, 2000);
+    buttonEvent(&buttonP, BUTTON_PRESSED, 3200);
+    buttonEvent(&buttonP, BUTTON_RELEASED, 3250);
+    buttonEvent(&buttonP, BUTTON_PRESSED, 3300);
+    buttonEvent(&buttonP, BUTTON_RELEASED, 3350);
+    buttonEvent(&buttonP, BUTTON_PRESSED, 3400);
+    buttonEvent(&buttonP, BUTTON_RELEASED, 3450);
+    buttonEvent(&buttonP, BUTTON_PRESSED, 3500);
+    buttonEvent(&buttonP, BUTTON_RELEASED, 3550);
+    press = buttonGetPress(&buttonP, 3560);
+    assert_int_equal(press, BUTTON_PULSATING_PRESS);
+    press = buttonGetPress(&buttonP, 3970);
+    assert_int_equal(press, BUTTON_RELEASE_PRESS);
 }
 
 static void test_buttonGetStatus(void** state) {
