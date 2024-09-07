@@ -136,9 +136,11 @@ void quaternionToEuler(quaternion_t* qr, axis3f_t* ea) {
     if (ea->x > PI_2 || ea->x < -PI_2) {
         ea->x = ea_pre.x;
     }
+    // This cannot happen, as asinf returns values between -pi/2 and pi/2
+    /*
     if (ea->y > PI_2 || ea->y < -PI_2) {
         ea->y = ea_pre.y;
-    }
+    }*/
 
     ea_pre.x = ea->x;
     ea_pre.y = ea->y;
