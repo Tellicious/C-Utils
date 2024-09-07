@@ -42,6 +42,34 @@
 
 #include <cmocka.h>
 
+/* Support functions ---------------------------------------------------------*/
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size) {
+    if (number_of_elements > 0) {
+        return test_calloc(number_of_elements, size);
+    } else {
+        return NULL;
+    }
+}
+
+void* ADVUtils_testMalloc(const size_t size) {
+    if (size > 0) {
+        return test_malloc(size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
 /* Functions -----------------------------------------------------------------*/
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
@@ -53,6 +81,22 @@ static void test_movingAvgInit(void** state) {
     assert_int_equal(movingAvg.size, 5);
     assert_non_null(movingAvg.data);
     movingAvgDelete(&movingAvg);
+    /* Check null initialization */
+    skipAssert = 0;
+    expect_assert_failure(movingAvgInit(&movingAvg, 0));
+    skipAssert = 1;
+    assert_int_equal(movingAvgInit(&movingAvg, 0), UTILS_STATUS_ERROR);
+    skipAssert = 0;
+}
+
+static void test_movingAvgDelete(void** state) {
+    (void)state; /* unused */
+    movingAvg_t movingAvg;
+    assert_int_equal(movingAvgInit(&movingAvg, 5), UTILS_STATUS_SUCCESS);
+    assert_int_equal(movingAvgDelete(&movingAvg), UTILS_STATUS_SUCCESS);
+    /* Check null deletion */
+    movingAvg.data = NULL;
+    assert_int_equal(movingAvgDelete(&movingAvg), UTILS_STATUS_ERROR);
 }
 
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
@@ -94,6 +138,9 @@ static void test_movingAvgFlush(void** state) {
     assert_int_equal(movingAvgFlush(&movingAvg), UTILS_STATUS_SUCCESS);
     assert_int_equal(movingAvg.sum, 0);
     assert_int_equal(movingAvg._write, 0);
+    /* Check null deletion */
+    movingAvg.data = NULL;
+    assert_int_equal(movingAvgFlush(&movingAvg), UTILS_STATUS_ERROR);
 }
 
 static void test_movingAvgGetLatest(void** state) {
@@ -111,7 +158,7 @@ static void test_movingAvgGetLatest(void** state) {
 int main(void) {
     const struct CMUnitTest tests[] = {
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-        cmocka_unit_test(test_movingAvgInit),
+        cmocka_unit_test(test_movingAvgInit),       cmocka_unit_test(test_movingAvgDelete),
 #endif
 #ifdef ADVUTILS_USE_STATIC_ALLOCATION
         cmocka_unit_test(test_movingAvgInitStatic),
