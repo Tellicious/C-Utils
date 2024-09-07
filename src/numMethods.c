@@ -394,6 +394,8 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
         /* check for singular Matrix */
         if (ELEM(A_cp, pivrow, k) == 0.0) {
             matrixZeros(result);
+            matrixDelete(&A_cp);
+            matrixDelete(&B_cp);
             return;
         }
 
@@ -568,7 +570,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
                 }
             }
         }
-        k2 = 0.25 * (max - min) * (max - min);
+        k2 = 0.25f * (max - min) * (max - min);
     }
 
     /* Perform best-fit algorithm */
@@ -679,7 +681,7 @@ utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint
                 }
             }
         }
-        k2 = 0.25 * (max - min) * (max - min);
+        k2 = 0.25f * (max - min) * (max - min);
     }
 
     /* Perform best-fit algorithm */
@@ -1087,7 +1089,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0
                 }
             }
         }
-        k2 = 0.25 * (max - min) * (max - min);
+        k2 = 0.25f * (max - min) * (max - min);
     }
 
     /* Perform best-fit algorithm */
@@ -1186,7 +1188,7 @@ utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0
                 }
             }
         }
-        k2 = 0.25 * (max - min) * (max - min);
+        k2 = 0.25f * (max - min) * (max - min);
     }
 
     /* Perform best-fit algorithm */
