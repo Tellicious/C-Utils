@@ -43,6 +43,34 @@
 
 #include <cmocka.h>
 
+/* Support functions ---------------------------------------------------------*/
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size) {
+    if (number_of_elements > 0) {
+        return test_calloc(number_of_elements, size);
+    } else {
+        return NULL;
+    }
+}
+
+void* ADVUtils_testMalloc(const size_t size) {
+    if (size > 0) {
+        return test_malloc(size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
 /* Functions -----------------------------------------------------------------*/
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
@@ -55,6 +83,12 @@ static void test_matrixInit(void** state) {
     assert_int_equal(matrix.cols, 3);
     assert_non_null(matrix.data);
     matrixDelete(&matrix);
+    /* Check null initialization */
+    skipAssert = 0;
+    expect_assert_failure(matrixInit(&matrix, 0, 0));
+    skipAssert = 1;
+    assert_int_equal(matrixInit(&matrix, 0, 0), UTILS_STATUS_ERROR);
+    skipAssert = 0;
 }
 
 static void test_matrixDelete(void** state) {
@@ -62,6 +96,9 @@ static void test_matrixDelete(void** state) {
     matrix_t matrix;
     assert_int_equal(matrixInit(&matrix, 3, 3), UTILS_STATUS_SUCCESS);
     assert_int_equal(matrixDelete(&matrix), UTILS_STATUS_SUCCESS);
+    /* Check null deletion */
+    matrix.data = NULL;
+    assert_int_equal(matrixDelete(&matrix), UTILS_STATUS_ERROR);
 }
 
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
@@ -167,17 +204,29 @@ static void test_matrixSub(void** state) {
 static void test_matrixMult(void** state) {
     (void)state; /* unused */
     matrix_t lhs, rhs, result;
-    float lhs_data[6] = {1, 2, 3, 4, 5, 6};
-    float rhs_data[6] = {7, 8, 9, 10, 11, 12};
-    float result_data[4];
-    matrixInitStatic(&lhs, lhs_data, 2, 3);
-    matrixInitStatic(&rhs, rhs_data, 3, 2);
-    matrixInitStatic(&result, result_data, 2, 2);
+    float lhs_data[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    float rhs_data[16] = {17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32};
+    float result_data[16];
+    matrixInitStatic(&lhs, lhs_data, 4, 4);
+    matrixInitStatic(&rhs, rhs_data, 4, 4);
+    matrixInitStatic(&result, result_data, 4, 4);
     matrixMult(&lhs, &rhs, &result);
-    assert_float_equal(result.data[0], 58.0f, 1e-5);
-    assert_float_equal(result.data[1], 64.0f, 1e-5);
-    assert_float_equal(result.data[2], 139.0f, 1e-5);
-    assert_float_equal(result.data[3], 154.0f, 1e-5);
+    assert_float_equal(result.data[0], 250.0f, 1e-5);
+    assert_float_equal(result.data[1], 260.0f, 1e-5);
+    assert_float_equal(result.data[2], 270.0f, 1e-5);
+    assert_float_equal(result.data[3], 280.0f, 1e-5);
+    assert_float_equal(result.data[4], 618.0f, 1e-5);
+    assert_float_equal(result.data[5], 644.0f, 1e-5);
+    assert_float_equal(result.data[6], 670.0f, 1e-5);
+    assert_float_equal(result.data[7], 696.0f, 1e-5);
+    assert_float_equal(result.data[8], 986.0f, 1e-5);
+    assert_float_equal(result.data[9], 1028.0f, 1e-5);
+    assert_float_equal(result.data[10], 1070.0f, 1e-5);
+    assert_float_equal(result.data[11], 1112.0f, 1e-5);
+    assert_float_equal(result.data[12], 1354.0f, 1e-5);
+    assert_float_equal(result.data[13], 1412.0f, 1e-5);
+    assert_float_equal(result.data[14], 1470.0f, 1e-5);
+    assert_float_equal(result.data[15], 1528.0f, 1e-5);
 }
 
 static void test_matrixMult_lhsT(void** state) {
@@ -250,6 +299,20 @@ static void test_matrixNorm(void** state) {
     assert_float_equal(norm, sqrtf(30.0f), 1e-5);
 }
 
+static void test_matrixNormalized(void** state) {
+    (void)state; /* unused */
+    matrix_t matrix, result;
+    float matrix_data[4] = {1, 2, 3, 4};
+    float result_data[4];
+    matrixInitStatic(&matrix, matrix_data, 2, 2);
+    matrixInitStatic(&result, result_data, 2, 2);
+    matrixNormalized(&matrix, &result);
+    assert_float_equal(result_data[0], 1 / sqrtf(30.0f), 1e-5);
+    assert_float_equal(result_data[1], 2 / sqrtf(30.0f), 1e-5);
+    assert_float_equal(result_data[2], 3 / sqrtf(30.0f), 1e-5);
+    assert_float_equal(result_data[3], 4 / sqrtf(30.0f), 1e-5);
+}
+
 static void test_matrixSetAndGet(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
@@ -275,6 +338,17 @@ static void test_matrixDet(void** state) {
                            0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     memcpy(matrix.data, matrix_data, 16 * sizeof(float));
     assert_float_equal(matrixDet(&matrix), -0.059641f, 1e-5);
+    matrixDelete(&matrix);
+    /* Check ill-conditioned matrix */
+    matrix_t matrix2;
+    float matrix2_data[] = {0, 7, 6, 2, 9, 5, 1, 3, 4, 3, 8, 4, 5, 6, 7, 8};
+    matrixInit(&matrix2, 4, 4);
+    memcpy(matrix2.data, matrix2_data, 16 * sizeof(float));
+    assert_float_equal(matrixDet(&matrix2), -1782.0f, 1e-3);
+    matrixDelete(&matrix2);
+    /* Check rows != columns */
+    matrixInit(&matrix, 4, 3);
+    assert_float_equal(matrixDet(&matrix), 0, 1e-5);
     matrixDelete(&matrix);
 }
 
@@ -365,6 +439,14 @@ static void test_matrixDetStatic(void** state) {
                            0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     matrixInitStatic(&matrix, matrix_data, 4, 4);
     assert_float_equal(matrixDetStatic(&matrix), -0.059641f, 1e-5);
+    /* Check ill-conditioned matrix */
+    matrix_t matrix2;
+    float matrix2_data[] = {0, 7, 6, 2, 9, 5, 1, 3, 4, 3, 8, 4, 5, 6, 7, 8};
+    matrixInitStatic(&matrix2, matrix2_data, 4, 4);
+    assert_float_equal(matrixDetStatic(&matrix2), -1782.0f, 1e-3);
+    /* Check rows != columns */
+    matrixInitStatic(&matrix2, matrix2_data, 1, 4);
+    assert_float_equal(matrixDetStatic(&matrix2), 0, 1e-5);
 }
 
 static void test_matrixInversedStatic(void** state) {
@@ -466,6 +548,7 @@ int main(void) {
         cmocka_unit_test(test_matrixMultScalar),
         cmocka_unit_test(test_matrixTrans),
         cmocka_unit_test(test_matrixNorm),
+        cmocka_unit_test(test_matrixNormalized),
         cmocka_unit_test(test_matrixSetAndGet),
     };
 
