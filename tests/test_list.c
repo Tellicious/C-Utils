@@ -43,6 +43,34 @@
 
 #include <cmocka.h>
 
+/* Support functions ---------------------------------------------------------*/
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size) {
+    if (number_of_elements > 0) {
+        return test_calloc(number_of_elements, size);
+    } else {
+        return NULL;
+    }
+}
+
+void* ADVUtils_testMalloc(const size_t size) {
+    if (size > 0) {
+        return test_malloc(size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
 /* Functions -----------------------------------------------------------------*/
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
@@ -89,7 +117,7 @@ static void test_listPushFront(void** state) {
     listInit(&list, sizeof(int), 10);
     int value1 = 42;
     int value2 = 43;
-    listPush(&list, &value1);
+    listPushFront(&list, &value1);
     listPushFront(&list, &value2);
     assert_int_equal(list.items, 2);
     int out_value;
@@ -98,21 +126,34 @@ static void test_listPushFront(void** state) {
     listFlush(&list);
 }
 
+static void test_listPushFrontFull(void** state) {
+    (void)state; /* unused */
+    list_t list;
+    listInit(&list, sizeof(int), 2);
+    int value = 42;
+    listPush(&list, &value);
+    listPush(&list, &value);
+    assert_int_equal(listPushFront(&list, &value), UTILS_STATUS_FULL);
+    listFlush(&list);
+}
+
 static void test_listInsert(void** state) {
     (void)state; /* unused */
     list_t list;
-    listInit(&list, sizeof(int), 10);
+    listInit(&list, sizeof(int), 5);
     int value1 = 42;
     int value2 = 43;
     int value3 = 44;
     int value4 = 45;
     int value5 = 46;
-    listPush(&list, &value1);
-    listInsert(&list, &value2, 0);
-    listPush(&list, &value3);
+    assert_int_equal(listInsert(&list, &value1, 0), UTILS_STATUS_SUCCESS);
+    assert_int_equal(listInsert(&list, &value2, 0), UTILS_STATUS_SUCCESS);
+    assert_int_equal(listInsert(&list, &value3, 2), UTILS_STATUS_SUCCESS);
     listPush(&list, &value4);
-    listInsert(&list, &value5, 2);
+    assert_int_equal(listInsert(&list, &value5, 6), UTILS_STATUS_ERROR);
+    assert_int_equal(listInsert(&list, &value5, 2), UTILS_STATUS_SUCCESS);
     assert_int_equal(list.items, 5);
+    assert_int_equal(listInsert(&list, &value5, 2), UTILS_STATUS_FULL);
     int out_value;
     memcpy(&out_value, list._front->data, sizeof(int));
     assert_int_equal(out_value, value2);
@@ -133,12 +174,21 @@ static void test_listUpdate(void** state) {
     listInit(&list, sizeof(int), 10);
     int value1 = 42;
     int value2 = 43;
-    listPush(&list, &value1);
-    listUpdate(&list, &value2, 0);
-    assert_int_equal(list.items, 1);
     int out_value;
+    listPush(&list, &value1);
+    listPush(&list, &value1);
+    listPush(&list, &value1);
+    assert_int_equal(listUpdate(&list, &value2, 0), UTILS_STATUS_SUCCESS);
     memcpy(&out_value, list._front->data, sizeof(int));
     assert_int_equal(out_value, value2);
+    assert_int_equal(listUpdate(&list, &value2, 1), UTILS_STATUS_SUCCESS);
+    memcpy(&out_value, list._front->next->data, sizeof(int));
+    assert_int_equal(out_value, value2);
+    assert_int_equal(listUpdate(&list, &value2, 2), UTILS_STATUS_SUCCESS);
+    memcpy(&out_value, list._front->next->next->data, sizeof(int));
+    assert_int_equal(out_value, value2);
+    assert_int_equal(listUpdate(&list, &value2, 4), UTILS_STATUS_ERROR);
+    assert_int_equal(list.items, 3);
     listFlush(&list);
 }
 
@@ -170,13 +220,39 @@ static void test_listPopBack(void** state) {
     listInit(&list, sizeof(int), 10);
     int value1 = 42;
     int value2 = 43;
+    int value3 = 44;
+    int value4 = 45;
+    int value5 = 46;
     listPush(&list, &value1);
     listPush(&list, &value2);
+    listPush(&list, &value3);
+    listPush(&list, &value4);
+    listPush(&list, &value5);
     int out_value;
+    assert_int_equal(listPopBack(&list, &out_value), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value5);
+    assert_int_equal(list.items, 4);
+    assert_int_equal(listPopBack(&list, &out_value), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value4);
+    assert_int_equal(list.items, 3);
+    assert_int_equal(listPopBack(&list, &out_value), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value3);
+    assert_int_equal(list.items, 2);
     assert_int_equal(listPopBack(&list, &out_value), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value2);
     assert_int_equal(list.items, 1);
+    assert_int_equal(listPopBack(&list, &out_value), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value1);
+    assert_int_equal(list.items, 0);
     listFlush(&list);
+}
+
+static void test_listPopBackEmpty(void** state) {
+    (void)state; /* unused */
+    list_t list;
+    listInit(&list, sizeof(int), 10);
+    int out_value;
+    assert_int_equal(listPopBack(&list, &out_value), UTILS_STATUS_EMPTY);
 }
 
 static void test_listRemove(void** state) {
@@ -185,12 +261,32 @@ static void test_listRemove(void** state) {
     listInit(&list, sizeof(int), 10);
     int value1 = 42;
     int value2 = 43;
+    int value3 = 44;
+    int value4 = 45;
+    int value5 = 46;
+    int out_value;
+    assert_int_equal(listRemove(&list, &out_value, 0), UTILS_STATUS_EMPTY);
     listPush(&list, &value1);
     listPush(&list, &value2);
-    int out_value;
+    listPush(&list, &value3);
+    listPush(&list, &value4);
+    listPush(&list, &value5);
     assert_int_equal(listRemove(&list, &out_value, 0), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value1);
+    assert_int_equal(list.items, 4);
+    assert_int_equal(listRemove(&list, &out_value, 3), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value5);
+    assert_int_equal(list.items, 3);
+    assert_int_equal(listRemove(&list, &out_value, 1), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value3);
+    assert_int_equal(list.items, 2);
+    assert_int_equal(listRemove(&list, &out_value, 4), UTILS_STATUS_ERROR);
+    assert_int_equal(listRemove(&list, &out_value, 1), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value4);
     assert_int_equal(list.items, 1);
+    assert_int_equal(listRemove(&list, &out_value, 0), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value2);
+    assert_int_equal(list.items, 0);
     listFlush(&list);
 }
 
@@ -199,8 +295,9 @@ static void test_listPeek(void** state) {
     list_t list;
     listInit(&list, sizeof(int), 10);
     int value = 42;
-    listPush(&list, &value);
     int out_value;
+    assert_int_equal(listPeek(&list, &out_value), UTILS_STATUS_EMPTY);
+    listPush(&list, &value);
     assert_int_equal(listPeek(&list, &out_value), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value);
     assert_int_equal(list.items, 1);
@@ -213,9 +310,10 @@ static void test_listPeekBack(void** state) {
     listInit(&list, sizeof(int), 10);
     int value1 = 42;
     int value2 = 43;
+    int out_value;
+    assert_int_equal(listPeekBack(&list, &out_value), UTILS_STATUS_EMPTY);
     listPush(&list, &value1);
     listPush(&list, &value2);
-    int out_value;
     assert_int_equal(listPeekBack(&list, &out_value), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value2);
     assert_int_equal(list.items, 2);
@@ -228,13 +326,19 @@ static void test_listPeekAtPos(void** state) {
     listInit(&list, sizeof(int), 10);
     int value1 = 42;
     int value2 = 43;
+    int value3 = 44;
+    int out_value;
+    assert_int_equal(listPeekAtPos(&list, &out_value, 0), UTILS_STATUS_EMPTY);
     listPush(&list, &value1);
     listPush(&list, &value2);
-    int out_value;
+    listPush(&list, &value3);
+    assert_int_equal(listPeekAtPos(&list, &out_value, 4), UTILS_STATUS_ERROR);
     assert_int_equal(listPeekAtPos(&list, &out_value, 0), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value1);
     assert_int_equal(listPeekAtPos(&list, &out_value, 1), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value2);
+    assert_int_equal(listPeekAtPos(&list, &out_value, 2), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value3);
     listFlush(&list);
 }
 
@@ -300,12 +404,15 @@ static void test_listIterator(void** state) {
 int main(void) {
     const struct CMUnitTest tests[] = {
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-        cmocka_unit_test(test_listInit),      cmocka_unit_test(test_listPush),     cmocka_unit_test(test_listPushFull),
-        cmocka_unit_test(test_listPushFront), cmocka_unit_test(test_listInsert),   cmocka_unit_test(test_listUpdate),
-        cmocka_unit_test(test_listPop),       cmocka_unit_test(test_listPopEmpty), cmocka_unit_test(test_listPopBack),
-        cmocka_unit_test(test_listRemove),    cmocka_unit_test(test_listPeek),     cmocka_unit_test(test_listPeekBack),
-        cmocka_unit_test(test_listPeekAtPos), cmocka_unit_test(test_listInfo),     cmocka_unit_test(test_listFlush),
-        cmocka_unit_test(test_listIterator),
+        cmocka_unit_test(test_listInit),          cmocka_unit_test(test_listPush),
+        cmocka_unit_test(test_listPushFull),      cmocka_unit_test(test_listPushFront),
+        cmocka_unit_test(test_listPushFrontFull), cmocka_unit_test(test_listInsert),
+        cmocka_unit_test(test_listUpdate),        cmocka_unit_test(test_listPop),
+        cmocka_unit_test(test_listPopEmpty),      cmocka_unit_test(test_listPopBack),
+        cmocka_unit_test(test_listPopBackEmpty),  cmocka_unit_test(test_listRemove),
+        cmocka_unit_test(test_listPeek),          cmocka_unit_test(test_listPeekBack),
+        cmocka_unit_test(test_listPeekAtPos),     cmocka_unit_test(test_listInfo),
+        cmocka_unit_test(test_listFlush),         cmocka_unit_test(test_listIterator),
 #endif
     };
 
