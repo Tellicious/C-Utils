@@ -52,6 +52,8 @@ if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
         ADVUTILS_FREE=test_free
         ADVUTILS_ASSERT_HEADER="cmocka_includes.h"
         ADVUTILS_UNIT_TESTS
+        LKHT_LIST_SIZE=2 
+        LKHT_HASHFUN=ADVUtils_testHash
     )
 endif()
 

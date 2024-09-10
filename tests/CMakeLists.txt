@@ -52,6 +52,7 @@ file(WRITE ${CMAKE_CURRENT_LIST_DIR}/../inc/cmocka_includes.h
 void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size);
 void* ADVUtils_testMalloc(const size_t size);
 void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line);
+uint32_t ADVUtils_testHash(char* key);
 
 #endif /* __CMOCKA_INCLUDES_H__ */
 ")
@@ -74,6 +75,9 @@ foreach(FILE ${TESTS_LIST})
     target_compile_options(run_${FILE}Tests PRIVATE ${compiler_OPTS})
     target_compile_definitions(run_${FILE}Tests PRIVATE ${user_DEFS})
     target_link_options(run_${FILE}Tests PRIVATE --coverage)
+    if(${FILE} STREQUAL "LKHashTable")
+    target_compile_definitions(run_${FILE}Tests PRIVATE LKHT_LIST_SIZE=2)
+    endif()
 endforeach()
 
 # Add tests

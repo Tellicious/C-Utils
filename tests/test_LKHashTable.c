@@ -39,8 +39,51 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "LKHashTable.h"
+#include "hashFunctions.h"
 
 #include <cmocka.h>
+
+/* Support functions ---------------------------------------------------------*/
+
+static uint8_t callocFail = 0;
+
+void* ADVUtils_testCalloc(const size_t number_of_elements, const size_t size) {
+    if ((number_of_elements > 0) && !callocFail) {
+        return test_calloc(number_of_elements, size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t mallocFail = 0;
+
+void* ADVUtils_testMalloc(const size_t size) {
+    if (!mallocFail) {
+        return test_malloc(size);
+    } else {
+        return NULL;
+    }
+}
+
+static uint8_t skipAssert = 0;
+
+void ADVUtils_testAssert(const int result, const char* const expression, const char* const file, const int line) {
+    if (skipAssert) {
+        return;
+    } else {
+        mock_assert(result, expression, file, line);
+    }
+}
+
+static uint16_t mockHash = 0;
+
+uint32_t ADVUtils_testHash(char* key) {
+    if (!mockHash) {
+        return hash_FNV1A(key);
+    } else {
+        return mockHash;
+    }
+}
 
 /* Functions -----------------------------------------------------------------*/
 
@@ -52,27 +95,68 @@ static void test_lkHashTableInit(void** state) {
     assert_int_equal(lkht.items, 0);
     assert_non_null(lkht.entries);
     for (uint32_t i = 0; i < lkht.size; i++) {
-        assert_int_equal(lkht.entries[i].size, UINT16_MAX);
+        assert_int_equal(lkht.entries[i].size, LKHT_LIST_SIZE);
         assert_int_equal(lkht.entries[i].items, 0);
     }
     test_free(lkht.entries);
+    /* Check null initialization */
+    skipAssert = 0;
+    expect_assert_failure(lkHashTableInit(&lkht, 0, 0));
+    skipAssert = 1;
+    assert_int_equal(lkHashTableInit(&lkht, 0, 0), UTILS_STATUS_ERROR);
+    skipAssert = 0;
 }
 
 static void test_lkHashTablePutAndGet(void** state) {
     (void)state; /* unused */
     lkHashTable_t lkht;
-    assert_int_equal(lkHashTableInit(&lkht, sizeof(int), 10), UTILS_STATUS_SUCCESS);
-    int value1 = 42, value2 = 43, out_value;
+    assert_int_equal(lkHashTableInit(&lkht, sizeof(int), 3), UTILS_STATUS_SUCCESS);
+    int value1 = 42;
+    int value2 = 43;
+    int value3 = 44;
+    int out_value;
+    assert_int_equal(lkHashTablePut(&lkht, NULL, &value1), UTILS_STATUS_ERROR);
+    assert_int_equal(lkHashTablePut(&lkht, "key1", NULL), UTILS_STATUS_ERROR);
     assert_int_equal(lkHashTablePut(&lkht, "key1", &value1), UTILS_STATUS_SUCCESS);
     assert_int_equal(lkHashTablePut(&lkht, "key2", &value2), UTILS_STATUS_SUCCESS);
-    assert_int_equal(lkht.items, 2);
+    assert_int_equal(lkHashTablePut(&lkht, "key3", &value3), UTILS_STATUS_SUCCESS);
+    assert_int_equal(lkHashTablePut(&lkht, "key4", &value3), UTILS_STATUS_FULL);
+    assert_int_equal(lkht.items, 3);
     assert_int_equal(lkHashTableGet(&lkht, "key1", &out_value, LKHT_REMOVE_ITEM), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value1);
-    assert_int_equal(lkHashTableGet(&lkht, "key1", &out_value, LKHT_DO_NOT_REMOVE_ITEM), UTILS_STATUS_BUCKET_EMPTY);
+    assert_int_equal(lkht.items, 2);
     assert_int_equal(lkHashTableGet(&lkht, "key2", &out_value, LKHT_DO_NOT_REMOVE_ITEM), UTILS_STATUS_SUCCESS);
     assert_int_equal(out_value, value2);
-    assert_int_equal(lkHashTableGet(&lkht, "key3", &out_value, LKHT_DO_NOT_REMOVE_ITEM), UTILS_STATUS_BUCKET_EMPTY);
+    assert_int_equal(lkht.items, 2);
+    assert_int_equal(lkHashTablePut(&lkht, "key2", &value3), UTILS_STATUS_SUCCESS);
+    assert_int_equal(lkht.items, 2);
     assert_int_equal(lkHashTableGet(&lkht, "key2", &out_value, LKHT_REMOVE_ITEM), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value3);
+    assert_int_equal(lkht.items, 1);
+    assert_int_equal(lkHashTableGet(&lkht, "key2", &out_value, LKHT_DO_NOT_REMOVE_ITEM), UTILS_STATUS_BUCKET_EMPTY);
+    assert_int_equal(lkHashTableGet(&lkht, "key4", &out_value, LKHT_DO_NOT_REMOVE_ITEM), UTILS_STATUS_ERROR);
+    assert_int_equal(lkHashTableGet(&lkht, "key3", &out_value, LKHT_REMOVE_ITEM), UTILS_STATUS_SUCCESS);
+    assert_int_equal(out_value, value3);
+    assert_int_equal(lkht.items, 0);
+    assert_int_equal(lkHashTableGet(&lkht, "key3", &out_value, LKHT_REMOVE_ITEM), UTILS_STATUS_EMPTY);
+    /* Check malloc / calloc fail  */
+    callocFail = 0;
+    skipAssert = 1;
+    mallocFail = 1;
+    assert_int_equal(lkHashTablePut(&lkht, "key2", &value3), UTILS_STATUS_ERROR);
+    mallocFail = 0;
+    callocFail = 1;
+    assert_int_equal(lkHashTablePut(&lkht, "key2", &value3), UTILS_STATUS_ERROR);
+    callocFail = 0;
+    skipAssert = 0;
+    /* Check listPush error */
+    mockHash = 1;
+    assert_int_equal(lkHashTablePut(&lkht, "key2", &value3), UTILS_STATUS_SUCCESS);
+    assert_int_equal(lkHashTablePut(&lkht, "key3", &value3), UTILS_STATUS_SUCCESS);
+    assert_int_equal(lkHashTablePut(&lkht, "key4", &value3), UTILS_STATUS_ERROR);
+    assert_int_equal(lkHashTableGet(&lkht, "key2", &out_value, LKHT_REMOVE_ITEM), UTILS_STATUS_SUCCESS);
+    assert_int_equal(lkHashTableGet(&lkht, "key3", &out_value, LKHT_REMOVE_ITEM), UTILS_STATUS_SUCCESS);
+    mockHash = 0;
     test_free(lkht.entries);
 }
 
@@ -95,7 +179,8 @@ static void test_lkHashTableFlush(void** state) {
     (void)state; /* unused */
     lkHashTable_t lkht;
     assert_int_equal(lkHashTableInit(&lkht, sizeof(int), 10), UTILS_STATUS_SUCCESS);
-    int value1 = 42, value2 = 43;
+    int value1 = 42;
+    int value2 = 43;
     assert_int_equal(lkHashTablePut(&lkht, "key1", &value1), UTILS_STATUS_SUCCESS);
     assert_int_equal(lkHashTablePut(&lkht, "key2", &value2), UTILS_STATUS_SUCCESS);
     assert_int_equal(lkht.items, 2);
@@ -112,6 +197,9 @@ static void test_lkHashTableDelete(void** state) {
     lkHashTable_t lkht;
     assert_int_equal(lkHashTableInit(&lkht, sizeof(int), 10), UTILS_STATUS_SUCCESS);
     assert_int_equal(lkHashTableDelete(&lkht), UTILS_STATUS_SUCCESS);
+    /* Check null deletion */
+    lkht.entries = NULL;
+    assert_int_equal(lkHashTableDelete(&lkht), UTILS_STATUS_ERROR);
 }
 
 int main(void) {
