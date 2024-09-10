@@ -60,8 +60,6 @@
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
-#define LPHT_HASHFUN(x) hash_FNV1A(x)
-
 /* Private Functions ---------------------------------------------------------*/
 
 static inline char* lkHashTableStrdup(const char* s) {
@@ -91,7 +89,7 @@ utilsStatus_t lkHashTableInit(lkHashTable_t* lkht, size_t itemSize, uint32_t siz
     }
 
     for (ii = 0; ii < lkht->size; ii++) {
-        listInit(&(lkht->entries[ii]), sizeof(lkHashTableEntry_t), UINT16_MAX);
+        listInit(&(lkht->entries[ii]), sizeof(lkHashTableEntry_t), LKHT_LIST_SIZE);
     }
 
     return UTILS_STATUS_SUCCESS;
@@ -107,7 +105,7 @@ utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
     }
 
     /* limit hash to current memory size */
-    uint32_t ii = LPHT_HASHFUN(key) & (lkht->size - 1);
+    uint32_t ii = LKHT_HASHFUN(key) & (lkht->size - 1);
 
     lkHashTableEntry_t entry;
 
@@ -127,12 +125,21 @@ utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
     entry.key = lkHashTableStrdup(key);
     entry.value = ADVUTILS_CALLOC(1, lkht->itemSize);
     ADVUTILS_ASSERT(entry.value != NULL);
+
+    if ((entry.key == NULL) || (entry.value == NULL)) {
+        ADVUTILS_FREE(entry.key);
+        ADVUTILS_FREE(entry.value);
+        return UTILS_STATUS_ERROR;
+    }
+
     memcpy(entry.value, value, lkht->itemSize);
 
     if (listPush(&(lkht->entries[ii]), &entry) == UTILS_STATUS_SUCCESS) {
         lkht->items++;
         return UTILS_STATUS_SUCCESS;
     }
+    ADVUTILS_FREE(entry.key);
+    ADVUTILS_FREE(entry.value);
     return UTILS_STATUS_ERROR;
 }
 
@@ -142,7 +149,7 @@ utilsStatus_t lkHashTableGet(lkHashTable_t* lkht, char* key, void* value, lkHash
         return UTILS_STATUS_EMPTY;
     }
 
-    uint32_t ii = LPHT_HASHFUN(key) & (lkht->size - 1);
+    uint32_t ii = LKHT_HASHFUN(key) & (lkht->size - 1);
 
     if (!lkht->entries[ii].items) {
         return UTILS_STATUS_BUCKET_EMPTY;
