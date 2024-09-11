@@ -45,8 +45,15 @@ extern "C" {
 
 /* Macros --------------------------------------------------------------------*/
 
-#define MOVAVG_TYPE     float
-#define MOVAVG_IND_TYPE uint16_t
+/* Moving average data type */
+#ifndef MOVAVG_TYPE
+#define MOVAVG_TYPE float
+#endif /* MOVAVG_TYPE */
+
+/* Type of moving average size property */
+#ifndef MOVAVG_STYPE
+#define MOVAVG_STYPE uint16_t
+#endif /* MOVAVG_STYPE */
 
 /* Typedefs ------------------------------------------------------------------*/
 
@@ -56,7 +63,7 @@ extern "C" {
 typedef struct {
     MOVAVG_TYPE* data;
     MOVAVG_TYPE sum, inv_size;
-    MOVAVG_IND_TYPE size, _write;
+    MOVAVG_STYPE size, _write;
 } movingAvg_t;
 
 /* Function prototypes -------------------------------------------------------*/
@@ -68,7 +75,7 @@ typedef struct {
  * \param[in]       movingAvg: pointer to moving average object
  * \param[in]       size: required queue size
  */
-utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size);
+utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_STYPE size);
 #endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
 
 #ifdef ADVUTILS_USE_STATIC_ALLOCATION
@@ -79,7 +86,7 @@ utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size);
  * \param[in]       data: pointer to data array
  * \param[in]       size: required queue size
  */
-void movingAvgInitStatic(movingAvg_t* movingAvg, MOVAVG_TYPE* data, MOVAVG_IND_TYPE size);
+void movingAvgInitStatic(movingAvg_t* movingAvg, MOVAVG_TYPE* data, MOVAVG_STYPE size);
 #endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 /**

@@ -63,7 +63,7 @@
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
-utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
+utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_STYPE size) {
     movingAvg->data = NULL;
     movingAvg->data = ADVUTILS_CALLOC(size, sizeof(MOVAVG_TYPE));
     ADVUTILS_ASSERT(movingAvg->data != NULL);
@@ -83,7 +83,7 @@ utilsStatus_t movingAvgInit(movingAvg_t* movingAvg, MOVAVG_IND_TYPE size) {
 
 #ifdef ADVUTILS_USE_STATIC_ALLOCATION
 
-void movingAvgInitStatic(movingAvg_t* movingAvg, MOVAVG_TYPE* data, MOVAVG_IND_TYPE size) {
+void movingAvgInitStatic(movingAvg_t* movingAvg, MOVAVG_TYPE* data, MOVAVG_STYPE size) {
     movingAvg->data = data;
     movingAvg->size = size;
     movingAvg->sum = 0;
