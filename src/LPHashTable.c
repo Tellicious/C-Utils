@@ -60,8 +60,6 @@
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
-#define LPHT_HASHFUN(x) hash_FNV1A(x)
-
 /* Function prototypes -------------------------------------------------------*/
 
 static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
