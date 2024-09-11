@@ -46,7 +46,10 @@ extern "C" {
 
 /* Macros --------------------------------------------------------------------*/
 
+/* Type of queue size property */
+#ifndef QUEUE_STYPE
 #define QUEUE_STYPE uint16_t
+#endif /* QUEUE_STYPE */
 
 /* Typedefs ------------------------------------------------------------------*/
 
