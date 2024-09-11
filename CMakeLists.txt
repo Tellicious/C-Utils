@@ -54,6 +54,11 @@ if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
         ADVUTILS_UNIT_TESTS
         LKHT_LIST_SIZE=2 
         LKHT_HASHFUN=ADVUtils_testHash
+        LPHT_MIN_SIZE=2
+        LPHT_MAX_SIZE=20
+        LPHT_MIN_SATURATION=0.2
+        LPHT_MAX_SATURATION=0.7
+        LPHT_HASHFUN=ADVUtils_testHash
     )
 endif()
 
