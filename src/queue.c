@@ -276,6 +276,7 @@ utilsStatus_t queueDelete(queue_t* queue) {
     }
 
     ADVUTILS_FREE(queue->data);
+    queue->data = NULL;
 
     return UTILS_STATUS_SUCCESS;
 }

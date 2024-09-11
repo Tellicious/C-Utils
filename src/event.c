@@ -139,6 +139,7 @@ utilsStatus_t eventDelete(event_t* event) {
     }
 
     ADVUTILS_FREE(event->eventsList);
+    event->eventsList = NULL;
 
     return UTILS_STATUS_SUCCESS;
 }

@@ -512,6 +512,7 @@ utilsStatus_t matrixDelete(matrix_t* matrix) {
     }
 
     ADVUTILS_FREE(matrix->data);
+    matrix->data = NULL;
 
     return UTILS_STATUS_SUCCESS;
 }

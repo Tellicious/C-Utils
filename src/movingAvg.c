@@ -125,6 +125,7 @@ utilsStatus_t movingAvgDelete(movingAvg_t* movingAvg) {
     }
 
     ADVUTILS_FREE(movingAvg->data);
+    movingAvg->data = NULL;
 
     return UTILS_STATUS_SUCCESS;
 }

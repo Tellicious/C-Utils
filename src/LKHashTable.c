@@ -214,6 +214,7 @@ utilsStatus_t lkHashTableDelete(lkHashTable_t* lkht) {
     lkHashTableFlush(lkht);
 
     ADVUTILS_FREE(lkht->entries);
+    lkht->entries = NULL;
 
     return UTILS_STATUS_SUCCESS;
 }
