@@ -65,6 +65,8 @@
 /* Function prototypes -------------------------------------------------------*/
 
 static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
+static utilsStatus_t lpHashTableUpdateEntry(lpHashTable_t* lpht, char* key, void* value);
+static void lpHashTableReplaceEntries(lpHashTable_t* lpht, uint32_t startIndex);
 static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase);
 
 /* Private Functions ---------------------------------------------------------*/
@@ -104,22 +106,24 @@ utilsStatus_t lpHashTablePut(lpHashTable_t* lpht, char* key, void* value) {
         return UTILS_STATUS_ERROR;
     }
 
+    /* Try to update the entry and go on if it doesn't exist already */
+    if (lpHashTableUpdateEntry(lpht, key, value) == UTILS_STATUS_SUCCESS) {
+        return UTILS_STATUS_SUCCESS;
+    }
+
     /* If length will exceed defined quota of current capacity, expand it. */
     if (((lpht->items + 1) >= (lpht->size * LPHT_MAX_SATURATION)) && (lpht->resizable == LPHT_RESIZABLE)) {
-        if (lpHashTableXpand(lpht, 1) != UTILS_STATUS_SUCCESS) {
-            return UTILS_STATUS_ERROR;
-        }
-    } else if (lpht->items == lpht->size) {
-        return UTILS_STATUS_FULL;
-    } else if ((lpht->items <= (lpht->size * LPHT_MIN_SATURATION)) && (lpht->size > LPHT_MIN_SIZE)
-               && (lpht->resizable == LPHT_RESIZABLE)) {
-        if (lpHashTableXpand(lpht, 0) != UTILS_STATUS_SUCCESS) {
+        if (lpHashTableXpand(lpht, 1) == UTILS_STATUS_ERROR) {
             return UTILS_STATUS_ERROR;
         }
     }
 
-    /* Set entry and update length. */
+    /* If table is full, return */
+    if (lpht->items >= lpht->size) {
+        return UTILS_STATUS_FULL;
+    }
 
+    /* Set entry and update length. */
     if (lpHashTableSetEntry(lpht, key, value) == UTILS_STATUS_SUCCESS) {
         return UTILS_STATUS_SUCCESS;
     }
@@ -145,21 +149,24 @@ utilsStatus_t lpHashTableGet(lpHashTable_t* lpht, char* key, void* value, lpHash
                 ADVUTILS_FREE(lpht->entries[ii].value);
                 lpht->entries[ii].key = NULL;
                 lpht->entries[ii].value = NULL;
-                lpht->items--;
+                if ((--lpht->items <= (lpht->size * LPHT_MIN_SATURATION)) && (lpht->resizable == LPHT_RESIZABLE)) {
+                    if (lpHashTableXpand(lpht, 0) == UTILS_STATUS_ERROR) {
+                        lpHashTableReplaceEntries(lpht, ii);
+                        return UTILS_STATUS_WARNING;
+                    }
+                } else {
+                    lpHashTableReplaceEntries(lpht, ii);
+                }
             }
-
             return UTILS_STATUS_SUCCESS;
         }
 
-        cnt++;
-        ii++;
-
-        if (ii >= lpht->size) {
+        if (++ii >= lpht->size) {
             ii = 0;
         }
 
         /* Check to avoid infinite loop in case of full not-resizable list */
-        if (cnt >= lpht->items) {
+        if (++cnt >= lpht->items) {
             return UTILS_STATUS_ERROR;
         }
     }
@@ -194,6 +201,7 @@ utilsStatus_t lpHashTableDelete(lpHashTable_t* lpht) {
     lpHashTableFlush(lpht);
 
     ADVUTILS_FREE(lpht->entries);
+    lpht->entries = NULL;
 
     return UTILS_STATUS_SUCCESS;
 }
@@ -204,18 +212,12 @@ static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* v
 
     /* Loop till we find an empty entry. */
     while (lpht->entries[ii].key != NULL) {
-        if (!strcmp(key, lpht->entries[ii].key)) {
-            /* Found key (it already exists), update value. */
-            memcpy(lpht->entries[ii].value, value, lpht->itemSize);
-            return UTILS_STATUS_SUCCESS;
-        }
-        ii++;
-        if (ii >= lpht->size) {
+        if (++ii >= lpht->size) {
             ii = 0;
         }
     }
 
-    /* Didn't find key, allocate+copy if needed, then insert it. */
+    /* Empty slot found, insert item. */
     lpht->entries[ii].key = lpHashTableStrdup(key);
     lpht->entries[ii].value = ADVUTILS_CALLOC(1, lpht->itemSize);
     ADVUTILS_ASSERT(lpht->entries[ii].value != NULL);
@@ -223,6 +225,8 @@ static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* v
     if ((lpht->entries[ii].key == NULL) || (lpht->entries[ii].value == NULL)) {
         ADVUTILS_FREE(lpht->entries[ii].key);
         ADVUTILS_FREE(lpht->entries[ii].value);
+        lpht->entries[ii].key = NULL;
+        lpht->entries[ii].value = NULL;
         return UTILS_STATUS_ERROR;
     }
 
@@ -233,6 +237,55 @@ static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* v
     return UTILS_STATUS_SUCCESS;
 }
 
+static utilsStatus_t lpHashTableUpdateEntry(lpHashTable_t* lpht, char* key, void* value) {
+    /* limit hash to current memory size */
+    uint32_t ii = LPHT_HASHFUN(key) & (lpht->size - 1);
+    uint32_t cnt = 0;
+
+    /* Loop to search the entry to be updated */
+    while (lpht->entries[ii].key != NULL) {
+        if (!strcmp(key, lpht->entries[ii].key)) {
+            /* Found entry, now update it */
+            memcpy(lpht->entries[ii].value, value, lpht->itemSize);
+            return UTILS_STATUS_SUCCESS;
+        }
+        if (++ii >= lpht->size) {
+            ii = 0;
+        }
+        /* Check to avoid infinite loop in case of full list */
+        if (++cnt >= lpht->size) {
+            return UTILS_STATUS_FULL;
+        }
+    }
+
+    return UTILS_STATUS_ERROR;
+}
+
+static void lpHashTableReplaceEntries(lpHashTable_t* lpht, uint32_t startIndex) {
+    if (++startIndex >= lpht->size) {
+        startIndex = 0;
+    }
+    uint32_t cnt = lpht->items;
+    while ((lpht->entries[startIndex].key != NULL) && cnt--) {
+        /* limit hash to current memory size */
+        uint32_t ii = LPHT_HASHFUN(lpht->entries[startIndex].key) & (lpht->size - 1);
+        if (startIndex != ii) {
+            while (lpht->entries[ii].key != NULL) {
+                if (++ii >= lpht->size) {
+                    ii = 0;
+                }
+            }
+            lpht->entries[ii].key = lpht->entries[startIndex].key;
+            lpht->entries[ii].value = lpht->entries[startIndex].value;
+            lpht->entries[startIndex].key = NULL;
+            lpht->entries[startIndex].value = NULL;
+        }
+        if (++startIndex >= lpht->size) {
+            startIndex = 0;
+        }
+    }
+}
+
 static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase) {
     /* Allocate new entries array. */
     uint32_t ii;
@@ -241,16 +294,18 @@ static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase) {
     /* hash is currently a uint32_t so Hash-table size should not exceed that */
     if (increase) {
         /* increase table size */
-        if (lpht->size == UINT32_MAX) {
-            return UTILS_STATUS_ERROR;
-        } else if (lpht->size >= (UINT32_MAX >> 1)) {
-            lpht->size = UINT32_MAX;
+        if (lpht->size >= LPHT_MAX_SIZE) {
+            return UTILS_STATUS_SUCCESS;
+        } else if (lpht->size >= (LPHT_MAX_SIZE >> 1)) {
+            lpht->size = LPHT_MAX_SIZE;
         } else {
             lpht->size *= 2;
         }
     } else {
         /* decrease table size */
-        if (lpht->size >= (LPHT_MIN_SIZE * 2)) {
+        if (lpht->size <= LPHT_MIN_SIZE) {
+            return UTILS_STATUS_SUCCESS;
+        } else if (lpht->size >= (LPHT_MIN_SIZE * 2)) {
             lpht->size = (lpht->size >> 1);
         } else {
             lpht->size = LPHT_MIN_SIZE;
@@ -271,9 +326,16 @@ static utilsStatus_t lpHashTableXpand(lpHashTable_t* lpht, uint8_t increase) {
 
     for (ii = 0; ii < old_size; ii++) {
         if (old_entries[ii].key != NULL) {
-            lpHashTableSetEntry(lpht, old_entries[ii].key, old_entries[ii].value);
-            ADVUTILS_FREE(old_entries[ii].key);
-            ADVUTILS_FREE(old_entries[ii].value);
+            /* limit hash to current memory size */
+            uint32_t jj = LPHT_HASHFUN(old_entries[ii].key) & (lpht->size - 1);
+            while (lpht->entries[jj].key != NULL) {
+                if (++jj >= lpht->size) {
+                    jj = 0;
+                }
+            }
+            lpht->entries[jj].key = old_entries[ii].key;
+            lpht->entries[jj].value = old_entries[ii].value;
+            lpht->items++;
         }
     }
 
