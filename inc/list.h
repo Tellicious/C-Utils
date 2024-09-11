@@ -46,7 +46,10 @@ extern "C" {
 
 /* Macros --------------------------------------------------------------------*/
 
+/* Type of list size property */
+#ifndef LIST_STYPE
 #define LIST_STYPE uint16_t
+#endif /* LIST_STYPE */
 
 /* Typedefs ------------------------------------------------------------------*/
 
