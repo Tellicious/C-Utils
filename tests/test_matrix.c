@@ -73,8 +73,6 @@ void ADVUtils_testAssert(const int result, const char* const expression, const c
 
 /* Functions -----------------------------------------------------------------*/
 
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-
 static void test_matrixInit(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
@@ -101,10 +99,6 @@ static void test_matrixDelete(void** state) {
     assert_int_equal(matrixDelete(&matrix), UTILS_STATUS_ERROR);
 }
 
-#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
-
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
-
 static void test_matrixInitStatic(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
@@ -114,8 +108,6 @@ static void test_matrixInitStatic(void** state) {
     assert_int_equal(matrix.cols, 3);
     assert_ptr_equal(matrix.data, buffer);
 }
-
-#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 static void test_matrixIdentity(void** state) {
     (void)state; /* unused */
@@ -328,8 +320,6 @@ static void test_matrixSetAndGet(void** state) {
     assert_float_equal(matrixGet(&matrix, 1, 1), 4.0f, 1e-5);
 }
 
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-
 static void test_matrixDet(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
@@ -428,10 +418,6 @@ static void test_matrixPseudoInv(void** state) {
     matrixDelete(&result);
 }
 
-#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
-
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
-
 static void test_matrixDetStatic(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
@@ -517,25 +503,19 @@ static void test_matrixPseudoInvStatic(void** state) {
     assert_float_equal(result.data[3], -0.5f, 1e-5);
 }
 
-#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
-
 int main(void) {
     const struct CMUnitTest tests[] = {
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
         cmocka_unit_test(test_matrixInit),
         cmocka_unit_test(test_matrixDelete),
         cmocka_unit_test(test_matrixDet),
         cmocka_unit_test(test_matrixInversed),
         cmocka_unit_test(test_matrixInversed_rob),
         cmocka_unit_test(test_matrixPseudoInv),
-#endif
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
         cmocka_unit_test(test_matrixInitStatic),
         cmocka_unit_test(test_matrixDetStatic),
         cmocka_unit_test(test_matrixInversedStatic),
         cmocka_unit_test(test_matrixInversedStatic_rob),
         cmocka_unit_test(test_matrixPseudoInvStatic),
-#endif
         cmocka_unit_test(test_matrixIdentity),
         cmocka_unit_test(test_matrixZeros),
         cmocka_unit_test(test_matrixCopy),

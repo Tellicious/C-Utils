@@ -173,8 +173,6 @@ static void test_LU_Crout(void** state) {
     assert_int_equal(LU_Crout(&A, &L, &U), UTILS_STATUS_ERROR);
 }
 
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-
 static void test_LU_Cormen(void** state) {
     (void)state; /* unused */
     matrix_t A, L, U;
@@ -513,10 +511,6 @@ static void test_GaussNewton_Sens_Cal_6(void** state) {
     matrixDelete(&result);
 }
 
-#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
-
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
-
 static void test_LU_CormenStatic(void** state) {
     (void)state; /* unused */
     matrix_t A, L, U;
@@ -796,8 +790,6 @@ static void test_GaussNewton_Sens_Cal_6Static(void** state) {
     assert_int_equal(GaussNewton_Sens_Cal_6Static(&Data2, 9.81, &X0, 600, 1e-6, &result), UTILS_STATUS_ERROR);
 }
 
-#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
-
 int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_fwsub),
@@ -806,7 +798,6 @@ int main(void) {
         cmocka_unit_test(test_bksubPerm),
         cmocka_unit_test(test_QuadProd),
         cmocka_unit_test(test_LU_Crout),
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
         cmocka_unit_test(test_LU_Cormen),
         cmocka_unit_test(test_LUP_Cormen),
         cmocka_unit_test(test_LinSolveLU),
@@ -815,8 +806,6 @@ int main(void) {
         cmocka_unit_test(test_DARE),
         cmocka_unit_test(test_GaussNewton_Sens_Cal_9),
         cmocka_unit_test(test_GaussNewton_Sens_Cal_6),
-#endif
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
         cmocka_unit_test(test_LU_CormenStatic),
         cmocka_unit_test(test_LUP_CormenStatic),
         cmocka_unit_test(test_LinSolveLUStatic),
@@ -825,7 +814,6 @@ int main(void) {
         cmocka_unit_test(test_DAREStatic),
         cmocka_unit_test(test_GaussNewton_Sens_Cal_9Static),
         cmocka_unit_test(test_GaussNewton_Sens_Cal_6Static),
-#endif
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

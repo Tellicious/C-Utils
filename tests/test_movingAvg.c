@@ -72,8 +72,6 @@ void ADVUtils_testAssert(const int result, const char* const expression, const c
 
 /* Functions -----------------------------------------------------------------*/
 
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-
 static void test_movingAvgInit(void** state) {
     (void)state; /* unused */
     movingAvg_t movingAvg;
@@ -99,10 +97,6 @@ static void test_movingAvgDelete(void** state) {
     assert_int_equal(movingAvgDelete(&movingAvg), UTILS_STATUS_ERROR);
 }
 
-#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
-
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
-
 static void test_movingAvgInitStatic(void** state) {
     (void)state; /* unused */
     movingAvg_t movingAvg;
@@ -111,8 +105,6 @@ static void test_movingAvgInitStatic(void** state) {
     assert_int_equal(movingAvg.size, 5);
     assert_ptr_equal(movingAvg.data, buffer);
 }
-
-#endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 
 static void test_movingAvgCalc(void** state) {
     (void)state; /* unused */
@@ -157,14 +149,9 @@ static void test_movingAvgGetLatest(void** state) {
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
         cmocka_unit_test(test_movingAvgInit),       cmocka_unit_test(test_movingAvgDelete),
-#endif
-#ifdef ADVUTILS_USE_STATIC_ALLOCATION
-        cmocka_unit_test(test_movingAvgInitStatic),
-#endif
-        cmocka_unit_test(test_movingAvgCalc),       cmocka_unit_test(test_movingAvgFlush),
-        cmocka_unit_test(test_movingAvgGetLatest),
+        cmocka_unit_test(test_movingAvgInitStatic), cmocka_unit_test(test_movingAvgCalc),
+        cmocka_unit_test(test_movingAvgFlush),      cmocka_unit_test(test_movingAvgGetLatest),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

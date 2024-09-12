@@ -73,8 +73,6 @@ void ADVUtils_testAssert(const int result, const char* const expression, const c
 
 /* Functions -----------------------------------------------------------------*/
 
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
-
 static void test_listInit(void** state) {
     (void)state; /* unused */
     list_t list;
@@ -399,11 +397,8 @@ static void test_listIterator(void** state) {
     listFlush(&list);
 }
 
-#endif /* ADVUTILS_USE_DYNAMIC_ALLOCATION */
-
 int main(void) {
     const struct CMUnitTest tests[] = {
-#ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
         cmocka_unit_test(test_listInit),          cmocka_unit_test(test_listPush),
         cmocka_unit_test(test_listPushFull),      cmocka_unit_test(test_listPushFront),
         cmocka_unit_test(test_listPushFrontFull), cmocka_unit_test(test_listInsert),
@@ -413,7 +408,6 @@ int main(void) {
         cmocka_unit_test(test_listPeek),          cmocka_unit_test(test_listPeekBack),
         cmocka_unit_test(test_listPeekAtPos),     cmocka_unit_test(test_listInfo),
         cmocka_unit_test(test_listFlush),         cmocka_unit_test(test_listIterator),
-#endif
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
