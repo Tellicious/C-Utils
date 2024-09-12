@@ -89,17 +89,34 @@ static void test_macros(void** state) {
     assert_float_equal(K2C(273.15f), 0.0f, 1e-5);
     assert_float_equal(MG2MS2(1000.0f), 9.80665f, 1e-5);
     assert_float_equal(MS22MG(9.80665f), 1000.0f, 1e-5);
+    assert_float_equal(RADPS2MDPS(10.f), 572957.795132f, 1e-5);
+    assert_float_equal(MDPS2RADPS(572957.795132f), 10.f, 1e-5);
 
     // Test bit manipulation macros
     assert_true(IS_BIT_SET_ALL(0xFF, 0x0F));
     assert_false(IS_BIT_SET_ALL(0x0F, 0xF0));
-    assert_true(IS_BIT_SET_ANY(0xFF, 0x0F));
-    assert_false(IS_BIT_SET_ANY(0x00, 0x0F));
+    assert_true(IS_BIT_SET_ANY(0xFF, 0x02));
+    assert_false(IS_BIT_SET_ANY(0x00, 0x01));
     assert_int_equal(BIT_MASK(0xFF, 0x0F), 0x0F);
     assert_int_equal(BIT_SET(0x00, 0x0F), 0x0F);
     assert_int_equal(BIT_CLEAR(0xFF, 0x0F), 0xF0);
-    assert_int_equal(BIT_TOGGLE(0x00, 0x0F), 0x0F);
+    assert_int_equal(BIT_TOGGLE(0x01, 0x0F), 0x0E);
     assert_int_equal(BIT_TOGGLE(0x0F, 0x0F), 0x00);
+    assert_int_equal(SHIFT(0x03, 2), 0x0C);
+    assert_int_equal(UNSHIFT(0x0C, 2), 0x03);
+
+    // Test bit manipulation macros in place
+    uint8_t val = 0x1C;
+    BIT_SET_IN_PLACE(val, 0x30);
+    assert_int_equal(val, 0x3C);
+    BIT_CLEAR_IN_PLACE(val, 0x0C);
+    assert_int_equal(val, 0x30);
+    BIT_TOGGLE_IN_PLACE(val, 0x62);
+    assert_int_equal(val, 0x52);
+    UNSHIFT_IN_PLACE(val, 1);
+    assert_int_equal(val, 0x29);
+    SHIFT_IN_PLACE(val, 2);
+    assert_int_equal(val, 0xA4);
 }
 
 static void test_functions(void** state) {
