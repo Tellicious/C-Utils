@@ -145,7 +145,12 @@ utilsStatus_t queuePushFront(queue_t* queue, void* value) {
         return UTILS_STATUS_FULL;
     }
 
-    queue->_front = ((queue->_front == 0) ? (queue->size - queue->itemSize) : (queue->_front - queue->itemSize));
+    if (queue->_front == 0) {
+        queue->_front = queue->size;
+    }
+
+    queue->_front -= queue->itemSize;
+
     memcpy(&(queue->data[queue->_front]), value, queue->itemSize);
     queue->items += queue->itemSize;
 
@@ -153,25 +158,24 @@ utilsStatus_t queuePushFront(queue_t* queue, void* value) {
 }
 
 utilsStatus_t queuePushFrontArr(queue_t* queue, void* data, QUEUE_STYPE num) {
-    QUEUE_STYPE num2Beg = 0;
     QUEUE_STYPE numBytes = num * queue->itemSize;
 
     if ((queue->size - queue->items) < numBytes) {
         return UTILS_STATUS_ERROR;
     }
 
-    queue->_front = ((queue->_front == 0) ? (queue->size - queue->itemSize) : (queue->_front - queue->itemSize));
+    if (queue->_front == 0) {
+        queue->_front = queue->size;
+    }
 
-    num2Beg = queue->_front + queue->itemSize;
-
-    if (num2Beg < numBytes) {
-        QUEUE_STYPE numFromEnd = numBytes - num2Beg;
-        memcpy(queue->data, ((uint8_t*)data + numFromEnd), num2Beg);
+    if (queue->_front < numBytes) {
+        QUEUE_STYPE numFromEnd = numBytes - queue->_front;
+        memcpy(queue->data, ((uint8_t*)data + numFromEnd), queue->_front);
         memcpy(&(queue->data[queue->size - numFromEnd]), data, numFromEnd);
         queue->_front = queue->size - numFromEnd;
     } else {
-        memcpy(&(queue->data[num2Beg - numBytes]), data, numBytes);
-        queue->_front -= (numBytes - queue->itemSize);
+        memcpy(&(queue->data[queue->_front - numBytes]), data, numBytes);
+        queue->_front -= numBytes;
     }
     queue->items += numBytes;
 
@@ -183,14 +187,14 @@ utilsStatus_t queuePop(queue_t* queue, void* value) {
         return UTILS_STATUS_EMPTY;
     }
 
+    if (queue->_front >= queue->size) {
+        queue->_front = 0;
+    }
+
     memcpy(value, &(queue->data[queue->_front]), queue->itemSize);
     queue->items -= queue->itemSize;
 
-    if (queue->_front >= queue->size - queue->itemSize) {
-        queue->_front = 0;
-    } else {
-        queue->_front += queue->itemSize;
-    }
+    queue->_front += queue->itemSize;
 
     return UTILS_STATUS_SUCCESS;
 }
@@ -203,6 +207,10 @@ utilsStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num) {
         return UTILS_STATUS_ERROR;
     }
 
+    if (queue->_front >= queue->size) {
+        queue->_front = 0;
+    }
+
     num2End = queue->size - queue->_front;
 
     if (num2End < numBytes) {
@@ -212,9 +220,6 @@ utilsStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num) {
     } else {
         memcpy(data, &(queue->data[queue->_front]), numBytes);
         queue->_front += numBytes;
-        if (queue->_front >= queue->size) {
-            queue->_front = 0;
-        }
     }
     queue->items -= numBytes;
 
@@ -226,7 +231,12 @@ utilsStatus_t queuePopBack(queue_t* queue, void* value) {
         return UTILS_STATUS_EMPTY;
     }
 
-    queue->_rear = ((queue->_rear == 0) ? (queue->size - queue->itemSize) : (queue->_rear - queue->itemSize));
+    if (queue->_rear == 0) {
+        queue->_rear = queue->size;
+    }
+
+    queue->_rear -= queue->itemSize;
+
     memcpy(value, &(queue->data[queue->_rear]), queue->itemSize);
     queue->items -= queue->itemSize;
 
@@ -263,6 +273,10 @@ utilsStatus_t queuePeek(queue_t* queue, void* value) {
         return UTILS_STATUS_EMPTY;
     }
 
+    if (queue->_front >= queue->size) {
+        queue->_front = 0;
+    }
+
     memcpy(value, &(queue->data[queue->_front]), queue->itemSize);
 
     return UTILS_STATUS_SUCCESS;
@@ -273,9 +287,11 @@ utilsStatus_t queuePeekBack(queue_t* queue, void* value) {
         return UTILS_STATUS_EMPTY;
     }
 
-    memcpy(value,
-           &(queue->data[((queue->_rear == 0) ? (queue->size - queue->itemSize) : (queue->_rear - queue->itemSize))]),
-           queue->itemSize);
+    if (queue->_rear == 0) {
+        queue->_rear = queue->size;
+    }
+
+    memcpy(value, &(queue->data[queue->_rear - queue->itemSize]), queue->itemSize);
 
     return UTILS_STATUS_SUCCESS;
 }
