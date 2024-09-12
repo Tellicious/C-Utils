@@ -233,6 +233,31 @@ utilsStatus_t queuePopBack(queue_t* queue, void* value) {
     return UTILS_STATUS_SUCCESS;
 }
 
+utilsStatus_t queuePopBackArr(queue_t* queue, void* data, QUEUE_STYPE num) {
+    QUEUE_STYPE numBytes = num * queue->itemSize;
+
+    if (queue->items < numBytes) {
+        return UTILS_STATUS_ERROR;
+    }
+
+    if (queue->_rear == 0) {
+        queue->_rear = queue->size;
+    }
+
+    if (queue->_rear < numBytes) {
+        QUEUE_STYPE numFromEnd = numBytes - queue->_rear;
+        memcpy(((uint8_t*)data + numFromEnd), queue->data, queue->_rear);
+        memcpy(data, &(queue->data[queue->size - numFromEnd]), numFromEnd);
+        queue->_rear = queue->size - numFromEnd;
+    } else {
+        memcpy(data, &(queue->data[queue->_rear - numBytes]), numBytes);
+        queue->_rear -= numBytes;
+    }
+    queue->items -= numBytes;
+
+    return UTILS_STATUS_SUCCESS;
+}
+
 utilsStatus_t queuePeek(queue_t* queue, void* value) {
     if (queue->items == 0) {
         return UTILS_STATUS_EMPTY;

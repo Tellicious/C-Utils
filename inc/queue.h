@@ -150,7 +150,7 @@ utilsStatus_t queuePop(queue_t* queue, void* value);
  * \param[out]      data: pointer to array of data to be read and removed
  * \param[in]       num: number of values to be read and removed
  *
- * \return          UTILS_STATUS_SUCCESS if data can be pushed to front correctly, UTILS_STATUS_ERROR if queue doesn't hold all requested items
+ * \return          UTILS_STATUS_SUCCESS if data can be read and removed correctly, UTILS_STATUS_ERROR if queue doesn't hold all requested items
  */
 utilsStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num);
 
@@ -163,6 +163,17 @@ utilsStatus_t queuePopArr(queue_t* queue, void* data, QUEUE_STYPE num);
  * \return          UTILS_STATUS_SUCCESS if data can be read and removed correctly, UTILS_STATUS_EMPTY if queue is empty
  */
 utilsStatus_t queuePopBack(queue_t* queue, void* value);
+
+/**
+ * \brief           Read an array of data from end of queue, removing it
+ *
+ * \param[in]       queue: pointer to queue object
+ * \param[out]      data: pointer to array of data to be read and removed
+ * \param[in]       num: number of values to be read and removed
+ *
+ * \return          UTILS_STATUS_SUCCESS if data can be read and removed correctly, UTILS_STATUS_ERROR if queue doesn't hold all requested items
+ */
+utilsStatus_t queuePopBackArr(queue_t* queue, void* data, QUEUE_STYPE num);
 
 /**
  * \brief           Read data from beginning of queue, without removing it
