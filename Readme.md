@@ -46,14 +46,14 @@
   
 ### LKHashTable:
 - `LKHT_LIST_SIZE`: maximum size of the list objects used by the hash-table. Default it `UINT16_MAX`
-- `LKHT_HASHFUN`: hash function used by hash-table. Default is `hash_FNV1A`
+- `LKHT_HASHFUN`: hash function used by hash-table. Default is `hash_FNV1A` (FNV-1a hash) and other options are `hash_djb` (Dan Bernstein hash) and `hash_sdbm` (sdbm hash)
 
 ### LPHashTable:
 - `LPHT_MIN_SIZE`: minimum size of hash-table when resizing. Default is `5`
 - `LPHT_MAX_SIZE`: maximum size of hash-table when resizing. Default is `UINT32_MAX`
 - `LPHT_MIN_SATURATION`: minimum saturation of hash-table, that triggers a down-sizing. Default is `0.2`, meaning `20%`
 - `LPHT_MAX_SATURATION`: maximum saturation of hash-table, that triggers an up-sizing. Default is `0.7`, meaning `70%`
-- `LPHT_HASHFUN`: hash function used by hash-table. Default is `hash_FNV1A`
+- `LPHT_HASHFUN`: hash function used by hash-table. Default is `hash_FNV1A` (FNV-1a hash) and other options are `hash_djb` (Dan Bernstein hash) and `hash_sdbm` (sdbm hash)
 
 ### movingAvg:
 - `MOVAVG_STYPE`: type of moving average size property, defining the maximum amount of values that can be stored in the moving average. Default is `uint16_t`
