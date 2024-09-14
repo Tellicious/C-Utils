@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.17.1
+
+**Bugfix:**
+- Moved `LKHashTable` and `LPHashTable` configurable parameters to source file
+  
 ## v1.17.0
 
 **New features:**
