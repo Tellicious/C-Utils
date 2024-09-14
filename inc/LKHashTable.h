@@ -45,18 +45,6 @@ extern "C" {
 #include "commonTypes.h"
 #include "list.h"
 
-/* Macros --------------------------------------------------------------------*/
-
-/* Maximum size of the list objects used by the hash-table */
-#ifndef LKHT_LIST_SIZE
-#define LKHT_LIST_SIZE UINT16_MAX
-#endif /* LKHT_LIST_SIZE */
-
-/* Hash function used by hash-table */
-#ifndef LKHT_HASHFUN
-#define LKHT_HASHFUN(x) hash_FNV1A(x)
-#endif /* LKHT_HASHFUN */
-
 /* Typedefs ------------------------------------------------------------------*/
 
 /*

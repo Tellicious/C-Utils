@@ -60,6 +60,16 @@
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
+/* Maximum size of the list objects used by the hash-table */
+#ifndef LKHT_LIST_SIZE
+#define LKHT_LIST_SIZE UINT16_MAX
+#endif /* LKHT_LIST_SIZE */
+
+/* Hash function used by hash-table */
+#ifndef LKHT_HASHFUN
+#define LKHT_HASHFUN hash_FNV1A
+#endif /* LKHT_HASHFUN */
+
 /* Private Functions ---------------------------------------------------------*/
 
 static inline char* lkHashTableStrdup(const char* s) {
