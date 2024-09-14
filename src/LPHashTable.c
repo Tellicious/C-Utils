@@ -60,6 +60,31 @@
 #define ADVUTILS_FREE   free
 #endif /* ADVUTILS_MEMORY_MGMT_HEADER */
 
+/* Minimum size of hash-table when resizing */
+#ifndef LPHT_MIN_SIZE
+#define LPHT_MIN_SIZE 5
+#endif /* LPHT_MIN_SIZE */
+
+/* Maximum size of hash-table when resizing */
+#ifndef LPHT_MAX_SIZE
+#define LPHT_MAX_SIZE UINT32_MAX
+#endif /* LPHT_MAX_SIZE */
+
+/* Minimum saturation of hash-table, that triggers a down-sizing */
+#ifndef LPHT_MIN_SATURATION
+#define LPHT_MIN_SATURATION 0.2
+#endif /* LPHT_MIN_SATURATION */
+
+/* Maximum saturation of hash-table, that triggers an up-sizing */
+#ifndef LPHT_MAX_SATURATION
+#define LPHT_MAX_SATURATION 0.7
+#endif /* LPHT_MAX_SATURATION */
+
+/* Hash function used by hash-table */
+#ifndef LPHT_HASHFUN
+#define LPHT_HASHFUN hash_FNV1A
+#endif /* LPHT_HASHFUN */
+
 /* Function prototypes -------------------------------------------------------*/
 
 static utilsStatus_t lpHashTableSetEntry(lpHashTable_t* lpht, char* key, void* value);
