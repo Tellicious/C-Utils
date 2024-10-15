@@ -40,5 +40,10 @@ jobs:
     
     - name: Test
       run: ctest --test-dir ${{github.workspace}}/build --output-on-failure --verbose
-  
 
+    - name: Upload results to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          plugin: gcov
+          flags: unitTests

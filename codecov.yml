@@ -1,0 +1,72 @@
+codecov:
+    disable_default_path_fixes: no
+    require_ci_to_pass: yes
+    notify:
+        after_n_builds: 1
+        wait_for_ci: yes
+coverage:
+    precision: 2
+    round: down
+    range: "80...100"
+parsers:
+    gcov:
+        branch_detection:
+            conditional: no
+            loop: yes
+            method: no
+            macro: yes
+ignore:
+    - "**/hashFunctions*"
+    - "**/test_*"
+comment:
+  layout: "header, diff, flags, components" 
+component_management:
+    default_rules:
+        statuses:
+            - type: project
+              target: auto
+              branches:
+                - '!main'
+    individual_components:
+        - component_id: basicMath
+          paths:
+            - "**/basicMath.*"
+        - component_id: button
+          paths:
+            - "**/button.*"
+        - component_id: event
+          paths:
+            - "**/event.*"
+        - component_id: IIRFilters
+          paths:
+            - "**/IIRFilters.*"
+        - component_id: list
+          paths:
+            - "**/list.*"
+        - component_id: LKHashTable
+          paths:
+            - "**/LKHashTable.*"
+        - component_id: LPHashTable
+          paths:
+            - "**/LPHashTable.*"
+        - component_id: matrix
+          paths:
+            - "**/matrix.*"
+        - component_id: movingAvg
+          paths:
+            - "**/movingAvg.*"
+        - component_id: numMethods
+          paths:
+            - "**/numMethods.*"
+        - component_id: PID
+          paths:
+            - "**/PID.*"
+        - component_id: quaternion
+          paths:
+            - "**/quaternion.*"
+        - component_id: queue
+          paths:
+            - "**/queue.*"
+        - component_id: timer
+          paths:
+            - "**/timer.*"

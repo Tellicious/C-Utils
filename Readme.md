@@ -3,6 +3,7 @@
 # Collection of useful C utilities
 
 [![Unit tests](https://github.com/Tellicious/ADV-utils/actions/workflows/runTests.yml/badge.svg?branch=main&event=push&event=workflow_dispatch)](https://github.com/Tellicious/ADV-utils/actions/workflows/runTests.yml)
+[![Codecov](https://codecov.io/gh/Tellicious/ADV-utils/graph/badge.svg?token=OJG3076HXJ)](https://codecov.io/gh/Tellicious/ADV-utils)
 
 ## Libraries included:
 - ***commonTypes:*** collection of common type definitions
@@ -62,21 +63,19 @@
 - `QUEUE_STYPE`: type of queue size property, defining the maximum amount of values that can be stored in the queue. Default is `uint16_t`
 
 ## Tests coverage:
-| Object      | Tests Coverage |
-| ----------- | -------------: |
-| basicMath   |           100% |
-| button      |           100% |
-| event       |           100% |
-| IIRFilters  |           100% |
-| list        |           100% |
-| LKHashTable |           100% |
-| LPHashTable |           100% |
-| matrix      |           100% |
-| movingAvg   |           100% |
-| numMethods  |           100% |
-| PID         |           100% |
-| quaternion  |           100% |
-| queue       |           100% |
-| timer       |           100% |
-
-
+| Object      | Coverage |
+| ----------- | -------: |
+| basicMath   |     100% |
+| button      |     100% |
+| event       |     100% |
+| IIRFilters  |     100% |
+| list        |     100% |
+| LKHashTable |     100% |
+| LPHashTable |     100% |
+| matrix      |     100% |
+| movingAvg   |     100% |
+| numMethods  |     100% |
+| PID         |     100% |
+| quaternion  |     100% |
+| queue       |     100% |
+| timer       |     100% |
