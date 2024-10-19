@@ -46,10 +46,10 @@ extern "C" {
 /* Typedefs ------------------------------------------------------------------*/
 
 typedef volatile struct {
-    uint32_t target_tick;
+    uint32_t lastTick;
     uint32_t interval;
     uint8_t flag;
-    uint16_t event_cnt;
+    uint16_t eventCnt;
 } userTimer_t;
 
 /* Function prototypes -------------------------------------------------------*/
@@ -63,7 +63,7 @@ typedef volatile struct {
 static inline void timerInit(userTimer_t* t, uint32_t interval) {
     t->interval = interval;
     t->flag = 0;
-    t->event_cnt = 0;
+    t->eventCnt = 0;
 }
 
 /**
@@ -73,7 +73,7 @@ static inline void timerInit(userTimer_t* t, uint32_t interval) {
  * \param[in]       currentTick: value of current tick
  */
 static inline void timerStart(userTimer_t* t, uint32_t currentTick) {
-    t->target_tick = currentTick + t->interval;
+    t->lastTick = currentTick;
     t->flag = 1;
 }
 
@@ -82,14 +82,14 @@ static inline void timerStart(userTimer_t* t, uint32_t currentTick) {
  *
  * \param[in]       t: pointer to timer object
  */
-static inline void timerStop(userTimer_t* t) { t->flag = 0; }
+static inline void timerStop(userTimer_t* t) { t->flag = t->eventCnt = 0; }
 
 /**
  * \brief           Reset timer object
  *
  * \param[in]       t: pointer to timer object
  */
-static inline void timerClear(userTimer_t* t) { t->event_cnt = 0; }
+static inline void timerClear(userTimer_t* t) { t->eventCnt = 0; }
 
 /**
  * \brief           Process timer object
@@ -108,7 +108,7 @@ void timerProcess(userTimer_t* t, uint32_t currentTick);
  *
  * \return          number of events for the specified timer
  */
-static inline uint16_t timerEventExists(userTimer_t* t) { return t->event_cnt; }
+static inline uint16_t timerEventExists(userTimer_t* t) { return t->eventCnt; }
 
 #ifdef __cplusplus
 }

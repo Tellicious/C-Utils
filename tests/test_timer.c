@@ -50,7 +50,7 @@ static void test_timerInit(void** state) {
     timerInit(&timer, 1000);
     assert_int_equal(timer.interval, 1000);
     assert_int_equal(timer.flag, 0);
-    assert_int_equal(timer.event_cnt, 0);
+    assert_int_equal(timer.eventCnt, 0);
 }
 
 static void test_timerStart(void** state) {
@@ -58,7 +58,6 @@ static void test_timerStart(void** state) {
     userTimer_t timer;
     timerInit(&timer, 1000);
     timerStart(&timer, 500);
-    assert_int_equal(timer.target_tick, 1500);
     assert_int_equal(timer.flag, 1);
 }
 
@@ -75,9 +74,9 @@ static void test_timerClear(void** state) {
     (void)state; /* unused */
     userTimer_t timer;
     timerInit(&timer, 1000);
-    timer.event_cnt = 5;
+    timer.eventCnt = 5;
     timerClear(&timer);
-    assert_int_equal(timer.event_cnt, 0);
+    assert_int_equal(timer.eventCnt, 0);
 }
 
 static void test_timerProcess(void** state) {
@@ -88,22 +87,20 @@ static void test_timerProcess(void** state) {
 
     // Process timer without reaching target tick
     timerProcess(&timer, 1000);
-    assert_int_equal(timer.event_cnt, 0);
+    assert_int_equal(timer.eventCnt, 0);
 
     // Process timer reaching target tick
     timerProcess(&timer, 1500);
-    assert_int_equal(timer.event_cnt, 1);
-    assert_int_equal(timer.target_tick, 2500);
+    assert_int_equal(timer.eventCnt, 1);
 
     // Process timer reaching multiple intervals
     timerProcess(&timer, 3500);
-    assert_int_equal(timer.event_cnt, 3);
-    assert_int_equal(timer.target_tick, 4500);
+    assert_int_equal(timer.eventCnt, 3);
 
     // Process stopped timer
     timerStop(&timer);
     timerProcess(&timer, 4502);
-    assert_int_equal(timer.event_cnt, 0);
+    assert_int_equal(timer.eventCnt, 0);
 }
 
 static void test_timerEventExists(void** state) {
@@ -111,7 +108,7 @@ static void test_timerEventExists(void** state) {
     userTimer_t timer;
     timerInit(&timer, 1000);
     assert_int_equal(timerEventExists(&timer), 0);
-    timer.event_cnt = 5;
+    timer.eventCnt = 5;
     assert_int_equal(timerEventExists(&timer), 5);
 }
 
@@ -119,31 +116,36 @@ static void test_timerWrapAround(void** state) {
     (void)state; /* unused */
     userTimer_t timer;
     timerInit(&timer, 500);
-    timerStart(&timer, UINT32_MAX - 900);
+    timerStart(&timer, UINT32_MAX - 899);
 
     // Process timer not wrapping-around
-    timerProcess(&timer, UINT32_MAX - 399);
-    assert_int_equal(timer.event_cnt, 1);
-    assert_int_equal(timer.target_tick, 100);
+    timerProcess(&timer, UINT32_MAX - 398);
+    assert_int_equal(timer.eventCnt, 1);
+    timer.eventCnt = 0;
 
     // Process timer once it has wrapped-around
     timerProcess(&timer, 101);
-    assert_int_equal(timer.event_cnt, 1);
-    assert_int_equal(timer.target_tick, 600);
+    assert_int_equal(timer.eventCnt, 1);
+    timer.eventCnt = 0;
 
     // Test timer with initial wrap-around
     timerStop(&timer);
-    timerStart(&timer, UINT32_MAX - 400);
+    timerStart(&timer, UINT32_MAX - 399);
     timerProcess(&timer, 101);
-    assert_int_equal(timer.event_cnt, 1);
-    assert_int_equal(timer.target_tick, 600);
+    assert_int_equal(timer.eventCnt, 1);
+    timer.eventCnt = 0;
+
+    // Test timer wrapping-around after interval
+    timerStop(&timer);
+    timerStart(&timer, UINT32_MAX - 599);
+    timerProcess(&timer, 1);
+    assert_int_equal(timer.eventCnt, 1);
 
     // Test timer wrapping-around with multiple events
     timerStop(&timer);
-    timerStart(&timer, UINT32_MAX - 900);
+    timerStart(&timer, UINT32_MAX - 899);
     timerProcess(&timer, 601);
-    assert_int_equal(timer.event_cnt, 3);
-    assert_int_equal(timer.target_tick, 1100);
+    assert_int_equal(timer.eventCnt, 3);
 }
 
 int main(void) {
