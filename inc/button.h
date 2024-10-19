@@ -94,8 +94,8 @@ typedef struct __attribute__((packed)) {
  * \param[in]       type: type of button, normal (BUTTON_TYPE_NORMAL) or pulsating (BUTTON_TYPE_PULSATING)
  * \param[in]       debounceTicks: number of ticks used for debouncing. Use 20ms as a starting point
  * \param[in]       resetTicks: number of ticks to reset pulse count. Use 400ms as a starting point. It must be greater than debounceTicks
- * \param[in]       longPressTicks: number of ticks that the button needs to be pressed to detect long-press
- * \param[in]       veryLongPressTicks: number of ticks that the button needs to be pressed to detect long-press
+ * \param[in]       longPressTicks: number of ticks that the button needs to be pressed (and then released) to detect long-press
+ * \param[in]       veryLongPressTicks: number of ticks that the button needs to be pressed to detect very long-press
  */
 void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks,
                 uint32_t longPressTicks, uint32_t veryLongPressTicks);
