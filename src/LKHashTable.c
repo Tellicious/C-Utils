@@ -123,11 +123,10 @@ utilsStatus_t lkHashTablePut(lkHashTable_t* lkht, char* key, void* value) {
     LIST_STYPE idx;
 
     for (idx = 0; idx < lkht->entries[ii].items; idx++) {
-        if (listPeekAtPos(&(lkht->entries[ii]), &entry, idx) == UTILS_STATUS_SUCCESS) {
-            if (!strcmp(key, entry.key)) {
-                memcpy(entry.value, value, lkht->itemSize);
-                return UTILS_STATUS_SUCCESS;
-            }
+        listPeekAtPos(&(lkht->entries[ii]), &entry, idx);
+        if (!strcmp(key, entry.key)) {
+            memcpy(entry.value, value, lkht->itemSize);
+            return UTILS_STATUS_SUCCESS;
         }
     }
 
