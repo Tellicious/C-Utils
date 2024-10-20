@@ -62,6 +62,9 @@ static void test_buttonInit(void** state) {
     assert_int_equal(button.resetTicks, 400);
     assert_int_equal(button.longPressTicks, 1000);
     assert_int_equal(button.veryLongPressTicks, 2000);
+    buttonInit(&button, BUTTON_TYPE_NORMAL, 300, 50, 1000, 2000);
+    assert_int_equal(button.debounceTicks, 300);
+    assert_int_equal(button.resetTicks, 300);
 }
 
 static void test_buttonEvent(void** state) {
@@ -203,9 +206,13 @@ static void test_buttonGetStatus(void** state) {
     buttonInit(&button, BUTTON_TYPE_NORMAL, 20, 400, 1000, 2000);
 
     buttonEvent(&button, BUTTON_PRESSED, 100);
-    assert_int_equal(buttonGetStatus(&button, 150), BUTTON_PRESSED);
+    assert_int_equal(buttonGetStatus(&button, 110), BUTTON_RELEASED);
+    buttonEvent(&button, BUTTON_RELEASED, 121);
+    buttonEvent(&button, BUTTON_PRESSED, 122);
+    assert_int_equal(buttonGetStatus(&button, 130), BUTTON_PRESSED);
 
     buttonEvent(&button, BUTTON_RELEASED, 200);
+    assert_int_equal(buttonGetStatus(&button, 210), BUTTON_PRESSED);
     assert_int_equal(buttonGetStatus(&button, 250), BUTTON_RELEASED);
 }
 
