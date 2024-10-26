@@ -321,7 +321,7 @@ static void test_lpHashTableDelete(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_LPHashTable[] = {
         cmocka_unit_test(test_lpHashTableInit),
         cmocka_unit_test(test_lpHashTablePutAndGetResizeable),
         cmocka_unit_test(test_lpHashTablePutAndGetNotResizeable),
@@ -330,5 +330,5 @@ int main(void) {
         cmocka_unit_test(test_lpHashTableDelete),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_LPHashTable, NULL, NULL);
 }

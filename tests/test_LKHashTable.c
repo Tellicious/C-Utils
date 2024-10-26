@@ -203,9 +203,9 @@ static void test_lkHashTableDelete(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {cmocka_unit_test(test_lkHashTableInit), cmocka_unit_test(test_lkHashTablePutAndGet),
-                                       cmocka_unit_test(test_lkHashTableInfo), cmocka_unit_test(test_lkHashTableFlush),
-                                       cmocka_unit_test(test_lkHashTableDelete)};
+    const struct CMUnitTest test_LKHashTable[] = {cmocka_unit_test(test_lkHashTableInit), cmocka_unit_test(test_lkHashTablePutAndGet),
+                                                  cmocka_unit_test(test_lkHashTableInfo), cmocka_unit_test(test_lkHashTableFlush),
+                                                  cmocka_unit_test(test_lkHashTableDelete)};
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_LKHashTable, NULL, NULL);
 }

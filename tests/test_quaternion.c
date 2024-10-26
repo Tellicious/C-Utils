@@ -178,10 +178,10 @@ static void test_quaternionToEuler(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_quaternion[] = {
         cmocka_unit_test(test_quaternionNorm), cmocka_unit_test(test_quaternionMult),    cmocka_unit_test(test_quaternionRotation),
         cmocka_unit_test(test_quaternionConj), cmocka_unit_test(test_quaternionToEuler),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_quaternion, NULL, NULL);
 }

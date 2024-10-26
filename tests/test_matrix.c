@@ -498,7 +498,7 @@ static void test_matrixPseudoInvStatic(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_matrix[] = {
         cmocka_unit_test(test_matrixInit),
         cmocka_unit_test(test_matrixDelete),
         cmocka_unit_test(test_matrixDet),
@@ -526,5 +526,5 @@ int main(void) {
         cmocka_unit_test(test_matrixSetAndGet),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_matrix, NULL, NULL);
 }

@@ -147,10 +147,10 @@ static void test_functions(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_basicMath[] = {
         cmocka_unit_test(test_macros),
         cmocka_unit_test(test_functions),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_basicMath, NULL, NULL);
 }

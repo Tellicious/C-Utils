@@ -398,7 +398,7 @@ static void test_listIterator(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_list[] = {
         cmocka_unit_test(test_listInit),      cmocka_unit_test(test_listPush),          cmocka_unit_test(test_listPushFull),
         cmocka_unit_test(test_listPushFront), cmocka_unit_test(test_listPushFrontFull), cmocka_unit_test(test_listInsert),
         cmocka_unit_test(test_listUpdate),    cmocka_unit_test(test_listPop),           cmocka_unit_test(test_listPopEmpty),
@@ -407,5 +407,5 @@ int main(void) {
         cmocka_unit_test(test_listInfo),      cmocka_unit_test(test_listFlush),         cmocka_unit_test(test_listIterator),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_list, NULL, NULL);
 }

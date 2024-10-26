@@ -33,11 +33,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include "hashFunctions.h"
+
+#include <cmocka.h>
 
 /* Functions -----------------------------------------------------------------*/
 
@@ -105,11 +106,10 @@ static void test_hash_sdbm(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_hashFunctions[] = {
         cmocka_unit_test(test_hash_FNV1A),
         cmocka_unit_test(test_hash_djb),
         cmocka_unit_test(test_hash_sdbm),
     };
-
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_hashFunctions, NULL, NULL);
 }

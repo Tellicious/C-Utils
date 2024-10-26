@@ -148,10 +148,10 @@ static void test_movingAvgGetLatest(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_movingAvg[] = {
         cmocka_unit_test(test_movingAvgInit), cmocka_unit_test(test_movingAvgDelete), cmocka_unit_test(test_movingAvgInitStatic),
         cmocka_unit_test(test_movingAvgCalc), cmocka_unit_test(test_movingAvgFlush),  cmocka_unit_test(test_movingAvgGetLatest),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_movingAvg, NULL, NULL);
 }

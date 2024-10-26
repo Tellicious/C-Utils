@@ -202,11 +202,11 @@ static void test_IIRFilterIntegrator(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_IIRFilters[] = {
         cmocka_unit_test(test_IIRFilterInit),       cmocka_unit_test(test_IIRFilterInitLP),     cmocka_unit_test(test_IIRFilterInitHP),
         cmocka_unit_test(test_IIRFilterInitBP),     cmocka_unit_test(test_IIRFilterInitBS),     cmocka_unit_test(test_IIRFilterProcess),
         cmocka_unit_test(test_IIRFilterDerivative), cmocka_unit_test(test_IIRFilterIntegrator),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_IIRFilters, NULL, NULL);
 }

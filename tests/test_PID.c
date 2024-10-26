@@ -202,11 +202,11 @@ static void test_PID_setGet(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_PID[] = {
         cmocka_unit_test(test_PID_init),          cmocka_unit_test(test_PID_calc),
         cmocka_unit_test(test_PID_calcAeroClamp), cmocka_unit_test(test_PID_calcIntegralClamp),
         cmocka_unit_test(test_PID_calcBackCalc),  cmocka_unit_test(test_PID_setGet),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_PID, NULL, NULL);
 }

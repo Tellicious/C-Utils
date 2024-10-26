@@ -217,12 +217,12 @@ static void test_buttonGetStatus(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_button[] = {
         cmocka_unit_test(test_buttonInit),
         cmocka_unit_test(test_buttonEvent),
         cmocka_unit_test(test_buttonGetPress),
         cmocka_unit_test(test_buttonGetStatus),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_button, NULL, NULL);
 }

@@ -767,7 +767,7 @@ static void test_GaussNewton_Sens_Cal_6Static(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {
+    const struct CMUnitTest test_numMethods[] = {
         cmocka_unit_test(test_fwsub),
         cmocka_unit_test(test_fwsubPerm),
         cmocka_unit_test(test_bksub),
@@ -792,5 +792,5 @@ int main(void) {
         cmocka_unit_test(test_GaussNewton_Sens_Cal_6Static),
     };
 
-    return cmocka_run_group_tests(tests, NULL, NULL);
+    return cmocka_run_group_tests(test_numMethods, NULL, NULL);
 }
