@@ -19,7 +19,7 @@ jobs:
             cmake ninja-build
     
     - name: Wait for code formatting to succeed
-      if: ${{ github.event_name != 'workflow_dispatch' }}
+      if: ${{ github.event_name == 'pull_request' }}
       uses: lewagon/wait-on-check-action@v1.3.4
       with:
         ref: ${{ github.ref }}
