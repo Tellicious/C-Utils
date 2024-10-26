@@ -39,11 +39,18 @@ jobs:
       run: cmake --build ${{github.workspace}}/build -j 10
     
     - name: Test
-      run: ctest --test-dir ${{github.workspace}}/build --output-on-failure --verbose
+      run: CMOCKA_MESSAGE_OUTPUT=XML CMOCKA_XML_FILE=./%g.xml ctest --test-dir ${{github.workspace}}/build --output-on-failure --verbose
 
-    - name: Upload results to Codecov
+    - name: Upload coverage results to Codecov
       uses: codecov/codecov-action@v4
       with:
           token: ${{ secrets.CODECOV_TOKEN }}
           plugin: gcov
+          flags: unitTests
+    
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/test-results-action@v1
+      with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           flags: unitTests
