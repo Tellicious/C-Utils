@@ -108,8 +108,7 @@ static inline char* lpHashTableStrdup(const char* s) {
 
 #ifdef ADVUTILS_USE_DYNAMIC_ALLOCATION
 
-utilsStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items,
-                              lpHashTableResizable_t resizable) {
+utilsStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items, lpHashTableResizable_t resizable) {
     lpht->items = 0;
     lpht->size = init_items;
     lpht->itemSize = itemSize;

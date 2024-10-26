@@ -399,15 +399,12 @@ static void test_listIterator(void** state) {
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_listInit),          cmocka_unit_test(test_listPush),
-        cmocka_unit_test(test_listPushFull),      cmocka_unit_test(test_listPushFront),
-        cmocka_unit_test(test_listPushFrontFull), cmocka_unit_test(test_listInsert),
-        cmocka_unit_test(test_listUpdate),        cmocka_unit_test(test_listPop),
-        cmocka_unit_test(test_listPopEmpty),      cmocka_unit_test(test_listPopBack),
-        cmocka_unit_test(test_listPopBackEmpty),  cmocka_unit_test(test_listRemove),
-        cmocka_unit_test(test_listPeek),          cmocka_unit_test(test_listPeekBack),
-        cmocka_unit_test(test_listPeekAtPos),     cmocka_unit_test(test_listInfo),
-        cmocka_unit_test(test_listFlush),         cmocka_unit_test(test_listIterator),
+        cmocka_unit_test(test_listInit),      cmocka_unit_test(test_listPush),          cmocka_unit_test(test_listPushFull),
+        cmocka_unit_test(test_listPushFront), cmocka_unit_test(test_listPushFrontFull), cmocka_unit_test(test_listInsert),
+        cmocka_unit_test(test_listUpdate),    cmocka_unit_test(test_listPop),           cmocka_unit_test(test_listPopEmpty),
+        cmocka_unit_test(test_listPopBack),   cmocka_unit_test(test_listPopBackEmpty),  cmocka_unit_test(test_listRemove),
+        cmocka_unit_test(test_listPeek),      cmocka_unit_test(test_listPeekBack),      cmocka_unit_test(test_listPeekAtPos),
+        cmocka_unit_test(test_listInfo),      cmocka_unit_test(test_listFlush),         cmocka_unit_test(test_listIterator),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

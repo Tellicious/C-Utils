@@ -150,10 +150,8 @@ static void test_timerWrapAround(void** state) {
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_timerInit),       cmocka_unit_test(test_timerStart),
-        cmocka_unit_test(test_timerStop),       cmocka_unit_test(test_timerClear),
-        cmocka_unit_test(test_timerProcess),    cmocka_unit_test(test_timerEventExists),
-        cmocka_unit_test(test_timerWrapAround),
+        cmocka_unit_test(test_timerInit),    cmocka_unit_test(test_timerStart),       cmocka_unit_test(test_timerStop),       cmocka_unit_test(test_timerClear),
+        cmocka_unit_test(test_timerProcess), cmocka_unit_test(test_timerEventExists), cmocka_unit_test(test_timerWrapAround),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

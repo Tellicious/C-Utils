@@ -46,29 +46,27 @@ extern "C" {
 /* Macros --------------------------------------------------------------------*/
 
 /* Absolute value */
-#define ABS(value)                  (((value) >= 0) ? (value) : (-value))
+#define ABS(value)                               (((value) >= 0) ? (value) : (-value))
 
 /* Get sign of value */
-#define SIGN(x)                     (((x) >= 0) ? 1 : -1)
+#define SIGN(x)                                  (((x) >= 0) ? 1 : -1)
 
 /* Constrain value between low and high */
-#define CONSTRAIN(value, low, high) ((value) < (low) ? (low) : ((value) > (high) ? (high) : (value)))
+#define CONSTRAIN(value, low, high)              ((value) < (low) ? (low) : ((value) > (high) ? (high) : (value)))
 
 /* Re-map value according to new scale */
-#define MAP(x, fromLow, fromHigh, toLow, toHigh)                                                                       \
-    (((x) - (fromLow)) * ((toHigh) - (toLow)) / ((fromHigh) - (fromLow)) + (fromLow))
+#define MAP(x, fromLow, fromHigh, toLow, toHigh) (((x) - (fromLow)) * ((toHigh) - (toLow)) / ((fromHigh) - (fromLow)) + (fromLow))
 
 /* Apply a deadband to value */
-#define DEADBAND(value, threshold)                                                                                     \
-    ((ABS(value) <= threshold) ? 0 : ((value > 0) ? (value - threshold) : (value + threshold)))
+#define DEADBAND(value, threshold)               ((ABS(value) <= threshold) ? 0 : ((value > 0) ? (value - threshold) : (value + threshold)))
 
 /* Get maximum between 2 values */
 #ifdef __GNUC__
-#define MAX(a, b)                                                                                                      \
-    ({                                                                                                                 \
-        __typeof__(a) _a = (a);                                                                                        \
-        __typeof__(b) _b = (b);                                                                                        \
-        _a > _b ? _a : _b;                                                                                             \
+#define MAX(a, b)                                                                                                                                              \
+    ({                                                                                                                                                         \
+        __typeof__(a) _a = (a);                                                                                                                                \
+        __typeof__(b) _b = (b);                                                                                                                                \
+        _a > _b ? _a : _b;                                                                                                                                     \
     })
 #else
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -76,11 +74,11 @@ extern "C" {
 
 /* Get minimum between 2 values */
 #ifdef __GNUC__
-#define MIN(a, b)                                                                                                      \
-    ({                                                                                                                 \
-        __typeof__(a) _a = (a);                                                                                        \
-        __typeof__(b) _b = (b);                                                                                        \
-        _a < _b ? _a : _b;                                                                                             \
+#define MIN(a, b)                                                                                                                                              \
+    ({                                                                                                                                                         \
+        __typeof__(a) _a = (a);                                                                                                                                \
+        __typeof__(b) _b = (b);                                                                                                                                \
+        _a < _b ? _a : _b;                                                                                                                                     \
     })
 #else
 #define MIN(a, b) ((a) < (b) ? (a) : (b))

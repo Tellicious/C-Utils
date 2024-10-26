@@ -97,8 +97,7 @@ typedef struct __attribute__((packed)) {
  * \param[in]       longPressTicks: number of ticks that the button needs to be pressed (and then released) to detect long-press
  * \param[in]       veryLongPressTicks: number of ticks that the button needs to be pressed to detect very long-press
  */
-void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks,
-                uint32_t longPressTicks, uint32_t veryLongPressTicks);
+void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks, uint32_t longPressTicks, uint32_t veryLongPressTicks);
 
 /**
  * \brief           Button event update, to be called either in an EXT interrupt or in a timer
@@ -129,8 +128,7 @@ buttonPressType_t buttonGetPress(button_t* button, uint32_t ticks);
  */
 
 static inline buttonStatus_t buttonGetStatus(button_t* button, uint32_t ticks) {
-    return (((button->validTick[button->status] > button->validTick[!button->status])
-             || (ticks - button->lastTick[button->status] > button->debounceTicks))
+    return (((button->validTick[button->status] > button->validTick[!button->status]) || (ticks - button->lastTick[button->status] > button->debounceTicks))
                 ? button->status
                 : !button->status);
 }

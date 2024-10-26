@@ -511,14 +511,11 @@ static void test_queueDelete(void** state) {
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(test_queueInit),    cmocka_unit_test(test_queueInitStatic),
-        cmocka_unit_test(test_queuePush),    cmocka_unit_test(test_queuePushFront),
-        cmocka_unit_test(test_queuePushArr), cmocka_unit_test(test_queuePushFrontArr),
-        cmocka_unit_test(test_queuePop),     cmocka_unit_test(test_queuePopBack),
-        cmocka_unit_test(test_queuePopArr),  cmocka_unit_test(test_queuePopBackArr),
-        cmocka_unit_test(test_queuePeek),    cmocka_unit_test(test_queuePeekBack),
-        cmocka_unit_test(test_queuePushPop), cmocka_unit_test(test_queueFlush),
-        cmocka_unit_test(test_queueDelete),
+        cmocka_unit_test(test_queueInit),       cmocka_unit_test(test_queueInitStatic), cmocka_unit_test(test_queuePush),
+        cmocka_unit_test(test_queuePushFront),  cmocka_unit_test(test_queuePushArr),    cmocka_unit_test(test_queuePushFrontArr),
+        cmocka_unit_test(test_queuePop),        cmocka_unit_test(test_queuePopBack),    cmocka_unit_test(test_queuePopArr),
+        cmocka_unit_test(test_queuePopBackArr), cmocka_unit_test(test_queuePeek),       cmocka_unit_test(test_queuePeekBack),
+        cmocka_unit_test(test_queuePushPop),    cmocka_unit_test(test_queueFlush),      cmocka_unit_test(test_queueDelete),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

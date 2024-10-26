@@ -324,8 +324,7 @@ static void test_matrixDet(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
     assert_int_equal(matrixInit(&matrix, 4, 4), UTILS_STATUS_SUCCESS);
-    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456,
-                           0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
+    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456, 0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     memcpy(matrix.data, matrix_data, 16 * sizeof(float));
     assert_float_equal(matrixDet(&matrix), -0.059641f, 1e-5);
     matrixDelete(&matrix);
@@ -347,8 +346,7 @@ static void test_matrixInversed(void** state) {
     matrix_t matrix, result;
     assert_int_equal(matrixInit(&matrix, 4, 4), UTILS_STATUS_SUCCESS);
     assert_int_equal(matrixInit(&result, 4, 4), UTILS_STATUS_SUCCESS);
-    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456,
-                           0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
+    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456, 0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     memcpy(matrix.data, matrix_data, 16 * sizeof(float));
     matrixInversed(&matrix, &result);
     assert_float_equal(result.data[0], -2.467338, 1e-5);
@@ -376,8 +374,7 @@ static void test_matrixInversed_rob(void** state) {
     matrix_t matrix, result;
     assert_int_equal(matrixInit(&matrix, 4, 4), UTILS_STATUS_SUCCESS);
     assert_int_equal(matrixInit(&result, 4, 4), UTILS_STATUS_SUCCESS);
-    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456,
-                           0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
+    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456, 0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     memcpy(matrix.data, matrix_data, 16 * sizeof(float));
     matrixInversed_rob(&matrix, &result);
     assert_float_equal(result.data[0], -2.467338, 1e-5);
@@ -421,8 +418,7 @@ static void test_matrixPseudoInv(void** state) {
 static void test_matrixDetStatic(void** state) {
     (void)state; /* unused */
     matrix_t matrix;
-    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456,
-                           0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
+    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456, 0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     matrixInitStatic(&matrix, matrix_data, 4, 4);
     assert_float_equal(matrixDetStatic(&matrix), -0.059641f, 1e-5);
     /* Check ill-conditioned matrix */
@@ -438,8 +434,7 @@ static void test_matrixDetStatic(void** state) {
 static void test_matrixInversedStatic(void** state) {
     (void)state; /* unused */
     matrix_t matrix, result;
-    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456,
-                           0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
+    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456, 0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     float result_data[16];
     matrixInitStatic(&matrix, matrix_data, 4, 4);
     matrixInitStatic(&result, result_data, 4, 4);
@@ -465,8 +460,7 @@ static void test_matrixInversedStatic(void** state) {
 static void test_matrixInversedStatic_rob(void** state) {
     (void)state; /* unused */
     matrix_t matrix, result;
-    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456,
-                           0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
+    float matrix_data[] = {0.5432, 0.3171, 0.3816, 0.4898, 0.0462, 0.4358, 0.6651, 0.4456, 0.8235, 0.1324, 0.7952, 0.6463, 0.6948, 0.9745, 0.1869, 0.4456};
     float result_data[16];
     matrixInitStatic(&matrix, matrix_data, 4, 4);
     matrixInitStatic(&result, result_data, 4, 4);

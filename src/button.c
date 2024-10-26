@@ -38,8 +38,7 @@
 
 /* Functions ------------------------------------------------------------------*/
 
-void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks,
-                uint32_t longPressTicks, uint32_t veryLongPressTicks) {
+void buttonInit(button_t* button, buttonType_t type, uint32_t debounceTicks, uint32_t resetTicks, uint32_t longPressTicks, uint32_t veryLongPressTicks) {
     button->type = type;
     button->status = BUTTON_RELEASED;
     button->press = BUTTON_NO_PRESS;
@@ -65,11 +64,8 @@ void buttonEvent(button_t* button, buttonStatus_t status, uint32_t ticks) {
     if (((button->lastTick[status] - button->lastTick[invStatus]) >= button->debounceTicks)) {
         button->event |= status;
         button->validTick[invStatus] = button->lastTick[invStatus];
-        if (invStatus
-            && ((button->type == BUTTON_TYPE_PULSATING)
-                || ((button->lastTick[0] - button->validTick[1]) < button->veryLongPressTicks))) {
-            (((button->validTick[1] - button->validTick[0]) > button->resetTicks)) ? (button->pulses = 1)
-                                                                                   : (button->pulses++);
+        if (invStatus && ((button->type == BUTTON_TYPE_PULSATING) || ((button->lastTick[0] - button->validTick[1]) < button->veryLongPressTicks))) {
+            (((button->validTick[1] - button->validTick[0]) > button->resetTicks)) ? (button->pulses = 1) : (button->pulses++);
         }
     }
 }
@@ -80,8 +76,7 @@ buttonPressType_t buttonGetPress(button_t* button, uint32_t ticks) {
 
     /* Check button press type */
     if (button->type == BUTTON_TYPE_NORMAL) {
-        if ((button->status == BUTTON_PRESSED) && !button->pulses
-            && ((ticks - button->lastTick[1]) > button->veryLongPressTicks) && button->event) {
+        if ((button->status == BUTTON_PRESSED) && !button->pulses && ((ticks - button->lastTick[1]) > button->veryLongPressTicks) && button->event) {
             button->press = BUTTON_VERYLONG_PRESS;
             button->event = 0;
             button->pulses = 0;
@@ -89,8 +84,7 @@ buttonPressType_t buttonGetPress(button_t* button, uint32_t ticks) {
             button->press = BUTTON_LONG_PRESS;
             button->event = 0;
             button->pulses = 0;
-        } else if ((button->status == BUTTON_RELEASED) && !button->pulses
-                   && ((ticks - button->lastTick[0]) > button->debounceTicks) && !button->event) {
+        } else if ((button->status == BUTTON_RELEASED) && !button->pulses && ((ticks - button->lastTick[0]) > button->debounceTicks) && !button->event) {
             button->press = BUTTON_RELEASE_PRESS;
             button->event = 1;
         } else if (((ticks - button->validTick[1]) > button->resetTicks) && button->pulses) {
@@ -104,8 +98,7 @@ buttonPressType_t buttonGetPress(button_t* button, uint32_t ticks) {
             button->pulses = 0;
         }
     } else {
-        if (button->pulses && (button->status == BUTTON_RELEASED)
-            && ((ticks - button->lastTick[0]) > button->resetTicks)) {
+        if (button->pulses && (button->status == BUTTON_RELEASED) && ((ticks - button->lastTick[0]) > button->resetTicks)) {
             button->press = BUTTON_RELEASE_PRESS;
             button->pulses = 0;
         } else if (button->pulses) {

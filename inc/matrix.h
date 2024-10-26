@@ -99,9 +99,7 @@ void matrixIdentity(matrix_t* matrix);
  *
  * \param[in]       matrix: pointer to matrix object
  */
-static inline void matrixZeros(matrix_t* matrix) {
-    memset(matrix->data, 0x00, matrix->cols * matrix->rows * sizeof(float));
-}
+static inline void matrixZeros(matrix_t* matrix) { memset(matrix->data, 0x00, matrix->cols * matrix->rows * sizeof(float)); }
 
 /**
  * \brief           Copy data from input matrix to output matrix
@@ -109,9 +107,7 @@ static inline void matrixZeros(matrix_t* matrix) {
  * \param[in]       input: pointer to input matrix object
  * \param[out]      output: pointer to output matrix object
  */
-static inline void matrixCopy(matrix_t* input, matrix_t* output) {
-    memcpy(output->data, input->data, output->cols * output->rows * sizeof(float));
-}
+static inline void matrixCopy(matrix_t* input, matrix_t* output) { memcpy(output->data, input->data, output->cols * output->rows * sizeof(float)); }
 
 /**
  * \brief           Matrix addition

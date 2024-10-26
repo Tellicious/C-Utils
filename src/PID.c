@@ -39,8 +39,7 @@
 
 /* Functions -----------------------------------------------------------------*/
 
-void PID_init(PID_t* PID, float kpVal, float kiVal, float kdVal, float ndVal, float kbVal, float dT_ms, float satMin,
-              float satMax) {
+void PID_init(PID_t* PID, float kpVal, float kiVal, float kdVal, float ndVal, float kbVal, float dT_ms, float satMin, float satMax) {
     PID->dT = dT_ms * 1e-3f;
     PID->kp = kpVal;
     PID->ki = 0.5f * kiVal * PID->dT;

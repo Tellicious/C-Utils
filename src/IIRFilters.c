@@ -106,8 +106,8 @@ float IIRFilterProcess(IIRFilterGeneric_t* filter, float input) {
     /* Apply the IIR filter equation */
     float output;
 
-    output = filter->n0 * input + filter->n1 * filter->i1 + filter->n2 * filter->i2 + filter->n3 * filter->i3
-             - filter->d1 * filter->o1 - filter->d2 * filter->o2 - filter->d3 * filter->o3;
+    output = filter->n0 * input + filter->n1 * filter->i1 + filter->n2 * filter->i2 + filter->n3 * filter->i3 - filter->d1 * filter->o1
+             - filter->d2 * filter->o2 - filter->d3 * filter->o3;
 
     /* Update state variables */
     filter->i3 = filter->i2;

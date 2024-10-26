@@ -122,8 +122,7 @@ void bksubPerm(matrix_t* A, matrix_t* B, matrix_t* P, matrix_t* result) {
     int16_t i, j, k;
     float tmp;
     for (k = 0; k < B->cols; k++) {
-        ELEMP(result, A->cols - 1, k) =
-            ELEMP(B, (uint8_t)ELEMP(P, A->cols - 1, 0), k) / ELEMP(A, A->cols - 1, A->cols - 1);
+        ELEMP(result, A->cols - 1, k) = ELEMP(B, (uint8_t)ELEMP(P, A->cols - 1, 0), k) / ELEMP(A, A->cols - 1, A->cols - 1);
         for (i = A->rows - 2; i >= 0; i--) {
             tmp = 0.0;
             for (j = A->cols - 1; j > i; j--) {
@@ -371,7 +370,7 @@ void LinSolveGauss(matrix_t* A, matrix_t* B, matrix_t* result) {
     uint8_t pivrow = 0; /* keeps track of current pivot row */
     uint8_t k, i, j;    /* k: overall index along diagonals; i: row index; j: col index */
     float tmp;          /* used for finding max value and making row swaps */
-    float tmp2; /* used to store abs when finding max value and to store coefficient value when eliminating values */
+    float tmp2;         /* used to store abs when finding max value and to store coefficient value when eliminating values */
     matrix_t A_cp, B_cp;
     matrixInit(&A_cp, A->rows, A->cols);
     matrixInit(&B_cp, B->rows, B->cols);
@@ -521,8 +520,7 @@ utilsStatus_t DARE(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t 
  s23=out(7,0);
  s33=out(8,0);*/
 
-utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                     matrix_t* result) {
+utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result) {
     float d1 = 0, d2 = 0, d3 = 0, rx1, rx2, rx3, t1, t2, t3;
     float k2;
     matrix_t Jr, res, delta, tmp1;
@@ -631,8 +629,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9(matrix_t* Data, float k, matrix_t* X0, uint
  s22=out(4,0);
  s33=out(5,0);*/
 
-utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                     matrix_t* result) {
+utilsStatus_t GaussNewton_Sens_Cal_6(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result) {
     float d1 = 0, d2 = 0, d3 = 0, t1, t2, t3;
     float k2;
 
@@ -900,7 +897,7 @@ void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
     uint8_t pivrow = 0; /* keeps track of current pivot row */
     uint8_t k, i, j;    /* k: overall index along diagonals; i: row index; j: col index */
     float tmp;          /* used for finding max value and making row swaps */
-    float tmp2; /* used to store abs when finding max value and to store coefficient value when eliminating values */
+    float tmp2;         /* used to store abs when finding max value and to store coefficient value when eliminating values */
 
     float _A_cp_Data[A->rows * A->cols];
     float _B_cp_Data[B->rows * B->cols];
@@ -965,8 +962,7 @@ void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result) {
 
 /* -------Iterative solver for discrete-time algebraic Riccati equation--------- */
 /* Solves discrete-time algebraic Riccati equation P = A'*P*A-(B'*P*A)'*inv(R+B'*P*B)*B'*P*A+Q */
-utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol,
-                         matrix_t* result) {
+utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol, matrix_t* result) {
     matrix_t _Ak, _G, _IGP, _Ak1, tmp1, tmp2, tmp3;
 
     ADVUTILS_ASSERT(A->rows == A->cols);
@@ -1040,8 +1036,7 @@ utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uin
  s23=out(7,0);
  s33=out(8,0);*/
 
-utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                           matrix_t* result) {
+utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result) {
     float d1 = 0, d2 = 0, d3 = 0, rx1, rx2, rx3, t1, t2, t3;
     float k2;
     float _JrData[Data->rows * 9];
@@ -1138,8 +1133,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0
  s22=out(4,0);
  s33=out(5,0);*/
 
-utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                           matrix_t* result) {
+utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result) {
     float d1 = 0, d2 = 0, d3 = 0, t1, t2, t3;
     float k2;
 

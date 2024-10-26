@@ -77,8 +77,7 @@ typedef struct {
  * \param[in]       satMin: lower saturation limit
  * \param[in]       satMax: upper saturation limit
  */
-void PID_init(PID_t* PID, float kpVal, float kiVal, float kdVal, float ndVal, float kbVal, float dT_ms, float satMin,
-              float satMax);
+void PID_init(PID_t* PID, float kpVal, float kiVal, float kdVal, float ndVal, float kbVal, float dT_ms, float satMin, float satMax);
 
 /**
  * \brief           PID calculation without anti-windup (with output clamping)

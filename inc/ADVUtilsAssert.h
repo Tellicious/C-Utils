@@ -48,10 +48,10 @@ extern "C" {
 
 #ifndef ADVUTILS_ASSERT
 #ifdef DEBUG
-#define ADVUTILS_ASSERT(x)                                                                                             \
-    if ((x) == 0) {                                                                                                    \
-        for (;;)                                                                                                       \
-            ;                                                                                                          \
+#define ADVUTILS_ASSERT(x)                                                                                                                                     \
+    if ((x) == 0) {                                                                                                                                            \
+        for (;;)                                                                                                                                               \
+            ;                                                                                                                                                  \
     }
 #else
 #define ADVUTILS_ASSERT(x)

@@ -288,8 +288,7 @@ void LinSolveGaussStatic(matrix_t* A, matrix_t* B, matrix_t* result);
  *
  * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached
  */
-utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol,
-                         matrix_t* result);
+utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uint16_t nmax, float tol, matrix_t* result);
 
 /**
  * \brief           Gauss-Newton sensor calibration with 9 parameters and static allocation
@@ -314,8 +313,7 @@ utilsStatus_t DAREStatic(matrix_t* A, matrix_t* B, matrix_t* Q, matrix_t* R, uin
  *
  * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
  */
-utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                           matrix_t* result);
+utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
 
 /**
  * \brief           Gauss-Newton sensor calibration with 6 parameters and static allocation
@@ -337,8 +335,7 @@ utilsStatus_t GaussNewton_Sens_Cal_9Static(matrix_t* Data, float k, matrix_t* X0
  *
  * \return          UTILS_STATUS_SUCCESS if success, UTILS_STATUS_TIMEOUT if nmax is reached, UTILS_STATUS_ERROR if errors
  */
-utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol,
-                                           matrix_t* result);
+utilsStatus_t GaussNewton_Sens_Cal_6Static(matrix_t* Data, float k, matrix_t* X0, uint16_t nmax, float tol, matrix_t* result);
 
 #endif /* ADVUTILS_USE_STATIC_ALLOCATION */
 

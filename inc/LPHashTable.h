@@ -97,8 +97,7 @@ typedef enum { LPHT_REMOVE_ITEM = 0, LPHT_DO_NOT_REMOVE_ITEM = 1 } lpHashTableRe
  * 
  * \return          UTILS_STATUS_SUCCESS if hash-table was initialized, UTILS_STATUS_ERROR if data was not allocated correctly
  */
-utilsStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items,
-                              lpHashTableResizable_t resizable);
+utilsStatus_t lpHashTableInit(lpHashTable_t* lpht, size_t itemSize, uint32_t init_items, lpHashTableResizable_t resizable);
 
 /**
  * \brief           Set item with given key to value. If not already present in table, key is copied to newly allocated memory, otherwise it is only updated.

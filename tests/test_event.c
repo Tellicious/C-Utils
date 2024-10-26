@@ -200,9 +200,8 @@ static void test_eventDelete(void** state) {
 }
 
 int main(void) {
-    const struct CMUnitTest tests[] = {cmocka_unit_test(test_eventInit),     cmocka_unit_test(test_eventInitStatic),
-                                       cmocka_unit_test(test_eventRegister), cmocka_unit_test(test_eventRegisterEx),
-                                       cmocka_unit_test(test_eventDispatch), cmocka_unit_test(test_eventDispatchEx),
+    const struct CMUnitTest tests[] = {cmocka_unit_test(test_eventInit),       cmocka_unit_test(test_eventInitStatic), cmocka_unit_test(test_eventRegister),
+                                       cmocka_unit_test(test_eventRegisterEx), cmocka_unit_test(test_eventDispatch),   cmocka_unit_test(test_eventDispatchEx),
                                        cmocka_unit_test(test_eventDelete)};
 
     return cmocka_run_group_tests(tests, NULL, NULL);
