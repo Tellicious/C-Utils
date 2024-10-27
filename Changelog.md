@@ -1,9 +1,17 @@
 # Changelog
 
+## v1.17.3
+
+**New features:**
+- Updated runTests action to upload also test results to Codecov
+
+**Improvements:**
+- Changed test groups naming
+
 ## v1.17.2
 
 **New features:**
-- Updated runTests action to upload results to Codecov
+- Updated runTests action to upload coverage results to Codecov
 
 **Improvements:**
 - Changed `timer` object to improve behavior on wrap-around and extended unit-tests to include all branches
