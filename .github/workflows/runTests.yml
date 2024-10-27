@@ -38,8 +38,11 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build -j 10
     
-    - name: Test
-      run: CMOCKA_MESSAGE_OUTPUT=XML CMOCKA_XML_FILE=./%g.xml ctest --test-dir ${{github.workspace}}/build --output-on-failure --verbose
+    - name: Test (output to XML)
+      run: CMOCKA_MESSAGE_OUTPUT=XML CMOCKA_XML_FILE=./%g.xml ctest --test-dir ${{github.workspace}}/build --output-on-failure -VV
+
+    - name: Test (output to stdout)
+      run: CMOCKA_MESSAGE_OUTPUT=stdout ctest --test-dir ${{github.workspace}}/build --output-on-failure -VV
 
     - name: Upload coverage results to Codecov
       uses: codecov/codecov-action@v4
