@@ -39,7 +39,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build -j 10
     
     - name: Test (output to XML)
-      run: CMOCKA_MESSAGE_OUTPUT=XML CMOCKA_XML_FILE=./%g.xml ctest --test-dir ${{github.workspace}}/build --output-on-failure -VV
+      run: CMOCKA_MESSAGE_OUTPUT=XML CMOCKA_XML_FILE=./%g.junit.xml ctest --test-dir ${{github.workspace}}/build --output-on-failure -VV
 
     - name: Test (output to stdout)
       run: CMOCKA_MESSAGE_OUTPUT=stdout ctest --test-dir ${{github.workspace}}/build --output-on-failure -VV
