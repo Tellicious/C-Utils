@@ -1,9 +1,9 @@
 ## Maintenance release
 
 **New features:**
-- Updated runTests action to upload also test results to Codecov
+- Added unit tests for `hashFunctions.c`
 
-**Improvements:**
-- Changed test groups naming
+**Bugfix:**
+- Minor fixes to CI actions
 
 See [Changelog](Changelog.md)

@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.17.4
+
+**New features:**
+- Added unit tests for `hashFunctions.c`
+
+**Bugfix:**
+- Minor fixes to CI actions
+  
 ## v1.17.3
 
 **New features:**
