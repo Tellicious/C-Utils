@@ -16,7 +16,6 @@ parsers:
             method: no
             macro: yes
 ignore:
-    - "**/hashFunctions*"
     - "**/test_*"
 comment:
   layout: "header, diff, flags, components" 
@@ -37,6 +36,9 @@ component_management:
         - component_id: event
           paths:
             - "**/event.*"
+        - component_id: hashFunctions
+          paths:
+            - "**/hashFunctions.*"
         - component_id: IIRFilters
           paths:
             - "**/IIRFilters.*"

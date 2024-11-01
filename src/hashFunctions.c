@@ -34,6 +34,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "hashFunctions.h"
+#include "ADVUtilsAssert.h"
 
 /* Functions -----------------------------------------------------------------*/
 
@@ -48,6 +49,8 @@ uint32_t hash_FNV1A(char* key) {
 
     uint64_t hash = FNV_OFFSET;
     uint8_t p;
+
+    ADVUTILS_ASSERT(key != NULL);
 
     while ((p = (uint8_t)*key++)) {
         hash ^= (uint64_t)p;
@@ -69,6 +72,8 @@ uint32_t hash_djb(char* key) {
     uint32_t hash = 5381;
     uint8_t p;
 
+    ADVUTILS_ASSERT(key != NULL);
+
     while ((p = (uint8_t)*key++)) {
         hash = ((hash << 5) + hash) + p; /* hash * 33 + c */
     }
@@ -85,6 +90,8 @@ uint32_t hash_djb(char* key) {
 uint32_t hash_sdbm(char* key) {
     uint32_t hash = 0;
     uint8_t p;
+
+    ADVUTILS_ASSERT(key != NULL);
 
     while ((p = (uint8_t)*key++)) {
         hash = p + (hash << 6) + (hash << 16) - hash;

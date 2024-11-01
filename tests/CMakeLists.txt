@@ -3,6 +3,7 @@ set(TESTS_LIST
     basicMath
     button
     event
+    hashFunctions
     IIRFilters
     list
     LKHashTable
@@ -58,7 +59,11 @@ uint32_t ADVUtils_testHash(char* key);
 ")
 
 # Find math library (needed for compilation under Ubuntu)
-find_library(MATH_LIBRARY m)
+if (NOT WIN32)
+    find_library(MATH_LIBRARY m)
+else()
+    set(MATH_LIBRARY "")
+endif()
 
 foreach(FILE ${TESTS_LIST})
     # Set sources
