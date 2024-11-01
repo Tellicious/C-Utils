@@ -1,13 +1,17 @@
+name: Unit tests
+
 on:
     pull_request:
-        types: [opened, reopened]
+        types: [opened, reopened, edited]
     push:
         # Sequence of patterns matched against refs/tags
         tags:
         - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
     workflow_dispatch:
 
-name: Unit tests
+env:
+ BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
 jobs:
   unitTests:
     runs-on: ubuntu-latest
@@ -22,7 +26,7 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
       uses: lewagon/wait-on-check-action@v1.3.4
       with:
-        ref: ${{ github.ref }}
+        ref: ${{ env.BRANCH_NAME }}
         check-name: 'formatCode'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 10
@@ -30,6 +34,9 @@ jobs:
 
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        ref: ${{ env.BRANCH_NAME }}
+        fetch-depth: 0
 
     - name: Configure CMake
       run: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -S ${{github.workspace}} -B ${{github.workspace}}/build -G Ninja

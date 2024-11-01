@@ -1,15 +1,22 @@
+name: Format code
+
 on:
     pull_request:
-        types: [opened, reopened]
+        types: [opened, reopened, edited]
     workflow_dispatch:
     push:
       branches:
         - main
 
-name: Format code
+env:
+ BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+
 jobs:
   formatCode:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
     - name: Install clang-format 18
       run: |
@@ -19,6 +26,9 @@ jobs:
 
     - name: Checkout Repository
       uses: actions/checkout@v4
+      with:
+        ref: ${{ env.BRANCH_NAME }}
+        fetch-depth: 0
 
     - name: Format code and commit changes
       run : |
@@ -34,6 +44,6 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: main
+        branch: ${{ env.BRANCH_NAME }}
   
 
