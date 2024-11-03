@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.17.5
+
+**Bugfix:**
+- Minor fix to `hashFunctions.c`
+  
 ## v1.17.4
 
 **New features:**

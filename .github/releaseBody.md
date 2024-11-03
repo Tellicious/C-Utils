@@ -1,9 +1,6 @@
-## Maintenance release
-
-**New features:**
-- Added unit tests for `hashFunctions.c`
+## Minor fix to `hashFunctions`
 
 **Bugfix:**
-- Minor fixes to CI actions
+- Minor fix to `hashFunctions.c`
 
 See [Changelog](Changelog.md)
