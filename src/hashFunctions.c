@@ -35,6 +35,7 @@
 
 #include "hashFunctions.h"
 #include "ADVUtilsAssert.h"
+#include "stddef.h"
 
 /* Functions -----------------------------------------------------------------*/
 
